@@ -5,16 +5,35 @@ import { createServerClient } from "@supabase/ssr";
 import { hasDemoSessionOnRequest } from "@/lib/demo-auth";
 import { getServerEnv } from "@odirico/core/env";
 
-const PROTECTED_PATHS = ["/dashboard", "/kanban", "/tickets"];
+const PROTECTED_PATHS = [
+  "/overview",
+  "/ember",
+  "/sol",
+  "/surge",
+  "/billing",
+  "/settings",
+  "/dashboard",
+  "/kanban",
+  "/tickets",
+];
+
+function resolveNextPath(nextPath: string | null) {
+  if (nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")) {
+    return nextPath;
+  }
+
+  return "/overview";
+}
 
 export async function updateSession(request: NextRequest) {
   const hasDemoSession = hasDemoSessionOnRequest(request);
   const isProtected = PROTECTED_PATHS.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
+  const resolvedNextPath = resolveNextPath(request.nextUrl.searchParams.get("next"));
 
   if (hasDemoSession && request.nextUrl.pathname === "/login") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL(resolvedNextPath, request.url));
   }
 
   if (hasDemoSession) {
@@ -52,7 +71,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (user && request.nextUrl.pathname === "/login") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL(resolvedNextPath, request.url));
   }
 
   return response;

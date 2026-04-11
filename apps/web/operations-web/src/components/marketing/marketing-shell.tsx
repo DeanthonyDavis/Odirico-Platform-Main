@@ -1,21 +1,21 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+
+import { ODIRICO_ECOSYSTEM_APPS } from "@odirico/core/apps";
 
 type MarketingShellProps = {
   children: ReactNode;
 };
 
 const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/expertise", label: "Consulting" },
-  { href: "/products", label: "Products" },
-  { href: "/sectors", label: "Markets" },
-  { href: "/capability", label: "Capability" },
+  { href: "/system", label: "System" },
+  { href: "/apps", label: "Apps" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
 ] as const;
 
 export function MarketingShell({ children }: MarketingShellProps) {
@@ -39,8 +39,23 @@ export function MarketingShell({ children }: MarketingShellProps) {
 
       <header className="marketing-header">
         <div className="marketing-shell marketing-nav-shell">
-          <Link className="marketing-brand" href="/" onClick={() => setIsOpen(false)}>
-            <img alt="Odirico" src="/assets/logo-primary.svg" />
+          <Link
+            aria-label="Odirico Platform home"
+            className="marketing-brand"
+            href="/"
+            onClick={() => setIsOpen(false)}
+          >
+            <Image
+              alt=""
+              className="marketing-brand-mark"
+              height={52}
+              src="/branding/odirico-platform.jpg"
+              width={52}
+            />
+            <div className="marketing-brand-copy">
+              <strong>Odirico</strong>
+              <span>Platform</span>
+            </div>
           </Link>
 
           <button
@@ -70,11 +85,19 @@ export function MarketingShell({ children }: MarketingShellProps) {
             </nav>
 
             <div className="marketing-nav-actions">
-              <Link className="marketing-button marketing-button-secondary" href="/login">
-                Platform Login
+              <Link
+                className="marketing-button marketing-button-secondary"
+                href="/install"
+                onClick={() => setIsOpen(false)}
+              >
+                Install
               </Link>
-              <Link className="marketing-button marketing-button-primary" href="/contact">
-                Work With Odirico
+              <Link
+                className="marketing-button marketing-button-primary"
+                href="/login"
+                onClick={() => setIsOpen(false)}
+              >
+                Get Started
               </Link>
             </div>
           </div>
@@ -86,38 +109,66 @@ export function MarketingShell({ children }: MarketingShellProps) {
       <footer className="marketing-footer">
         <div className="marketing-shell marketing-footer-grid">
           <div className="marketing-footer-brand">
-            <img alt="Odirico" src="/assets/logo-white.svg" />
+            <div className="marketing-footer-brand-row">
+              <Image
+                alt=""
+                className="marketing-footer-mark"
+                height={48}
+                src="/branding/odirico-platform.jpg"
+                width={48}
+              />
+              <div>
+                <strong>Odirico Platform</strong>
+                <p>One connected system for Ember, Sol, and Surge.</p>
+              </div>
+            </div>
             <p>
-              Odirico combines infrastructure consulting with a route-based platform ecosystem for
-              operations, readiness, planning, and application command workflows.
+              Odirico is the parent company. The user-facing product is the platform ecosystem that
+              connects planning, money, and momentum without splitting your life into disconnected
+              tools.
             </p>
           </div>
 
           <div>
-            <h3>Navigate</h3>
+            <h3>Explore</h3>
             <ul className="marketing-footer-list">
-              {navItems.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href as never}>{item.label}</Link>
+              <li>
+                <Link href="/system">System</Link>
+              </li>
+              <li>
+                <Link href="/apps">Apps</Link>
+              </li>
+              <li>
+                <Link href="/pricing">Pricing</Link>
+              </li>
+              <li>
+                <Link href="/install">Install</Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>Apps</h3>
+            <ul className="marketing-footer-list">
+              {ODIRICO_ECOSYSTEM_APPS.map((app) => (
+                <li key={app.key}>
+                  <Link href={`/apps#${app.key}`}>{app.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h3>Platform</h3>
+            <h3>Access</h3>
             <ul className="marketing-footer-list">
               <li>
-                <Link href="/dashboard">PoleQA</Link>
+                <Link href="/login">Sign in</Link>
               </li>
               <li>
-                <Link href="/ember">Ember</Link>
+                <Link href="/contact">Contact</Link>
               </li>
               <li>
-                <Link href="/sol">Sol</Link>
-              </li>
-              <li>
-                <Link href="/surge">Surge</Link>
+                <Link href="/install">Platform install</Link>
               </li>
             </ul>
             <p className="marketing-footer-note">© {currentYear} Odirico</p>

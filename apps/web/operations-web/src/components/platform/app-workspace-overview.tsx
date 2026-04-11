@@ -1,11 +1,12 @@
-import { getOdiricoApp, type OdiricoAppKey } from "@odirico/core/apps";
+import { getOdiricoEcosystemApp, type OdiricoConsumerAppKey } from "@odirico/core/apps";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { AppAccessLinks } from "@/components/platform/app-access-links";
 import { EcosystemAppGrid } from "@/components/platform/ecosystem-app-grid";
 import type { UserContext } from "@/lib/auth/roles";
 
 type AppWorkspaceOverviewProps = {
-  appKey: OdiricoAppKey;
+  appKey: OdiricoConsumerAppKey;
   currentPath: string;
   title?: string;
   subtitle: string;
@@ -25,15 +26,16 @@ export function AppWorkspaceOverview({
   nextMoves,
   userContext,
 }: AppWorkspaceOverviewProps) {
-  const app = getOdiricoApp(appKey);
+  const app = getOdiricoEcosystemApp(appKey);
 
   return (
     <AppShell
       currentPath={currentPath}
-      title={title ?? `${app.label} Workspace`}
+      title={title ?? app.label}
       subtitle={subtitle}
       userContext={userContext}
-      eyebrow={`Odirico / ${app.label}`}
+      eyebrow={`Odirico / Platform / ${app.label}`}
+      variant="ecosystem"
     >
       <div className="panel-grid">
         <section className="panel">
@@ -52,7 +54,7 @@ export function AppWorkspaceOverview({
           <div className="context-row">
             <span className="status-pill">{app.platformRole}</span>
             <span className="status-pill">{app.audience}</span>
-            <span className="status-pill">{app.href}</span>
+            <span className="status-pill">{app.integrationRole}</span>
           </div>
 
           <div className="feature-stack">
@@ -82,10 +84,11 @@ export function AppWorkspaceOverview({
             <h3>Route shell is live</h3>
             <p className="muted">{statusNote}</p>
             <p className="ecosystem-workspace-root">Current source: {app.workspaceRoot}</p>
+            <AppAccessLinks compact targets={app.installTargets} />
           </section>
 
           <section className="panel">
-            <p className="sidebar-label">Ecosystem switcher</p>
+            <p className="sidebar-label">Platform modules</p>
             <EcosystemAppGrid currentAppKey={appKey} showWorkspaceRoot />
           </section>
         </aside>

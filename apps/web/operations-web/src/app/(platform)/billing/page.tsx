@@ -10,9 +10,10 @@ export default async function BillingPage() {
     <AppShell
       currentPath="/billing"
       title="Billing"
-      subtitle="One subscription surface for the full Odirico ecosystem, even while app runtimes are still being consolidated."
+      subtitle="One subscription surface for Ember, Sol, and Surge under the shared Odirico platform."
       userContext={userContext}
-      eyebrow="Odirico / Billing"
+      eyebrow="Odirico / Platform / Billing"
+      variant="ecosystem"
     >
       <div className="stats-grid">
         <article className="stat-card">
@@ -27,8 +28,8 @@ export default async function BillingPage() {
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Apps covered</span>
-          <strong>4</strong>
-          <p className="muted">PoleQA, Ember, Sol, and Surge are being grouped under one platform contract.</p>
+          <strong>3</strong>
+          <p className="muted">Ember, Sol, and Surge share the same consumer platform contract.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Identity</span>

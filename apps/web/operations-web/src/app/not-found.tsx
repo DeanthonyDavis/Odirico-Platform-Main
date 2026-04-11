@@ -6,9 +6,9 @@ export default function NotFound() {
       <section className="landing-panel">
         <p className="eyebrow">404</p>
         <h1>That page does not exist.</h1>
-        <p className="muted">Use the dashboard to get back to active QA work.</p>
-        <Link className="primary-button" href="/dashboard">
-          Back to dashboard
+        <p className="muted">Use the platform home to get back to Ember, Sol, and Surge.</p>
+        <Link className="primary-button" href="/">
+          Back to home
         </Link>
       </section>
     </main>

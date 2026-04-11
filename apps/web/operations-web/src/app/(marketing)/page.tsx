@@ -1,149 +1,224 @@
-import { ODIRICO_APPS } from "@odirico/core/apps";
+import Image from "next/image";
+import Link from "next/link";
+
+import { AppAccessLinks } from "@/components/platform/app-access-links";
 import {
-  MarketingCardGrid,
-  MarketingCta,
-  MarketingHero,
-  MarketingSection,
-  MarketingStats,
-} from "@/components/marketing/marketing-sections";
+  CONNECTION_FLOWS,
+  ECOSYSTEM_APP_STORIES,
+  ECOSYSTEM_TAGLINE,
+  PRICING_PLANS,
+  SYSTEM_PILLARS,
+  WHY_IT_EXISTS,
+} from "@/components/marketing/ecosystem-data";
 import { getSession } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const user = await getSession();
-  const appHref = user ? "/dashboard" : "/login";
-  const appLabel = user ? "Open Platform" : "Platform Login";
+  const primaryHref = user ? "/overview" : "/login";
+  const primaryLabel = user ? "Open Platform" : "Start Free";
 
   return (
     <>
-      <MarketingHero
-        actions={[
-          { href: "/expertise", label: "Explore Consulting", variant: "dark" },
-          { href: "/products", label: "See Odirico OS", variant: "primary" },
-          { href: appHref, label: appLabel, variant: "secondary" },
-        ]}
-        copy="Odirico is the master brand. Odirico Consulting delivers infrastructure support and field execution clarity. Odirico OS turns that same operating logic into one route-based product ecosystem."
-        dark
-        eyebrow="Houston, Texas · infrastructure consulting · route-based software ecosystem"
-        side={
-          <div className="marketing-card-grid columns-2">
-            {ODIRICO_APPS.map((app) => (
-              <article className="marketing-card" key={app.key}>
-                <span className="marketing-card-badge">{app.statusLabel}</span>
-                <h3>{app.label}</h3>
-                <p>{app.tagline}</p>
+      <section className="platform-hero">
+        <div className="marketing-shell platform-hero-grid">
+          <div className="platform-hero-copy">
+            <p className="platform-kicker">Odirico Platform</p>
+            <h1>Your life, organized into one system.</h1>
+            <p className="platform-lead">{ECOSYSTEM_TAGLINE}</p>
+
+            <div className="platform-hero-actions">
+              <Link className="marketing-button marketing-button-primary" href={primaryHref}>
+                {primaryLabel}
+              </Link>
+              <Link className="marketing-button marketing-button-secondary" href="/apps">
+                Explore Apps
+              </Link>
+              <Link className="marketing-button marketing-button-ghost" href="/install">
+                Install Platform
+              </Link>
+            </div>
+
+            <div className="platform-trust-row">
+              <span>One login</span>
+              <span>One subscription</span>
+              <span>Shared memory</span>
+            </div>
+          </div>
+
+          <div className="platform-hero-visual">
+            <div className="platform-mark-stage">
+              <Image
+                alt="Odirico Platform mark"
+                className="platform-mark-image"
+                height={240}
+                priority
+                src="/branding/odirico-platform.jpg"
+                width={240}
+              />
+            </div>
+
+            <div className="platform-hero-modules">
+              {ECOSYSTEM_APP_STORIES.map((app) => (
+                <article className="platform-module" key={app.key}>
+                  <div className="platform-module-head">
+                    <Image alt="" className="platform-module-logo" height={58} src={app.logoPath} width={58} />
+                    <div>
+                      <p className="platform-module-kicker">{app.platformRole}</p>
+                      <h2>{app.label}</h2>
+                    </div>
+                  </div>
+                  <p>{app.tagline}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="platform-section">
+        <div className="marketing-shell">
+          <div className="platform-section-head">
+            <div>
+              <p className="platform-kicker">System</p>
+              <h2>Three focused products. One connected platform.</h2>
+            </div>
+            <p>
+              Ember handles your week. Sol handles your money and direction. Surge handles
+              opportunities and execution. The platform ties them together so the same context does
+              not need to be rebuilt three times.
+            </p>
+          </div>
+
+          <div className="platform-pillars">
+            {SYSTEM_PILLARS.map((pillar) => (
+              <article className="platform-pillar" key={pillar.title}>
+                <h3>{pillar.title}</h3>
+                <p>{pillar.copy}</p>
               </article>
             ))}
           </div>
-        }
-        title="Consulting, software, and operating systems under one deploy."
-      />
+        </div>
+      </section>
 
-      <MarketingSection
-        copy="The public story should be simple: one firm, one ecosystem, and clear paths into consulting work or product workflows."
-        eyebrow="Platform snapshot"
-        title="Built for infrastructure work that cannot afford confusion."
-      >
-        <MarketingStats
-          items={[
-            { label: "Apps in the platform shell", value: "4" },
-            { label: "Connected divisions", value: "2" },
-            { label: "Primary launch market", value: "TX" },
-            { label: "Deployment model", value: "1" },
-          ]}
-        />
-      </MarketingSection>
+      <section className="platform-section platform-section-contrast">
+        <div className="marketing-shell">
+          <div className="platform-section-head">
+            <div>
+              <p className="platform-kicker">Connection</p>
+              <h2>The value is in how the apps connect.</h2>
+            </div>
+            <p>
+              This only works if the handoff between modules feels natural. The ecosystem is meant
+              to remember what happened and move the next useful signal into the right place.
+            </p>
+          </div>
 
-      <MarketingSection
-        copy="The consulting arm informs the tools. The tools strengthen delivery. Clients can buy services, software, or both without the story breaking apart."
-        eyebrow="One firm. Two divisions."
-        muted
-        title="The website and the platform now point to the same operating model."
-      >
-        <MarketingCardGrid
-          cards={[
-            {
-              badge: "Division 01",
-              title: "Odirico Consulting",
-              copy: "Founder-led infrastructure support for project services, surveying, and engineering-adjacent execution.",
-              bullets: [
-                "Project services for active utility and infrastructure scopes.",
-                "Surveying and field documentation support.",
-                "Engineering context for owners, contractors, and public teams.",
-              ],
-            },
-            {
-              badge: "Division 02",
-              title: "Odirico OS",
-              copy: "A unified product platform for operations, planning, readiness, and application command workflows.",
-              bullets: [
-                "PoleQA for field issue capture and QA/QC.",
-                "Ember and Sol for personal operating systems and planning.",
-                "Surge for universal job and internship command workflows.",
-              ],
-            },
-            {
-              badge: "Market fit",
-              title: "Texas-first positioning",
-              copy: "Houston-rooted, utility-aware, and credible for outreach, procurement conversations, and product demos.",
-              bullets: [
-                "Power, utility, and telecom fluency.",
-                "Operator-friendly positioning.",
-                "Clear story for services plus software.",
-              ],
-            },
-          ]}
-        />
-      </MarketingSection>
+          <div className="connection-flow-list">
+            {CONNECTION_FLOWS.map((flow, index) => (
+              <article className="connection-flow" key={flow.title}>
+                <span className="connection-flow-index">0{index + 1}</span>
+                <div>
+                  <h3>{flow.title}</h3>
+                  <p>{flow.copy}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <MarketingSection
-        copy="The platform now has real route homes for every app, so the public site can talk about one ecosystem instead of a fragmented tool list."
-        eyebrow="Software ecosystem"
-        title="Route-based products, one login, and one shared shell."
-      >
-        <MarketingCardGrid
-          cards={ODIRICO_APPS.map((app) => ({
-            badge: app.statusLabel,
-            title: app.label,
-            copy: app.summary,
-            href: app.href,
-            hrefLabel: `Open ${app.label}`,
-          }))}
-          columns={4}
-        />
-      </MarketingSection>
+      <section className="platform-section">
+        <div className="marketing-shell">
+          <div className="platform-section-head">
+            <div>
+              <p className="platform-kicker">Apps</p>
+              <h2>Each module has a clear job inside the system.</h2>
+            </div>
+            <p>
+              The platform should feel like one place to live, not a random pile of tools. Each
+              module owns a different pressure zone in real life.
+            </p>
+          </div>
 
-      <MarketingSection
-        copy="The clearest early wins stay close to utility infrastructure, telecom, field reporting, and operational consistency."
-        eyebrow="Where Odirico should win first"
-        title="Markets where the services story and the software story reinforce each other."
-      >
-        <MarketingCardGrid
-          cards={[
-            {
-              title: "Power and utilities",
-              copy: "Electric co-ops, municipal utilities, and infrastructure operators where field clarity and documentation quality matter.",
-              href: "/sectors",
-              hrefLabel: "View markets",
-            },
-            {
-              title: "Telecom and broadband",
-              copy: "Field-heavy broadband and telecom programs benefit from stronger QA oversight and cleaner reporting paths.",
-              href: "/sectors",
-              hrefLabel: "View markets",
-            },
-          ]}
-          columns={2}
-        />
-      </MarketingSection>
+          <div className="platform-app-stack">
+            {ECOSYSTEM_APP_STORIES.map((app) => (
+              <article className="platform-app-row" id={app.key} key={app.key}>
+                <div className="platform-app-brand">
+                  <Image alt="" className="platform-app-logo" height={76} src={app.logoPath} width={76} />
+                  <div>
+                    <p className="platform-module-kicker">{app.integrationRole}</p>
+                    <h3>{app.label}</h3>
+                    <p>{app.summary}</p>
+                  </div>
+                </div>
 
-      <MarketingCta
-        copy="The website, public positioning, and platform shell now all support the same story. That means outreach, proposals, demos, and product onboarding can point to one destination."
-        primary={{ href: "/capability", label: "View Capability Page", variant: "dark" }}
-        secondary={{ href: "/contact", label: "Start a Conversation", variant: "secondary" }}
-        title="Use one deploy for the website, the platform shell, and the product ecosystem."
-      />
+                <div className="platform-app-actions">
+                  <AppAccessLinks compact targets={app.installTargets} />
+                  <Link className="platform-inline-link" href={app.accessHref}>
+                    Enter {app.label}
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="platform-section platform-section-pricing">
+        <div className="marketing-shell">
+          <div className="platform-section-head">
+            <div>
+              <p className="platform-kicker">Pricing</p>
+              <h2>One plan model for the whole ecosystem.</h2>
+            </div>
+            <p>Pricing applies across Ember, Sol, and Surge instead of splitting access by module.</p>
+          </div>
+
+          <div className="pricing-grid">
+            {PRICING_PLANS.map((plan) => (
+              <article className="pricing-card" key={plan.name}>
+                <p className="platform-module-kicker">{plan.audience}</p>
+                <h3>{plan.name}</h3>
+                <p className="pricing-price">
+                  {plan.price}
+                  <span>{plan.cadence}</span>
+                </p>
+                <ul>
+                  {plan.features.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="platform-section platform-section-final">
+        <div className="marketing-shell platform-final-grid">
+          <div>
+            <p className="platform-kicker">Why this exists</p>
+            <h2>Most apps only solve one piece of life at a time.</h2>
+          </div>
+
+          <div className="platform-why-list">
+            {WHY_IT_EXISTS.map((item) => (
+              <p key={item}>{item}</p>
+            ))}
+
+            <div className="platform-hero-actions">
+              <Link className="marketing-button marketing-button-primary" href={primaryHref}>
+                {primaryLabel}
+              </Link>
+              <Link className="marketing-button marketing-button-secondary" href="/pricing">
+                View Pricing
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

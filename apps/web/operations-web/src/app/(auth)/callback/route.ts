@@ -8,7 +8,7 @@ function resolveNextPath(nextPath: string | null) {
     return nextPath;
   }
 
-  return "/dashboard";
+  return "/overview";
 }
 
 export async function GET(request: NextRequest) {

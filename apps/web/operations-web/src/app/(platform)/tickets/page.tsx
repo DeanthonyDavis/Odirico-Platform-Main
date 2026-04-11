@@ -15,6 +15,8 @@ export default async function TicketsPage() {
       title="PoleQA Ticket System"
       subtitle="Working queue for review cycles, issue handling, and documentation-heavy field workflows."
       userContext={userContext}
+      eyebrow="Odirico / Operations / PoleQA"
+      variant="operations"
     >
       <TicketWorkspace
         initialIssues={snapshot.issues}

@@ -13,9 +13,10 @@ export default async function DashboardPage() {
     <AppShell
       currentPath="/dashboard"
       title="PoleQA Workspace"
-      subtitle="Live inspection and QA/QC operations inside the broader Odirico ecosystem shell."
+      subtitle="Live inspection and QA/QC operations inside a dedicated Odirico operations workspace."
       userContext={userContext}
-      eyebrow="Odirico / PoleQA"
+      eyebrow="Odirico / Operations / PoleQA"
+      variant="operations"
     >
       <TicketWorkspace
         initialIssues={snapshot.issues}

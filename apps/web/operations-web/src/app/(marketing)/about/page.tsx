@@ -1,60 +1,71 @@
-import { MarketingCardGrid, MarketingCta, MarketingHero, MarketingSection } from "@/components/marketing/marketing-sections";
+import Link from "next/link";
+
+import { WHY_IT_EXISTS } from "@/components/marketing/ecosystem-data";
 
 export default function AboutPage() {
   return (
     <>
-      <MarketingHero
-        actions={[
-          { href: "/capability", label: "Capability Statement", variant: "primary" },
-          { href: "/contact", label: "Contact Odirico", variant: "secondary" },
-        ]}
-        copy="Odirico is structured to support both infrastructure services and software without making either side of the story feel bolted on."
-        eyebrow="About Odirico"
-        title="A firm brand built to support both infrastructure services and software."
-      />
+      <section className="platform-page-hero">
+        <div className="marketing-shell platform-page-hero-grid">
+          <div>
+            <p className="platform-kicker">About</p>
+            <h1>Odirico is the company. The platform is the user-facing system.</h1>
+          </div>
+          <p>
+            The brand should be simple. Odirico is the parent company. Ember, Sol, and Surge are
+            the connected products users actually live inside. The public experience should reflect
+            that without pretending the company name itself is the product.
+          </p>
+        </div>
+      </section>
 
-      <MarketingSection
-        copy="The immediate message should be simple: Odirico Consulting handles the services. Odirico OS handles the software. The system gets stronger because both sides inform each other."
-        eyebrow="What the firm should communicate immediately"
-        title="One firm, two divisions, one ecosystem."
-      >
-        <MarketingCardGrid
-          cards={[
-            {
-              title: "Odirico Consulting",
-              copy: "Project services, surveying, and engineering-adjacent execution support for infrastructure work.",
-            },
-            {
-              title: "Odirico OS",
-              copy: "A route-based product ecosystem for operations, readiness, planning, and application command workflows.",
-            },
-          ]}
-          columns={2}
-        />
-      </MarketingSection>
+      <section className="platform-section">
+        <div className="marketing-shell platform-final-grid">
+          <div>
+            <p className="platform-kicker">Why build it this way</p>
+            <h2>It should feel like a life system, not a folder of apps.</h2>
+          </div>
+          <div className="platform-why-list">
+            {WHY_IT_EXISTS.map((item) => (
+              <p key={item}>{item}</p>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <MarketingSection
-        copy="These are the principles that keep the brand coherent as the product ecosystem grows."
-        eyebrow="Working principles"
-        muted
-        title="How Odirico should behave."
-      >
-        <MarketingCardGrid
-          cards={[
-            { title: "Clarity first", copy: "Explain the consulting work and the product ecosystem in language buyers can understand quickly." },
-            { title: "Operational credibility", copy: "Stay grounded in real infrastructure workflows instead of abstract software language." },
-            { title: "One ecosystem", copy: "Make the apps feel connected through one route shell, one identity layer, and one deploy." },
-          ]}
-          columns={3}
-        />
-      </MarketingSection>
+      <section className="platform-section platform-section-contrast">
+        <div className="marketing-shell platform-priority-list">
+          <article className="platform-priority">
+            <h3>Odirico</h3>
+            <p>The parent company behind the ecosystem, infrastructure, and future products.</p>
+          </article>
+          <article className="platform-priority">
+            <h3>Odirico Platform</h3>
+            <p>The connected consumer product layer built around Ember, Sol, and Surge.</p>
+          </article>
+          <article className="platform-priority">
+            <h3>Consumer focus</h3>
+            <p>The public platform experience should stay centered on time, money, and momentum instead of mixing unrelated products into the story.</p>
+          </article>
+        </div>
+      </section>
 
-      <MarketingCta
-        copy="Use the firm story to support proposals, demos, outreach, and platform positioning without needing separate narratives."
-        primary={{ href: "/contact", label: "Start the Conversation", variant: "dark" }}
-        secondary={{ href: "/products", label: "See the Platform", variant: "secondary" }}
-        title="Use the firm story to support proposals, demos, and outreach."
-      />
+      <section className="platform-section">
+        <div className="marketing-shell platform-final-grid">
+          <div>
+            <p className="platform-kicker">Next step</p>
+            <h2>Enter the ecosystem or review the app layer first.</h2>
+          </div>
+          <div className="platform-hero-actions">
+            <Link className="marketing-button marketing-button-primary" href="/login">
+              Get Started
+            </Link>
+            <Link className="marketing-button marketing-button-secondary" href="/apps">
+              Explore Apps
+            </Link>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

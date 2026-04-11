@@ -1,23 +1,25 @@
 .marketing-site {
-  --marketing-bg: #f4efe7;
-  --marketing-surface: rgba(255, 249, 242, 0.86);
-  --marketing-dark: #161312;
-  --marketing-ink: #191513;
-  --marketing-muted: #695f56;
-  --marketing-line: rgba(25, 21, 19, 0.12);
-  --marketing-accent: #de613b;
-  --marketing-accent-strong: #ba4728;
-  --marketing-shadow: 0 18px 50px rgba(20, 17, 15, 0.08);
-  --marketing-shadow-deep: 0 26px 80px rgba(20, 17, 15, 0.16);
-  --marketing-radius-md: 24px;
-  --marketing-radius-lg: 36px;
-  --marketing-max: 1220px;
+  --marketing-bg: #f6f1e8;
+  --marketing-surface: rgba(255, 251, 246, 0.86);
+  --marketing-panel: #fffaf4;
+  --marketing-dark: #121214;
+  --marketing-dark-soft: #1e1b1a;
+  --marketing-ink: #171412;
+  --marketing-muted: #6e635a;
+  --marketing-line: rgba(23, 20, 18, 0.12);
+  --marketing-accent: #ff5a43;
+  --marketing-accent-strong: #ff7f34;
+  --marketing-yellow: #f5cb48;
+  --marketing-blue: #1e2e56;
+  --marketing-shadow: 0 30px 70px rgba(16, 12, 10, 0.1);
+  --marketing-shadow-deep: 0 38px 120px rgba(10, 10, 12, 0.22);
+  --marketing-max: 1240px;
   min-height: 100vh;
   color: var(--marketing-ink);
   background:
-    radial-gradient(circle at top left, rgba(222, 97, 59, 0.11), transparent 24rem),
-    radial-gradient(circle at right 18%, rgba(49, 94, 169, 0.08), transparent 22rem),
-    linear-gradient(180deg, #fbf7f1 0%, var(--marketing-bg) 46%, #f8f3ec 100%);
+    radial-gradient(circle at top left, rgba(255, 90, 67, 0.11), transparent 26rem),
+    radial-gradient(circle at top right, rgba(30, 46, 86, 0.08), transparent 24rem),
+    linear-gradient(180deg, #f9f5ee 0%, var(--marketing-bg) 48%, #efe8de 100%);
 }
 
 .marketing-shell {
@@ -43,7 +45,7 @@
 .marketing-header {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 50;
   padding: 1rem 1rem 0;
 }
 
@@ -52,27 +54,56 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 88px;
-  padding: 1rem 1.2rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  min-height: 86px;
+  padding: 0.95rem 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 999px;
-  background: rgba(255, 248, 240, 0.8);
+  background: rgba(255, 250, 245, 0.82);
+  backdrop-filter: blur(18px);
   box-shadow: var(--marketing-shadow);
-  backdrop-filter: blur(16px);
 }
 
-.marketing-brand img {
-  width: 136px;
-  height: auto;
-}
-
+.marketing-brand,
 .marketing-nav-group,
 .marketing-nav-links,
 .marketing-nav-actions,
-.marketing-button-row {
+.platform-hero-actions,
+.marketing-footer-brand-row {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.85rem;
+}
+
+.marketing-brand {
+  min-width: 0;
+}
+
+.marketing-brand-mark,
+.marketing-footer-mark {
+  border-radius: 50%;
+  box-shadow: 0 18px 40px rgba(18, 18, 20, 0.12);
+}
+
+.marketing-brand-copy,
+.platform-module-head,
+.platform-app-brand,
+.platform-app-actions,
+.pricing-price,
+.contact-path-card,
+.install-app-card li {
+  display: grid;
+}
+
+.marketing-brand-copy strong,
+.marketing-footer-brand strong {
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 1.02rem;
+  letter-spacing: -0.03em;
+}
+
+.marketing-brand-copy span {
+  color: var(--marketing-muted);
+  font-size: 0.82rem;
 }
 
 .marketing-nav-links {
@@ -80,17 +111,17 @@
 }
 
 .marketing-nav-link {
-  padding: 0.72rem 0.92rem;
+  padding: 0.72rem 0.95rem;
   border-radius: 999px;
   color: var(--marketing-muted);
-  font-size: 0.96rem;
+  font-size: 0.94rem;
   font-weight: 600;
 }
 
 .marketing-nav-link:hover,
 .marketing-nav-link.is-active {
   color: var(--marketing-ink);
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .marketing-nav-toggle {
@@ -102,7 +133,7 @@
   height: 46px;
   border: 1px solid var(--marketing-line);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.76);
 }
 
 .marketing-nav-toggle span {
@@ -117,104 +148,105 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.55rem;
-  padding: 0.92rem 1.25rem;
+  padding: 0.94rem 1.3rem;
   border: 1px solid transparent;
   border-radius: 999px;
-  font-size: 0.96rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  line-height: 1.1;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  line-height: 1;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
 }
 
-.marketing-button:hover {
+.marketing-button:hover,
+.platform-inline-link:hover,
+.contact-path-card:hover {
   transform: translateY(-1px);
 }
 
 .marketing-button-primary {
-  background: linear-gradient(135deg, var(--marketing-accent) 0%, #f07a53 100%);
   color: white;
-  box-shadow: 0 12px 28px rgba(222, 97, 59, 0.22);
+  background: linear-gradient(135deg, var(--marketing-accent) 0%, var(--marketing-accent-strong) 100%);
+  box-shadow: 0 18px 36px rgba(255, 90, 67, 0.28);
 }
 
 .marketing-button-secondary {
-  border-color: var(--marketing-line);
-  background: rgba(255, 255, 255, 0.84);
   color: var(--marketing-ink);
+  border-color: var(--marketing-line);
+  background: rgba(255, 255, 255, 0.9);
 }
 
-.marketing-button-dark {
-  background: var(--marketing-dark);
-  color: white;
-  box-shadow: 0 12px 26px rgba(17, 15, 13, 0.22);
+.marketing-button-ghost {
+  color: var(--marketing-ink);
+  background: rgba(23, 20, 18, 0.06);
+  border-color: rgba(23, 20, 18, 0.08);
 }
 
-.marketing-hero {
-  padding: 1rem 0 2rem;
+.platform-kicker,
+.platform-module-kicker {
+  margin: 0 0 0.7rem;
+  color: var(--marketing-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
-.marketing-hero-grid,
-.marketing-section-head,
-.marketing-footer-grid,
-.marketing-cta-card {
+.platform-hero {
+  padding: 1.4rem 0 2rem;
+}
+
+.platform-hero-grid,
+.platform-page-hero-grid,
+.platform-section-head,
+.platform-final-grid,
+.marketing-footer-grid {
   display: grid;
   gap: 1.5rem;
 }
 
-.marketing-hero-grid {
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+.platform-hero-grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
   align-items: center;
-  min-height: calc(100svh - 120px);
-  padding: 2rem 0 1rem;
+  min-height: calc(100svh - 126px);
+  padding: 2rem 0 4rem;
 }
 
-.marketing-hero-dark .marketing-hero-grid {
-  border-radius: 42px;
-  padding: 3rem;
-  color: white;
-  background:
-    linear-gradient(130deg, rgba(13, 12, 12, 0.9), rgba(32, 24, 21, 0.82) 42%, rgba(46, 34, 27, 0.56) 68%, rgba(93, 56, 40, 0.36) 100%),
-    radial-gradient(circle at right top, rgba(222, 97, 59, 0.28), transparent 24rem),
-    radial-gradient(circle at left bottom, rgba(49, 94, 169, 0.2), transparent 26rem);
-  box-shadow: var(--marketing-shadow-deep);
-}
-
-.marketing-hero-copy h1,
-.marketing-section h2,
-.marketing-cta-card h2,
-.marketing-card h3,
-.marketing-stat-card strong,
-.marketing-footer h3 {
-  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
-  letter-spacing: -0.04em;
-}
-
-.marketing-hero-copy h1 {
+.platform-hero-copy h1,
+.platform-page-hero h1,
+.platform-section h2,
+.platform-app-detail h2,
+.platform-app-row h3,
+.pricing-card h2,
+.contact-path-card h2 {
   margin: 0;
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  letter-spacing: -0.05em;
   line-height: 0.96;
 }
 
-.marketing-hero-dark .marketing-hero-copy h1,
-.marketing-hero-dark .marketing-lead,
-.marketing-hero-dark .marketing-eyebrow {
-  color: white;
+.platform-hero-copy h1 {
+  font-size: clamp(3.6rem, 8vw, 6.8rem);
+  max-width: 8ch;
 }
 
-.marketing-eyebrow,
-.marketing-section-kicker,
-.marketing-card-badge {
-  margin: 0 0 0.75rem;
-  font-size: 0.76rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: var(--marketing-accent);
-}
-
-.marketing-lead,
-.marketing-section-copy,
-.marketing-card p,
+.platform-lead,
+.platform-page-hero p,
+.platform-section-head p,
+.platform-pillar p,
+.connection-flow p,
+.platform-app-row p,
+.platform-app-detail p,
+.pricing-card ul,
+.platform-why-list p,
+.platform-priority p,
+.install-surface-card p,
+.install-app-card p,
+.install-app-card span,
+.contact-path-card p,
 .marketing-footer p,
 .marketing-footer-note {
   margin: 0;
@@ -222,160 +254,343 @@
   line-height: 1.7;
 }
 
-.marketing-lead {
-  max-width: 42rem;
-  font-size: 1.1rem;
+.platform-lead {
+  max-width: 36rem;
   margin-top: 1rem;
+  font-size: 1.08rem;
 }
 
-.marketing-hero-panel,
-.marketing-card,
-.marketing-stat-card,
-.marketing-cta-card {
+.platform-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.platform-trust-row span,
+.platform-inline-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
   border: 1px solid var(--marketing-line);
-  border-radius: var(--marketing-radius-md);
-  background: var(--marketing-surface);
-  box-shadow: var(--marketing-shadow);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
 }
 
-.marketing-hero-panel {
+.platform-inline-link {
+  min-width: 148px;
+  color: var(--marketing-ink);
+}
+
+.platform-hero-visual {
+  position: relative;
+  display: grid;
+  gap: 1.1rem;
   padding: 1.5rem;
-}
-
-.marketing-section {
-  padding: 1.5rem 0 2rem;
-}
-
-.marketing-section-muted {
-  position: relative;
-}
-
-.marketing-section-muted::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(233, 221, 208, 0.3));
   border-radius: 40px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 90, 67, 0.28), transparent 17rem),
+    radial-gradient(circle at left bottom, rgba(245, 203, 72, 0.14), transparent 18rem),
+    linear-gradient(160deg, rgba(17, 17, 19, 0.98), rgba(28, 24, 24, 0.92));
+  box-shadow: var(--marketing-shadow-deep);
 }
 
-.marketing-section-muted > .marketing-shell {
-  position: relative;
-  z-index: 1;
+.platform-mark-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1rem 0.4rem;
 }
 
-.marketing-section-head {
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
-  margin-bottom: 1.5rem;
-  align-items: start;
+.platform-mark-image {
+  width: min(52vw, 240px);
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.3);
 }
 
-.marketing-section h2,
-.marketing-cta-card h2 {
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3.1rem);
-  line-height: 0.98;
-}
-
-.marketing-card-grid,
-.marketing-stats-grid {
+.platform-hero-modules,
+.platform-pillars,
+.platform-priority-list,
+.pricing-grid,
+.install-surface-grid,
+.contact-path-grid {
   display: grid;
   gap: 1rem;
 }
 
-.marketing-card-grid.columns-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.marketing-card-grid.columns-3 {
+.platform-hero-modules {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.marketing-card-grid.columns-4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+.platform-module,
+.platform-pillar,
+.pricing-card,
+.platform-priority,
+.install-surface-card,
+.install-app-card,
+.contact-path-card {
+  border: 1px solid var(--marketing-line);
+  background: var(--marketing-panel);
+  box-shadow: var(--marketing-shadow);
 }
 
-.marketing-card {
-  display: grid;
-  gap: 0.85rem;
+.platform-module {
+  padding: 1.15rem;
+  border-radius: 28px;
+  background: rgba(255, 249, 244, 0.92);
+}
+
+.platform-module-head {
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.platform-module-head h2,
+.platform-app-row h3,
+.platform-app-detail h2,
+.pricing-card h2,
+.connection-flow h3,
+.platform-priority h3,
+.install-app-card h3,
+.contact-path-card h2 {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+}
+
+.platform-module-logo,
+.platform-app-logo {
+  border-radius: 50%;
+  box-shadow: 0 18px 42px rgba(18, 18, 20, 0.16);
+}
+
+.platform-section,
+.platform-page-hero {
+  padding: 2.2rem 0;
+}
+
+.platform-page-hero {
+  padding-top: 1rem;
+}
+
+.platform-page-hero-grid,
+.platform-section-head,
+.platform-final-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
+  align-items: start;
+}
+
+.platform-page-hero h1,
+.platform-section h2 {
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+}
+
+.platform-section-contrast {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(240, 231, 220, 0.7)),
+    linear-gradient(180deg, rgba(255, 90, 67, 0.04), rgba(30, 46, 86, 0.06));
+}
+
+.platform-pillars {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.platform-pillar,
+.pricing-card,
+.platform-priority,
+.install-surface-card,
+.install-app-card,
+.contact-path-card {
   padding: 1.4rem;
+  border-radius: 26px;
 }
 
-.marketing-card-linkable:hover {
-  transform: translateY(-2px);
+.platform-pillar h3,
+.platform-priority h3 {
+  margin: 0 0 0.65rem;
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 1.28rem;
+  letter-spacing: -0.03em;
 }
 
-.marketing-card h3 {
-  margin: 0;
-  font-size: 1.35rem;
-  line-height: 1.08;
-}
-
-.marketing-card-link {
-  font-weight: 700;
-  color: var(--marketing-accent-strong);
-}
-
-.marketing-list {
-  margin: 0;
-  padding-left: 1.1rem;
+.connection-flow-list,
+.platform-app-stack {
   display: grid;
-  gap: 0.6rem;
-  color: var(--marketing-muted);
+  gap: 1.1rem;
 }
 
-.marketing-stats-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+.connection-flow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: 1.2rem 0;
+  border-top: 1px solid rgba(23, 20, 18, 0.12);
 }
 
-.marketing-stat-card {
-  padding: 1.3rem 1rem;
-  text-align: center;
+.connection-flow:last-child {
+  border-bottom: 1px solid rgba(23, 20, 18, 0.12);
 }
 
-.marketing-stat-card strong {
-  display: block;
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  line-height: 1;
+.connection-flow-index {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 90, 67, 0.12);
+  color: var(--marketing-accent);
+  font-weight: 700;
 }
 
-.marketing-stat-card span {
-  display: block;
-  margin-top: 0.45rem;
-  color: var(--marketing-muted);
-  font-weight: 600;
+.platform-app-row,
+.platform-app-detail {
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.3rem 0;
+  border-top: 1px solid rgba(23, 20, 18, 0.12);
 }
 
-.marketing-cta-band {
-  padding: 1rem 0 3rem;
+.platform-app-row:last-child,
+.platform-app-detail:last-child {
+  border-bottom: 1px solid rgba(23, 20, 18, 0.12);
 }
 
-.marketing-cta-card {
+.platform-app-row {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  padding: 2rem;
-  border-radius: var(--marketing-radius-lg);
-  background:
-    linear-gradient(135deg, rgba(255, 250, 243, 0.92), rgba(239, 229, 219, 0.92)),
-    linear-gradient(135deg, rgba(222, 97, 59, 0.12), transparent 36%);
+}
+
+.platform-app-detail {
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+}
+
+.platform-app-detail-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.platform-app-brand {
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.platform-app-actions {
+  gap: 1rem;
+  justify-items: end;
+}
+
+.platform-detail-list,
+.pricing-card ul,
+.install-link-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.72rem;
+}
+
+.platform-app-detail-side {
+  display: grid;
+  gap: 1rem;
+}
+
+.platform-app-note {
+  font-size: 0.95rem;
+}
+
+.platform-section-pricing {
+  padding-bottom: 3rem;
+}
+
+.pricing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pricing-card {
+  gap: 0.9rem;
+}
+
+.pricing-price {
+  gap: 0.4rem;
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 3rem;
+  letter-spacing: -0.05em;
+  color: var(--marketing-ink);
+}
+
+.pricing-price span {
+  font-size: 1rem;
+  letter-spacing: 0;
+  color: var(--marketing-muted);
+}
+
+.platform-section-final {
+  padding-bottom: 3.4rem;
+}
+
+.platform-final-grid {
+  padding: 1.5rem 0 0;
+  border-top: 1px solid rgba(23, 20, 18, 0.12);
+}
+
+.platform-why-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.install-surface-grid,
+.install-app-grid,
+.contact-path-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.install-app-card,
+.contact-path-card {
+  gap: 0.85rem;
+}
+
+.install-link-list a {
+  font-weight: 700;
+  color: var(--marketing-ink);
+}
+
+.install-link-list span {
+  display: block;
+}
+
+.contact-path-card {
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease;
+}
+
+.contact-path-card:hover {
+  border-color: rgba(255, 90, 67, 0.2);
 }
 
 .marketing-footer {
-  margin-top: 1rem;
-  padding: 2rem 0 2.5rem;
-  background: linear-gradient(180deg, rgba(15, 13, 12, 0.96), rgba(23, 20, 18, 1));
-  color: rgba(255, 255, 255, 0.8);
+  padding: 2.8rem 0 3rem;
+  background:
+    radial-gradient(circle at top right, rgba(255, 90, 67, 0.18), transparent 18rem),
+    linear-gradient(180deg, rgba(13, 13, 15, 0.98), rgba(20, 17, 16, 1));
+  color: rgba(255, 255, 255, 0.86);
 }
 
 .marketing-footer-grid {
-  grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 0.7fr));
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.65fr));
 }
 
-.marketing-footer-brand img {
-  width: 144px;
+.marketing-footer-brand-row {
+  margin-bottom: 0.8rem;
 }
 
 .marketing-footer h3 {
   margin: 0 0 0.8rem;
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
   font-size: 1rem;
   color: white;
 }
@@ -393,17 +608,40 @@
 }
 
 @media (max-width: 1100px) {
-  .marketing-hero-grid,
-  .marketing-section-head,
-  .marketing-cta-card,
-  .marketing-footer-grid {
+  .platform-hero-grid,
+  .platform-page-hero-grid,
+  .platform-section-head,
+  .platform-final-grid,
+  .marketing-footer-grid,
+  .platform-app-detail {
     grid-template-columns: 1fr;
   }
 
-  .marketing-card-grid.columns-4,
-  .marketing-card-grid.columns-3,
-  .marketing-stats-grid {
+  .platform-hero-copy h1 {
+    max-width: none;
+  }
+
+  .platform-pillars,
+  .pricing-grid,
+  .install-surface-grid,
+  .install-app-grid,
+  .contact-path-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .platform-hero-grid,
+  .platform-app-row {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-app-actions {
+    justify-items: start;
+  }
+
+  .platform-hero-modules {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -428,7 +666,7 @@
     padding: 1rem;
     border: 1px solid var(--marketing-line);
     border-radius: 28px;
-    background: rgba(255, 249, 242, 0.98);
+    background: rgba(255, 251, 246, 0.98);
     box-shadow: var(--marketing-shadow);
   }
 
@@ -438,7 +676,7 @@
 
   .marketing-nav-links,
   .marketing-nav-actions,
-  .marketing-button-row {
+  .platform-hero-actions {
     flex-direction: column;
     align-items: stretch;
   }
@@ -448,19 +686,30 @@
     width: 100%;
     justify-content: center;
   }
+}
 
-  .marketing-hero-grid {
-    min-height: auto;
+@media (max-width: 720px) {
+  .platform-hero-copy h1,
+  .platform-page-hero h1,
+  .platform-section h2 {
+    font-size: clamp(2.4rem, 13vw, 4rem);
   }
 
-  .marketing-hero-dark .marketing-hero-grid {
-    padding: 1.5rem;
+  .platform-section,
+  .platform-page-hero {
+    padding: 1.8rem 0;
   }
 
-  .marketing-card-grid.columns-4,
-  .marketing-card-grid.columns-3,
-  .marketing-card-grid.columns-2,
-  .marketing-stats-grid {
+  .platform-pillars,
+  .platform-priority-list,
+  .pricing-grid,
+  .install-surface-grid,
+  .install-app-grid,
+  .contact-path-grid {
     grid-template-columns: 1fr;
+  }
+
+  .platform-mark-image {
+    width: min(70vw, 220px);
   }
 }

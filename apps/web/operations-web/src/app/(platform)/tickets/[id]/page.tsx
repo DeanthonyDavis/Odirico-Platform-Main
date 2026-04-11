@@ -25,6 +25,8 @@ export default async function TicketDetailPage({
       title={`Ticket ${detail.ticket.id}`}
       subtitle="Structured ticket detail with summary, issue tracking, and timeline context."
       userContext={userContext}
+      eyebrow="Odirico / Operations / PoleQA"
+      variant="operations"
     >
       <section className="detail-grid">
         <article className="panel">

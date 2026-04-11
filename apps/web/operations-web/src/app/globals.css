@@ -201,7 +201,23 @@ button {
 }
 
 .auth-intro-panel {
-  padding: 2rem;
+  padding: 2.2rem;
+}
+
+.auth-brand {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.auth-brand-mark,
+.auth-module-mark,
+.brand-mark-image,
+.sidebar-module-logo,
+.ecosystem-card-logo {
+  border-radius: 50%;
+  box-shadow: 0 18px 42px rgba(10, 10, 15, 0.12);
 }
 
 .auth-intro-panel h1 {
@@ -218,11 +234,18 @@ button {
 
 .auth-module-item {
   display: grid;
-  gap: 0.2rem;
+  grid-template-columns: auto 1fr;
+  gap: 0.85rem;
+  align-items: center;
   padding: 1rem 1.05rem;
   border-radius: 18px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.72);
+}
+
+.auth-module-item div {
+  display: grid;
+  gap: 0.2rem;
 }
 
 .auth-module-item span {
@@ -291,13 +314,24 @@ button {
 
 .sidebar {
   padding: 2rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebar-operations {
   background:
     radial-gradient(circle at top, rgba(255, 90, 53, 0.18), transparent 20%),
     linear-gradient(180deg, #0a0a0f 0%, #171726 100%);
   color: #eef2f8;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+}
+
+.sidebar-ecosystem {
+  background:
+    radial-gradient(circle at top left, rgba(255, 90, 53, 0.1), transparent 25%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(247, 242, 234, 0.94));
+  color: var(--ink);
+  border-right: 1px solid rgba(10, 10, 15, 0.08);
 }
 
 .brand-block {
@@ -317,6 +351,10 @@ button {
   font-weight: 700;
 }
 
+.brand-mark-operations {
+  border-radius: 20px;
+}
+
 .brand-name {
   font-size: 1.25rem;
   font-weight: 700;
@@ -324,7 +362,17 @@ button {
 
 .brand-subtitle,
 .sidebar-footer {
+  font-size: 0.92rem;
+}
+
+.sidebar-operations .brand-subtitle,
+.sidebar-operations .sidebar-footer {
   color: #afbbca;
+}
+
+.sidebar-ecosystem .brand-subtitle,
+.sidebar-ecosystem .sidebar-footer {
+  color: var(--muted);
   font-size: 0.92rem;
 }
 
@@ -337,9 +385,17 @@ button {
   display: grid;
   gap: 0.7rem;
   padding: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
+}
+
+.sidebar-operations .sidebar-module-panel {
+  border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-ecosystem .sidebar-module-panel {
+  border: 1px solid rgba(10, 10, 15, 0.08);
+  background: rgba(255, 255, 255, 0.68);
 }
 
 .sidebar-label {
@@ -347,12 +403,25 @@ button {
   font-size: 0.72rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+.sidebar-operations .sidebar-label {
   color: #8f98a8;
+}
+
+.sidebar-ecosystem .sidebar-label {
+  color: var(--muted);
 }
 
 .sidebar-module-list {
   display: grid;
   gap: 0.45rem;
+}
+
+.sidebar-module-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
 }
 
 .sidebar-module-link {
@@ -362,20 +431,41 @@ button {
   gap: 0.75rem;
   padding: 0.75rem 0.85rem;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #eef2f8;
   transition:
     background 140ms ease,
     transform 140ms ease;
 }
 
+.sidebar-operations .sidebar-module-link {
+  background: rgba(255, 255, 255, 0.04);
+  color: #eef2f8;
+}
+
+.sidebar-ecosystem .sidebar-module-link {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  border: 1px solid rgba(10, 10, 15, 0.06);
+}
+
 .sidebar-module-link:hover {
-  background: rgba(255, 255, 255, 0.09);
   transform: translateY(-1px);
+}
+
+.sidebar-operations .sidebar-module-link:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.sidebar-ecosystem .sidebar-module-link:hover {
+  background: rgba(255, 255, 255, 1);
 }
 
 .sidebar-module-link.active {
   background: rgba(255, 255, 255, 0.14);
+}
+
+.sidebar-ecosystem .sidebar-module-link.active {
+  border-color: rgba(255, 90, 53, 0.18);
+  background: rgba(255, 246, 241, 0.98);
 }
 
 .module-pill {
@@ -392,6 +482,16 @@ button {
 .module-pill.live {
   background: rgba(255, 90, 53, 0.18);
   color: #ffd2c7;
+}
+
+.sidebar-ecosystem .module-pill {
+  background: rgba(10, 10, 15, 0.06);
+  color: var(--muted);
+}
+
+.sidebar-ecosystem .module-pill.live {
+  background: rgba(255, 90, 53, 0.14);
+  color: var(--brand-2);
 }
 
 .ecosystem-grid {
@@ -430,6 +530,13 @@ button {
   align-items: flex-start;
 }
 
+.ecosystem-card-title {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  align-items: center;
+}
+
 .ecosystem-card-top h3 {
   margin: 0.2rem 0 0;
   font-family: "Aptos Display", "Segoe UI", sans-serif;
@@ -465,6 +572,18 @@ button {
   word-break: break-word;
 }
 
+.ecosystem-card-primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.72rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.96);
+  font-weight: 700;
+}
+
 .ecosystem-pill {
   align-self: flex-start;
 }
@@ -496,12 +615,29 @@ button {
 .sidebar-link {
   padding: 0.9rem 1rem;
   border-radius: 999px;
+}
+
+.sidebar-operations .sidebar-link {
   color: #dfe7ef;
+}
+
+.sidebar-ecosystem .sidebar-link {
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.44);
 }
 
 .sidebar-link.active {
   background: rgba(255, 255, 255, 0.14);
+}
+
+.sidebar-operations .sidebar-link.active {
   color: white;
+}
+
+.sidebar-ecosystem .sidebar-link.active {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
 }
 
 .page-frame {
@@ -602,6 +738,49 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
+}
+
+.access-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.access-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-width: 120px;
+  padding: 0.72rem 0.88rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ink);
+}
+
+.access-link small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.access-link-live {
+  border-color: rgba(255, 90, 53, 0.22);
+  background: rgba(255, 245, 241, 0.96);
+}
+
+.access-link-guided {
+  border-color: rgba(37, 99, 235, 0.12);
+  background: rgba(244, 248, 255, 0.96);
+}
+
+.access-link-row-compact .access-link {
+  min-width: 0;
+  padding: 0.58rem 0.8rem;
+  font-size: 0.86rem;
 }
 
 .stacked-meta {

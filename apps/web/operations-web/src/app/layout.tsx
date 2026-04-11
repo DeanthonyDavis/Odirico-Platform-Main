@@ -1,12 +1,19 @@
 import type { ReactNode } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Odirico OS",
+  title: {
+    default: "Odirico Platform",
+    template: "%s | Odirico Platform",
+  },
   description:
-    "A unified Odirico platform shell with route-based homes for PoleQA, Ember, Sol, and Surge under one login.",
+    "Plan your time, manage your money, and track your future across Ember, Sol, and Surge inside one connected Odirico platform.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ff5a43",
 };
 
 export default function RootLayout({

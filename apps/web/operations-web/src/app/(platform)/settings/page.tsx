@@ -16,8 +16,10 @@ export default async function SettingsPage() {
     <AppShell
       currentPath="/settings"
       title="Settings"
-      subtitle="Personal appearance and dashboard preferences, plus PM/admin access controls for teams and role labels."
+      subtitle="Operations workspace preferences, plus PM/admin access controls for teams and role labels."
       userContext={userContext}
+      eyebrow="Odirico / Operations / PoleQA"
+      variant="operations"
     >
       <SettingsPanel managedUsers={managedUsers} userContext={userContext} />
     </AppShell>

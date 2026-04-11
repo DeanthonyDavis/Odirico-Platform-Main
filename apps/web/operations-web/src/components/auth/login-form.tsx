@@ -18,7 +18,7 @@ export function LoginForm() {
   const callbackError = searchParams.get("error");
   const callbackMessage = searchParams.get("message");
 
-  const nextPath = ((searchParams.get("next") as Route | null) ?? "/dashboard") as Route;
+  const nextPath = ((searchParams.get("next") as Route | null) ?? "/overview") as Route;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -86,9 +86,9 @@ export function LoginForm() {
   return (
     <form className="auth-card" onSubmit={handleSubmit}>
       <div className="auth-heading">
-        <p className="eyebrow">Odirico ecosystem</p>
+        <p className="eyebrow">Odirico Platform</p>
         <h1>Sign in</h1>
-        <p>Use your workspace credentials to enter the unified Odirico platform shell.</p>
+        <p>Use your account to enter the connected Ember, Sol, and Surge ecosystem.</p>
       </div>
 
       <label className="field">
@@ -99,7 +99,7 @@ export function LoginForm() {
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="name@odirico.com"
+          placeholder="you@example.com"
           required
         />
       </label>
@@ -148,7 +148,7 @@ export function LoginForm() {
 
       {demoModeEnabled ? (
         <p className="form-message">
-          Demo mode bypasses Supabase sign-in and loads sample inspection and project workflow data locally.
+          Demo mode bypasses Supabase sign-in and loads sample platform data locally for exploration.
         </p>
       ) : null}
     </form>
