@@ -1,0 +1,61 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2022"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@odirico/core": [
+        "../../../packages/core/src/index.ts"
+      ],
+      "@odirico/core/*": [
+        "../../../packages/core/src/*"
+      ],
+      "@odirico/auth": [
+        "../../../packages/auth/src/index.ts"
+      ],
+      "@odirico/auth/*": [
+        "../../../packages/auth/src/*"
+      ],
+      "@odirico/api": [
+        "../../../packages/api/src/index.ts"
+      ],
+      "@odirico/api/*": [
+        "../../../packages/api/src/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "esModuleInterop": true,
+    "ignoreDeprecations": "6.0"
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
