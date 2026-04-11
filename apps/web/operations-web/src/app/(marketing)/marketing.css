@@ -82,6 +82,7 @@
 .marketing-footer-mark {
   border-radius: 50%;
   box-shadow: 0 18px 40px rgba(18, 18, 20, 0.12);
+  clip-path: circle(38.5% at 50% 50%);
 }
 
 .marketing-brand-copy,
@@ -308,6 +309,7 @@
   width: min(52vw, 240px);
   height: auto;
   border-radius: 50%;
+  clip-path: circle(38.5% at 50% 50%);
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.3);
 }
 

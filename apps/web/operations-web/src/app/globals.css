@@ -223,6 +223,8 @@ button {
 .auth-module-mark,
 .sidebar-module-logo,
 .ecosystem-card-logo,
+.auth-brand-mark,
+.brand-mark-image,
 .platform-module-logo,
 .platform-app-logo {
   clip-path: circle(38.5% at 50% 50%);
