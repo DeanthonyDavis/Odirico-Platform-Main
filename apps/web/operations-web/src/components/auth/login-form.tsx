@@ -11,6 +11,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const demoModeEnabled = process.env.NEXT_PUBLIC_ENABLE_DEMO_AUTH === "true";
   const [isPending, startTransition] = useTransition();
+  const [isGooglePending, setIsGooglePending] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -40,6 +41,28 @@ export function LoginForm() {
       router.replace(nextPath);
       router.refresh();
     });
+  }
+
+  async function handleGoogleLogin() {
+    setError(null);
+    setMessage(null);
+    setIsGooglePending(true);
+
+    const supabase = createClientSupabaseClient();
+    const callbackUrl = new URL("/callback", window.location.origin);
+    callbackUrl.searchParams.set("next", nextPath);
+
+    const { error: signInError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: callbackUrl.toString(),
+      },
+    });
+
+    if (signInError) {
+      setError(signInError.message);
+      setIsGooglePending(false);
+    }
   }
 
   async function handleDemoLogin() {
@@ -116,6 +139,15 @@ export function LoginForm() {
           required
         />
       </label>
+
+      <button
+        className="ghost-button"
+        disabled={isPending || isGooglePending}
+        onClick={handleGoogleLogin}
+        type="button"
+      >
+        {isGooglePending ? "Redirecting to Google..." : "Continue with Google"}
+      </button>
 
       {error || callbackError ? <p className="form-error">{error ?? callbackError}</p> : null}
       {message || callbackMessage ? (
