@@ -11,6 +11,14 @@ type LoginFormProps = {
   mode?: "signin" | "signup";
 };
 
+function presentAuthError(message: string, mode: "signin" | "signup") {
+  if (mode === "signup" && message.toLowerCase().includes("database error saving new user")) {
+    return "Account creation reached Supabase, but your database signup trigger failed. Apply the auth signup repair SQL in Supabase, then try again.";
+  }
+
+  return message;
+}
+
 function buildAuthHref(pathname: "/login" | "/signup", nextPath: Route) {
   const search = new URLSearchParams();
 
@@ -61,7 +69,7 @@ export function LoginForm({ mode = "signin" }: LoginFormProps) {
       });
 
       if (signUpError) {
-        setError(signUpError.message);
+        setError(presentAuthError(signUpError.message, mode));
         return;
       }
 
@@ -83,7 +91,7 @@ export function LoginForm({ mode = "signin" }: LoginFormProps) {
     });
 
     if (signInError) {
-      setError(signInError.message);
+      setError(presentAuthError(signInError.message, mode));
       return;
     }
 
@@ -110,7 +118,7 @@ export function LoginForm({ mode = "signin" }: LoginFormProps) {
     });
 
     if (signInError) {
-      setError(signInError.message);
+      setError(presentAuthError(signInError.message, mode));
       setIsGooglePending(false);
     }
   }
