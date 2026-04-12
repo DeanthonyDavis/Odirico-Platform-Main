@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surge Command Center</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f3eee7;--surface:#fffaf4;--surface-strong:#ffffff;--line:#d9cfc3;--line-strong:#bcae9d;--ink:#211a16;--muted:#74675e;--accent:#d85a30;--accent-soft:#faece7;--blue:#1c63ab;--blue-soft:#e7f1fb;--green:#2f6b16;--green-soft:#e8f4df;--amber:#8a5310;--amber-soft:#fbefdc;--red:#a33232;--red-soft:#fdecec;--purple:#5547aa;--purple-soft:#efedff;--shadow:0 24px 60px rgba(33,26,22,.08);--radius-xl:26px;--radius-lg:18px;--radius-md:14px;--radius-sm:10px}
+html,body{min-height:100%}
+body{font:14px/1.45 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at top left,rgba(216,90,48,.09),transparent 28%),radial-gradient(circle at top right,rgba(28,99,171,.08),transparent 24%),linear-gradient(180deg,#faf6f1 0%,#f2ebe3 100%)}
+body.embedded{background:transparent}
+button,input,select,textarea{font:inherit}a{color:inherit}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.shell{max-width:1380px;margin:0 auto;padding:22px 18px 36px}.topbar{display:grid;grid-template-columns:minmax(0,1.2fr) auto auto;gap:14px;align-items:start;margin-bottom:14px}
+.embedded .shell{max-width:none;padding:0 0 28px}
+.embedded .brand{display:none}
+.embedded .topbar{grid-template-columns:minmax(0,1fr) auto}
+.brand,.nav,.panel,.metric,.hero-banner,.modal{background:rgba(255,250,244,.86);border:1px solid rgba(188,174,157,.7);box-shadow:var(--shadow);backdrop-filter:blur(10px)}.brand{padding:18px 20px;border-radius:var(--radius-xl)}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--muted);margin-bottom:6px}.logo{font-size:34px;font-weight:800;letter-spacing:-.05em}.logo span{color:var(--accent)}.subline{margin-top:10px;color:var(--muted);max-width:64ch;font-size:13px}
+.nav,.actions,.row,.stack-row,.tag-row,.hero-actions,.toolbar,.meta-line,.timeline-row,.follow-actions,.modal-actions,.capture-tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.nav{padding:6px;border-radius:20px}
+.tnb,.btn,.ghost,.tiny,.status-pill,.source-pill{border:none;transition:.18s ease}.tnb,.btn,.ghost,.tiny{cursor:pointer}
+.tnb{background:transparent;color:var(--muted);padding:10px 14px;border-radius:12px;font-weight:700;font-size:13px}.tnb.on{background:var(--surface-strong);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(188,174,157,.82)}
+.btn{padding:11px 14px;border-radius:14px;border:1px solid rgba(188,174,157,.72);background:rgba(255,250,244,.9);box-shadow:var(--shadow);font-weight:700}.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}.btn.warn{background:var(--red-soft);border-color:#efb8b8;color:var(--red)}.btn.sm,.ghost,.tiny{padding:8px 10px;border-radius:10px;font-size:12px;font-weight:700}.ghost{background:transparent;color:var(--muted);border:1px solid rgba(188,174,157,.8)}.tiny{background:var(--surface);border:1px solid rgba(188,174,157,.74);color:var(--ink)}.tnb:hover,.btn:hover,.ghost:hover,.tiny:hover{transform:translateY(-1px)}
+.hero-banner{display:none;justify-content:space-between;gap:16px;align-items:flex-start;border-radius:20px;padding:16px 18px;margin-bottom:14px;position:sticky;top:12px;z-index:10;background:linear-gradient(135deg,#fff8ed,#fff1e0);border-color:#efca87}.hero-banner.on{display:flex}.hero-copy{display:flex;gap:12px;align-items:flex-start}.hero-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:#fff3df;color:var(--amber);font-size:16px;font-weight:800}.hero-title{font-size:13px;font-weight:800;margin-bottom:3px}.hero-text{font-size:13px;color:#644819}
+.metric-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:14px}.metric{border-radius:22px;padding:16px}.metric-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}.metric-value{font-size:30px;font-weight:800;letter-spacing:-.05em}.metric-sub{margin-top:4px;color:var(--muted);font-size:12px}.accent{color:var(--accent)}.blue{color:var(--blue)}.green{color:var(--green)}.amber{color:var(--amber)}.purple{color:var(--purple)}
+.view{display:none}.view.on{display:block}.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(320px,.9fr);gap:14px}.panel{border-radius:var(--radius-xl);padding:16px;margin-bottom:14px}.panel-title{font-size:15px;font-weight:800;margin-bottom:10px;letter-spacing:-.03em}.panel-sub{color:var(--muted);font-size:12px;margin-bottom:14px}
+.signal-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.hero-panel{background:linear-gradient(135deg,rgba(216,90,48,.08),rgba(28,99,171,.06)),var(--surface)}.hero-headline{font-size:28px;line-height:1.05;letter-spacing:-.06em;max-width:16ch;margin-bottom:10px}.hero-body{color:var(--muted);max-width:60ch;margin-bottom:16px}
+.board-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.list,.timeline,.company-list,.card-list,.bucket-list{display:flex;flex-direction:column;gap:10px}
+.item,.company-card,.role-card,.event-card,.signal-card,.merge-card,.action-card,.bucket-card{background:var(--surface-strong);border:1px solid rgba(188,174,157,.66);border-radius:18px}.item,.signal-card,.merge-card,.action-card,.event-card,.bucket-card{padding:12px}.company-card{overflow:hidden}
+.company-head{display:flex;gap:12px;align-items:flex-start;padding:14px}.avatar{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-weight:800;flex-shrink:0}.company-main,.role-main,.event-main{min-width:0;flex:1}.company-name,.role-title,.event-title,.item-title,.signal-title{font-size:14px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}.muted,.item-meta,.signal-meta,.event-meta,.company-meta,.role-meta,.action-meta{color:var(--muted);font-size:12px}
+.tag,.status-pill,.source-pill{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800}.tag{background:#f3eee9;color:#6f645b}
+.priority-high{background:var(--accent-soft);color:#6d280f}.priority-med{background:#f1eee9;color:#6f645b}.priority-low{background:#ece8e4;color:#7a736c}
+.status-lead{background:#efebe7;color:#6f665f}.status-applied{background:var(--blue-soft);color:var(--blue)}.status-confirmed{background:#eef6ff;color:#205a8f}.status-review{background:var(--green-soft);color:var(--green)}.status-recruiter{background:#e0f3ef;color:#0f6a57}.status-interview{background:var(--amber-soft);color:var(--amber)}.status-offer{background:#dff0d8;color:#24530d}.status-rejected{background:var(--red-soft);color:var(--red)}.status-withdrawn{background:#efebe7;color:#6f665f}
+.source-linkedin{background:#e7f1fb;color:var(--blue)}.source-indeed{background:#eef0ff;color:#4a40a0}.source-direct{background:#f3efe8;color:#645951}.source-email{background:#fff1db;color:#8a5310}.source-browser{background:#f0edff;color:var(--purple)}.source-imported{background:#edf6ee;color:#2f6b16}.source-other{background:#f3efe8;color:#645951}
+.role-stack{border-top:1px solid rgba(188,174,157,.52);background:#fff8f2;padding:12px 14px 14px}.role-card{padding:12px}.role-head,.signal-head,.timeline-row,.item-head,.action-head{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.meta-line{margin-top:8px}
+.attention{margin-top:8px;padding:8px 10px;border-radius:12px;font-size:12px;font-weight:700}.attention.warn{background:#fff6e7;color:#7d4b09}.attention.hot{background:#ffecec;color:#8f2626}.attention.ok{background:#edf7e8;color:#2f5d0f}
+.bar-stack{display:flex;flex-direction:column;gap:8px}.bar-row{display:grid;grid-template-columns:minmax(95px,130px) 1fr auto;gap:10px;align-items:center}.bar-label{font-size:12px;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.bar-track{height:10px;background:#eee6dc;border-radius:999px;overflow:hidden}.bar-fill{height:100%;border-radius:999px}.bar-count{font-size:12px;font-weight:800}
+.pipeline-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.bucket{min-height:220px;background:rgba(255,250,244,.84);border:1px solid rgba(188,174,157,.72);border-radius:20px;padding:14px;box-shadow:var(--shadow)}.bucket-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.bucket-title{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}.bucket-card strong{display:block;font-size:12px;margin-bottom:3px}.bucket-card span{display:block;font-size:11px;color:var(--muted)}
+.toolbar{margin-bottom:14px}.toolbar input,.toolbar select,.modal input,.modal select,.modal textarea{border:1px solid rgba(188,174,157,.88);background:#fffdfb;color:var(--ink);border-radius:12px;padding:10px 12px}.toolbar input{flex:1;min-width:220px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.capture-note{padding:12px;border-radius:16px;background:#fffdfb;border:1px solid rgba(188,174,157,.66);color:var(--muted);font-size:12px}.bookmarklet{padding:10px 12px;border-radius:12px;background:#fff;border:1px dashed rgba(188,174,157,.9);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;word-break:break-all;color:#5a514a}.empty{padding:30px 16px;text-align:center;color:var(--muted)}
+.modal-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;z-index:30;background:rgba(33,26,22,.42)}.modal-wrap.open{display:flex}.modal{width:min(860px,96vw);max-height:92vh;overflow:auto;border-radius:28px;padding:20px}.modal-title{font-size:24px;font-weight:800;letter-spacing:-.05em;margin-bottom:6px}.modal-sub{color:var(--muted);font-size:13px;margin-bottom:14px}.capture-tabs{margin-bottom:14px}.capture-tab{padding:8px 10px;border-radius:10px;border:1px solid rgba(188,174,157,.74);background:transparent;color:var(--muted);font-weight:700;cursor:pointer}.capture-tab.on{background:#fff;color:var(--ink)}.capture-pane{display:none}.capture-pane.on{display:block}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}.field textarea{min-height:120px;resize:vertical}.parser-output{margin-top:14px;padding:14px;border-radius:18px;background:#fffdfb;border:1px solid rgba(188,174,157,.66)}.parser-title{font-size:13px;font-weight:800;margin-bottom:8px}
+.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:10px}
+@media (max-width:1220px){.topbar,.dashboard-grid,.signal-layout,.grid-2,.board-grid{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.pipeline-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.shell{padding:16px 12px 32px}.metric-grid,.pipeline-grid,.form-grid{grid-template-columns:1fr}.company-head,.role-head,.signal-head,.timeline-row,.action-head,.hero-banner{flex-direction:column}.toolbar input{min-width:100%}.hero-headline{font-size:24px}}
+</style>
+</head>
+<body>
+<h1 class="sr-only">Surge universal application command center</h1>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">
+      <div class="eyebrow">Universal application command center</div>
+      <div class="logo">Surge</div>
+      <div id="storage-summary" class="subline">Apply anywhere. Surge keeps the record, updates the timeline, and remembers the next move.</div>
+    </div>
+    <div class="nav">
+      <button class="tnb on" data-view="overview" onclick="nav('overview', this)">Overview</button>
+      <button class="tnb" data-view="pipeline" onclick="nav('pipeline', this)">Pipeline</button>
+      <button class="tnb" data-view="companies" onclick="nav('companies', this)">Companies</button>
+      <button class="tnb" data-view="activity" onclick="nav('activity', this)">Activity</button>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="triggerImport()">Import backup</button>
+      <button class="btn" onclick="exportState()">Export backup</button>
+      <button class="btn" onclick="openSetup()">Connections</button>
+      <button class="btn pri" onclick="openCapture('manual')">Capture signal</button>
+    </div>
+  </div>
+  <div id="hero-banner" class="hero-banner"></div>
+  <div id="metrics" class="metric-grid"></div>
+
+  <div id="view-overview" class="view on">
+    <div class="dashboard-grid">
+      <div>
+        <div class="panel hero-panel">
+          <div class="panel-title">Command center</div>
+          <div class="hero-headline">Apply anywhere. Surge keeps the record.</div>
+          <div class="hero-body">This MVP is structured around signals, not platforms. Manual captures, pasted emails, and browser-page context all resolve into the same company, role, application, event, and contact timeline.</div>
+          <div class="hero-actions">
+            <button class="btn pri" onclick="openCapture('manual')">New application</button>
+            <button class="btn" onclick="openCapture('email')">Parse recruiter email</button>
+            <button class="btn" onclick="openCapture('browser')">Capture from page</button>
+          </div>
+        </div>
+        <div class="signal-layout">
+          <div>
+            <div class="panel">
+              <div class="panel-title">Action queue</div>
+              <div class="panel-sub">Everything due now: follow-ups, stale applications, interview prep, and next-step reminders.</div>
+              <div id="action-queue" class="list"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-title">Recent signal inbox</div>
+              <div class="panel-sub">The latest captures and imported signals that shaped your search memory.</div>
+              <div id="signal-inbox" class="list"></div>
+            </div>
+          </div>
+          <div>
+            <div class="panel">
+              <div class="panel-title">Merge queue</div>
+              <div class="panel-sub">Potential duplicate companies or roles that should be consolidated before clutter spreads.</div>
+              <div id="merge-queue" class="list"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-title">Capture paths</div>
+              <div class="panel-sub">The ingestion model is already shaped for the universal workflow you described.</div>
+              <div class="list">
+                <div class="item"><div class="item-title">Manual quick capture</div><div class="item-meta">Fast path for anything you just applied to or want to save as a lead.</div></div>
+                <div class="item"><div class="item-title">Email parser</div><div class="item-meta">Paste recruiter or ATS email text and Surge maps it into a structured record.</div></div>
+                <div class="item"><div class="item-title">Browser capture parser</div><div class="item-meta">Paste page title, URL, and visible text from any job board or careers page.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="panel-title">Sync and setup</div>
+          <div class="panel-sub">Connect Google, run Gmail and Calendar sync, and receive one-click browser captures from your extension.</div>
+          <div id="sync-setup" class="list"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Top companies</div>
+          <div class="panel-sub">Canonical company records with all roles and application attempts nested underneath.</div>
+          <div id="overview-companies" class="company-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-pipeline" class="view">
+    <div class="panel">
+      <div class="panel-title">Application pipeline</div>
+      <div class="panel-sub">Every application attempt arranged by current stage. Multiple attempts under one role stay clean because role identity and application attempts are separate records.</div>
+      <div id="pipeline-grid" class="pipeline-grid"></div>
+    </div>
+  </div>
+
+  <div id="view-companies" class="view">
+    <div class="panel">
+      <div class="toolbar">
+        <input id="company-search" type="text" placeholder="Search companies, roles, sources, notes, contacts..." oninput="renderCompanies()">
+        <select id="company-priority" onchange="renderCompanies()">
+          <option value="">Any priority</option>
+          <option value="high">High priority</option>
+          <option value="med">Medium priority</option>
+          <option value="low">Low priority</option>
+        </select>
+        <select id="company-sort" onchange="renderCompanies()">
+          <option value="priority">Sort: priority</option>
+          <option value="activity">Sort: recent activity</option>
+          <option value="name">Sort: name</option>
+          <option value="stage">Sort: furthest stage</option>
+        </select>
+      </div>
+      <div id="company-list" class="company-list"></div>
+    </div>
+  </div>
+
+  <div id="view-activity" class="view">
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">Activity timeline</div>
+        <div class="panel-sub">Signals become events, and events become your search memory.</div>
+        <div id="activity-timeline" class="timeline"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Contacts</div>
+        <div class="panel-sub">Recruiters, coordinators, and other named people linked to the right company and role.</div>
+        <div id="contact-list" class="list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span id="footer-status">Ready.</span>
+    <span>Run Surge from localhost for local testing or from your secure production domain, add your Google OAuth client ID, and install the companion browser extension to activate Gmail sync, Calendar sync, and one-click captures.</span>
+  </div>
+</div>
+
+<div id="capture-modal" class="modal-wrap">
+  <div class="modal">
+    <div class="modal-title">Capture signal</div>
+    <div class="modal-sub">Everything flows through the same Surge schema. Manual entries, pasted emails, and pasted browser context all resolve into companies, roles, applications, events, and contacts.</div>
+    <div class="capture-tabs">
+      <button class="capture-tab on" data-capture="manual" onclick="switchCaptureTab('manual', this)">Manual</button>
+      <button class="capture-tab" data-capture="email" onclick="switchCaptureTab('email', this)">Email parser</button>
+      <button class="capture-tab" data-capture="browser" onclick="switchCaptureTab('browser', this)">Browser capture</button>
+    </div>
+    <div id="capture-manual" class="capture-pane on">
+      <div class="form-grid">
+        <div class="field"><label for="manual-company">Company</label><input id="manual-company" placeholder="Kiewit Corporation"></div>
+        <div class="field"><label for="manual-role">Role title</label><input id="manual-role" placeholder="Construction Engineering Intern"></div>
+        <div class="field"><label for="manual-source">Source</label><select id="manual-source"><option value="direct">Direct site</option><option value="linkedin">LinkedIn</option><option value="indeed">Indeed</option><option value="email">Email / recruiter</option><option value="browser">Browser capture</option><option value="other">Other</option></select></div>
+        <div class="field"><label for="manual-status">Status</label><select id="manual-status"><option value="lead">Saved lead</option><option value="applied">Applied</option><option value="confirmed">Confirmed</option><option value="review">Under review</option><option value="recruiter">Recruiter reached out</option><option value="interview">Interview</option><option value="offer">Offer</option><option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option></select></div>
+        <div class="field"><label for="manual-category">Category</label><select id="manual-category"></select></div>
+        <div class="field"><label for="manual-location">Location</label><input id="manual-location" placeholder="Houston, TX"></div>
+        <div class="field"><label for="manual-type">Role type</label><select id="manual-type"></select></div>
+        <div class="field"><label for="manual-priority">Company priority</label><select id="manual-priority"><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select></div>
+        <div class="field"><label for="manual-applied-at">Applied on</label><input id="manual-applied-at" type="date"></div>
+        <div class="field"><label for="manual-next-at">Next action date</label><input id="manual-next-at" type="date"></div>
+        <div class="field full"><label for="manual-url">Source URL</label><input id="manual-url" placeholder="https://company.com/jobs/..."></div>
+        <div class="field"><label for="manual-contact-name">Contact name</label><input id="manual-contact-name" placeholder="Recruiter or coordinator"></div>
+        <div class="field"><label for="manual-contact-email">Contact email</label><input id="manual-contact-email" placeholder="name@company.com"></div>
+        <div class="field"><label for="manual-pay">Compensation</label><input id="manual-pay" placeholder="$25/hr or $70k"></div>
+        <div class="field"><label for="manual-next-step">Next step</label><input id="manual-next-step" placeholder="Follow up, prep interview, send transcript"></div>
+        <div class="field full"><label for="manual-notes">Notes</label><textarea id="manual-notes" placeholder="Anything you want Surge to remember."></textarea></div>
+      </div>
+      <div class="modal-actions" style="margin-top:14px"><button class="btn pri" onclick="submitManualCapture()">Capture manual signal</button></div>
+    </div>
+    <div id="capture-email" class="capture-pane">
+      <div class="form-grid"><div class="field full"><label for="email-source">Pasted email</label><textarea id="email-source" placeholder="Paste the full recruiter or ATS email here."></textarea></div></div>
+      <div class="capture-note">Parser heuristics look for company, role, recruiter name/email, confirmation language, rejection language, interview language, and next-step cues.</div>
+      <div class="modal-actions" style="margin-top:14px"><button class="btn" onclick="previewEmailCapture()">Preview parse</button><button class="btn pri" onclick="submitEmailCapture()">Ingest email signal</button></div>
+      <div id="email-preview" class="parser-output" style="display:none"></div>
+    </div>
+    <div id="capture-browser" class="capture-pane">
+      <div class="form-grid">
+        <div class="field"><label for="browser-url">Page URL</label><input id="browser-url" placeholder="https://www.linkedin.com/jobs/view/..."></div>
+        <div class="field"><label for="browser-title">Page title</label><input id="browser-title" placeholder="Job title shown in the tab or page header"></div>
+        <div class="field"><label for="browser-mode">What happened here?</label><select id="browser-mode"><option value="lead">I found a lead</option><option value="applied">I applied here</option><option value="review">This page indicates review / progress</option></select></div>
+        <div class="field"><label for="browser-source">Source label</label><select id="browser-source"><option value="browser">Browser capture</option><option value="linkedin">LinkedIn</option><option value="indeed">Indeed</option><option value="direct">Direct site</option><option value="other">Other</option></select></div>
+        <div class="field full"><label for="browser-text">Visible page text or copied job details</label><textarea id="browser-text" placeholder="Paste the job description header, company block, location, or any visible page content you copied."></textarea></div>
+      </div>
+      <div class="capture-note"><div style="font-weight:800;margin-bottom:6px;color:var(--ink)">Manual fallback</div><div style="margin-bottom:8px">If the extension is not installed yet, this bookmarklet still copies page title, URL, and selected text so you can paste them here.</div><div class="bookmarklet">javascript:(async()=>{const text=[document.title,location.href,window.getSelection().toString()].join('\n\n');await navigator.clipboard.writeText(text);alert('Copied page context for Surge capture. Paste it into the browser capture form.');})();</div></div>
+      <div class="modal-actions" style="margin-top:14px"><button class="btn" onclick="previewBrowserCapture()">Preview parse</button><button class="btn pri" onclick="submitBrowserCapture()">Ingest browser signal</button></div>
+      <div id="browser-preview" class="parser-output" style="display:none"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:18px"><button class="ghost" onclick="closeModal('capture-modal')">Close</button><button class="btn warn" onclick="clearCaptureForms()">Clear forms</button></div>
+  </div>
+</div>
+
+<div id="setup-modal" class="modal-wrap">
+  <div class="modal">
+    <div class="modal-title">Connections and setup</div>
+    <div class="modal-sub">Surge can sync Gmail and Google Calendar directly from your browser when it is running on localhost or a secure HTTPS origin and has your Google OAuth web client ID.</div>
+    <div class="form-grid">
+      <div class="field full"><label for="setup-google-client-id">Google OAuth web client ID</label><input id="setup-google-client-id" placeholder="1234567890-abcdefg.apps.googleusercontent.com"></div>
+      <div class="field full"><label for="setup-surge-url">Surge URL</label><input id="setup-surge-url" placeholder="https://www.odirico.com/surge"></div>
+      <div class="field full"><label for="setup-gmail-query">Gmail search query</label><input id="setup-gmail-query" placeholder="newer_than:180d (application OR interview OR recruiter OR hiring OR candidate OR offer)"></div>
+      <div class="field"><label for="setup-gmail-max-results">Gmail max messages</label><input id="setup-gmail-max-results" type="number" min="5" max="100" step="1"></div>
+      <div class="field"><label for="setup-calendar-window">Calendar lookahead days</label><input id="setup-calendar-window" type="number" min="7" max="365" step="1"></div>
+    </div>
+    <div class="capture-note" style="margin-top:14px">Google setup uses the browser token flow. Your OAuth client must be a <strong>Web application</strong> with every origin you plan to use listed as an Authorized JavaScript origin, including localhost for testing and your secure production domain.</div>
+    <div class="modal-actions" style="margin-top:18px">
+      <button class="btn pri" onclick="saveSetup()">Save setup</button>
+      <button class="btn" onclick="connectGoogle()">Connect Google</button>
+      <button class="ghost" onclick="closeModal('setup-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<input id="import-file" type="file" accept="application/json,.json" style="display:none">
+<script src="./job_tracker_seed.js"></script>
+<script async defer src="https://accounts.google.com/gsi/client"></script>
+<script>
+const EMBEDDED_MODE = new URLSearchParams(window.location.search).get("embedded") === "1";
+const STORAGE_KEY = "surge_command_center_v1";
+const LEGACY_KEYS = ["jobboard_tracker_v3"];
+const COMPANY_CATEGORIES = ["Oil & Gas","Oilfield Services","Utilities / Grid","Construction / EPC","Engineering / Industrial","Renewables","Government / National Lab","Other"];
+const HOUSING_OPTIONS = ["No","Yes","Stipend","Partial","TBD"];
+const ROLE_TYPES = { internship:"Internship", entry:"Entry-level", ft:"Full-time", "co-op":"Co-op" };
+const APP_STATUS = {
+  lead:{ label:"Lead", cls:"status-lead", rank:6, pipeline:"lead" },
+  applied:{ label:"Applied", cls:"status-applied", rank:5, pipeline:"applied" },
+  confirmed:{ label:"Confirmed", cls:"status-confirmed", rank:4, pipeline:"applied" },
+  review:{ label:"Review", cls:"status-review", rank:3, pipeline:"review" },
+  recruiter:{ label:"Recruiter", cls:"status-recruiter", rank:2, pipeline:"recruiter" },
+  interview:{ label:"Interview", cls:"status-interview", rank:1, pipeline:"interview" },
+  offer:{ label:"Offer", cls:"status-offer", rank:0, pipeline:"offer" },
+  rejected:{ label:"Rejected", cls:"status-rejected", rank:7, pipeline:"closed" },
+  withdrawn:{ label:"Withdrawn", cls:"status-withdrawn", rank:8, pipeline:"closed" }
+};
+const SOURCE_STYLES = {
+  linkedin:{ label:"LinkedIn", cls:"source-linkedin" },
+  indeed:{ label:"Indeed", cls:"source-indeed" },
+  direct:{ label:"Direct", cls:"source-direct" },
+  email:{ label:"Email", cls:"source-email" },
+  browser:{ label:"Browser", cls:"source-browser" },
+  imported:{ label:"Imported", cls:"source-imported" },
+  other:{ label:"Other", cls:"source-other" }
+};
+const PIPELINE_COLUMNS = [
+  { key:"lead", label:"Saved leads" },
+  { key:"applied", label:"Applied" },
+  { key:"review", label:"Under review" },
+  { key:"recruiter", label:"Recruiter" },
+  { key:"interview", label:"Interview" },
+  { key:"offer", label:"Offer" }
+];
+const CATEGORY_COLORS = {
+  "Oil & Gas":["#faefdb","#8a5310"],
+  "Oilfield Services":["#faece7","#712b13"],
+  "Utilities / Grid":["#e8f1fb","#1c63ab"],
+  "Construction / EPC":["#f2eee8","#5f5147"],
+  "Engineering / Industrial":["#efedff","#5547aa"],
+  "Renewables":["#e9f5df","#2f6b16"],
+  "Government / National Lab":["#e3f4f0","#0f6a57"],
+  "Other":["#f1eee9","#6f645b"]
+};
+const GOOGLE_SCOPES = [
+  "https://www.googleapis.com/auth/gmail.readonly",
+  "https://www.googleapis.com/auth/calendar.readonly"
+];
+const DEFAULT_SETTINGS = {
+  googleClientId: "",
+  surgeUrl: "",
+  gmailQuery: "newer_than:180d (application OR interview OR recruiter OR hiring OR candidate OR offer OR position OR role)",
+  gmailMaxResults: 25,
+  calendarLookaheadDays: 90,
+  calendarLookbackDays: 14
+};
+const STORAGE_SEED = typeof window.__JOB_TRACKER_SEED__ !== "undefined" ? window.__JOB_TRACKER_SEED__ : null;
+
+if(EMBEDDED_MODE) document.body.classList.add("embedded");
+
+let currentView = "overview";
+let state = emptyState();
+let expandedCompanies = new Set();
+let captureMode = "manual";
+let lastEmailPreview = null;
+let lastBrowserPreview = null;
+let googleTokenClient = null;
+let googleConfiguredClientId = "";
+let googleAccessToken = "";
+let googleTokenExpiresAt = 0;
+
+function nowIso(){ return new Date().toISOString(); }
+function todayIso(){ return new Date().toISOString().split("T")[0]; }
+function footer(text){ document.getElementById("footer-status").textContent = text; }
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+function shortDate(value){
+  if(!value) return "—";
+  const d = new Date(value.length === 10 ? `${value}T00:00:00` : value);
+  return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+}
+function fullDate(value){
+  if(!value) return "Never";
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? value : d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+}
+function daysUntil(value){
+  if(!value) return null;
+  const d = new Date(value.length === 10 ? `${value}T00:00:00` : value);
+  if(Number.isNaN(d.getTime())) return null;
+  const today = new Date();
+  const base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.floor((d - base) / 86400000);
+}
+function daysSince(value){
+  if(!value) return null;
+  const d = new Date(value.length === 10 ? `${value}T00:00:00` : value);
+  if(Number.isNaN(d.getTime())) return null;
+  return Math.floor((new Date() - d) / 86400000);
+}
+function initials(name){
+  return String(name || "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0,2)
+    .map(part => part[0])
+    .join("")
+    .toUpperCase() || "SG";
+}
+function normalizeText(text){
+  return String(text || "")
+    .toLowerCase()
+    .replace(/&/g,"and")
+    .replace(/[^a-z0-9]+/g," ")
+    .trim();
+}
+function slug(text){
+  return normalizeText(text).replace(/\s+/g,"");
+}
+function domainFromUrl(url){
+  try{
+    return new URL(url).hostname.toLowerCase().replace(/^www\./,"");
+  }catch{
+    return "";
+  }
+}
+function hostnameBrand(url){
+  const host = domainFromUrl(url);
+  if(!host) return "";
+  const parts = host.split(".");
+  return parts.length < 2 ? host : parts[parts.length - 2].replace(/-/g," ");
+}
+function emptyState(){
+  return {
+    companies: [],
+    roles: [],
+    applications: [],
+    events: [],
+    contacts: [],
+    signals: [],
+    settings: { ...DEFAULT_SETTINGS },
+    sync: {
+      gmailMessageIds: [],
+      calendarEventIds: [],
+      lastGmailSyncAt: "",
+      lastCalendarSyncAt: "",
+      lastBrowserCaptureAt: "",
+      browserCaptureCount: 0
+    },
+    nextIds: { company:1, role:1, application:1, event:1, contact:1, signal:1 },
+    lastSavedAt: "",
+    lastExportedAt: "",
+    createdAt: nowIso()
+  };
+}
+function defaultSurgeUrl(){
+  try{
+    return window.location.origin && /^https?:/i.test(window.location.origin)
+      ? `${window.location.origin}/surge`
+      : "http://localhost:4173/job_tracker_v2.html";
+  }catch{
+    return "http://localhost:4173/job_tracker_v2.html";
+  }
+}
+function normalizeSettings(raw){
+  const value = raw && typeof raw === "object" ? raw : {};
+  const fallbackSurgeUrl = defaultSurgeUrl();
+  return {
+    googleClientId: String(value.googleClientId || "").trim(),
+    surgeUrl: String(value.surgeUrl || DEFAULT_SETTINGS.surgeUrl || fallbackSurgeUrl).trim() || fallbackSurgeUrl,
+    gmailQuery: String(value.gmailQuery || DEFAULT_SETTINGS.gmailQuery).trim() || DEFAULT_SETTINGS.gmailQuery,
+    gmailMaxResults: Math.min(100, Math.max(5, Number(value.gmailMaxResults) || DEFAULT_SETTINGS.gmailMaxResults)),
+    calendarLookaheadDays: Math.min(365, Math.max(7, Number(value.calendarLookaheadDays) || DEFAULT_SETTINGS.calendarLookaheadDays)),
+    calendarLookbackDays: Math.min(60, Math.max(0, Number(value.calendarLookbackDays) || DEFAULT_SETTINGS.calendarLookbackDays))
+  };
+}
+function normalizeSync(raw){
+  const value = raw && typeof raw === "object" ? raw : {};
+  return {
+    gmailMessageIds: Array.isArray(value.gmailMessageIds) ? value.gmailMessageIds.map(String).slice(-500) : [],
+    calendarEventIds: Array.isArray(value.calendarEventIds) ? value.calendarEventIds.map(String).slice(-500) : [],
+    lastGmailSyncAt: String(value.lastGmailSyncAt || "").trim(),
+    lastCalendarSyncAt: String(value.lastCalendarSyncAt || "").trim(),
+    lastBrowserCaptureAt: String(value.lastBrowserCaptureAt || "").trim(),
+    browserCaptureCount: Math.max(0, Number(value.browserCaptureCount) || 0)
+  };
+}
+function statusLabel(key){ return APP_STATUS[key]?.label || key; }
+function sourceStyle(key){ return SOURCE_STYLES[key] || SOURCE_STYLES.other; }
+function normalizeCompany(record){
+  return {
+    id: Number(record.id),
+    name: String(record.name || "").trim(),
+    category: COMPANY_CATEGORIES.includes(record.category) ? record.category : COMPANY_CATEGORIES.includes(record.cat) ? record.cat : "Other",
+    location: String(record.location ?? record.loc ?? "").trim(),
+    housing: HOUSING_OPTIONS.includes(record.housing) ? record.housing : "No",
+    website: String(record.website ?? record.link ?? "").trim(),
+    priority: ["high","med","low"].includes(record.priority) ? record.priority : "med",
+    notes: String(record.notes || "").trim(),
+    createdAt: record.createdAt || nowIso(),
+    updatedAt: record.updatedAt || nowIso()
+  };
+}
+function normalizeRole(record){
+  return {
+    id: Number(record.id),
+    companyId: Number(record.companyId ?? record.coId),
+    title: String(record.title || "").trim(),
+    type: ROLE_TYPES[record.type] ? record.type : "internship",
+    location: String(record.location ?? record.loc ?? "").trim(),
+    notes: String(record.notes || "").trim(),
+    createdAt: record.createdAt || nowIso(),
+    updatedAt: record.updatedAt || nowIso()
+  };
+}
+function normalizeApplication(record){
+  return {
+    id: Number(record.id),
+    companyId: Number(record.companyId ?? record.coId),
+    roleId: Number(record.roleId),
+    source: SOURCE_STYLES[record.source] ? record.source : "other",
+    status: APP_STATUS[record.status] ? record.status : "lead",
+    appliedAt: String(record.appliedAt ?? record.date ?? "").trim(),
+    sourceUrl: String(record.sourceUrl ?? record.link ?? "").trim(),
+    location: String(record.location ?? record.loc ?? "").trim(),
+    compensation: String(record.compensation ?? record.pay ?? "").trim(),
+    nextStep: String(record.nextStep ?? record.next ?? "").trim(),
+    nextStepAt: String(record.nextStepAt ?? record.nextDate ?? "").trim(),
+    notes: String(record.notes || "").trim(),
+    lastSignalAt: String(record.lastSignalAt ?? record.updatedAt ?? record.createdAt ?? nowIso()).trim(),
+    createdAt: record.createdAt || nowIso(),
+    updatedAt: record.updatedAt || nowIso()
+  };
+}
+function normalizeEvent(record){
+  return {
+    id: Number(record.id),
+    companyId: Number(record.companyId ?? 0),
+    roleId: Number(record.roleId ?? 0),
+    applicationId: Number(record.applicationId ?? 0),
+    kind: String(record.kind || "note"),
+    channel: SOURCE_STYLES[record.channel] ? record.channel : "other",
+    occurredAt: String(record.occurredAt || record.createdAt || nowIso()),
+    summary: String(record.summary || "").trim(),
+    details: String(record.details || "").trim(),
+    createdAt: record.createdAt || nowIso()
+  };
+}
+function normalizeContact(record){
+  return {
+    id: Number(record.id),
+    companyId: Number(record.companyId ?? 0),
+    roleId: Number(record.roleId ?? 0),
+    name: String(record.name || "").trim(),
+    email: String(record.email || "").trim(),
+    title: String(record.title || "").trim(),
+    source: SOURCE_STYLES[record.source] ? record.source : "other",
+    notes: String(record.notes || "").trim(),
+    createdAt: record.createdAt || nowIso(),
+    updatedAt: record.updatedAt || nowIso()
+  };
+}
+function normalizeSignal(record){
+  return {
+    id: Number(record.id),
+    channel: SOURCE_STYLES[record.channel] ? record.channel : "other",
+    source: SOURCE_STYLES[record.source] ? record.source : "other",
+    raw: String(record.raw || "").trim(),
+    summary: String(record.summary || "").trim(),
+    resolvedAt: String(record.resolvedAt || "").trim(),
+    createdAt: record.createdAt || nowIso(),
+    parsed: record.parsed || {}
+  };
+}
+function mapLegacyStatus(status){
+  return ({ n:"lead", a:"applied", r:"review", p:"recruiter", i:"interview", o:"offer", x:"rejected", w:"withdrawn" })[status] || "lead";
+}
+function migrateLegacyState(raw){
+  const nextState = emptyState();
+  const companies = new Map();
+  (raw.companies || []).forEach(legacyCompany => {
+    const company = normalizeCompany(legacyCompany);
+    companies.set(company.id, company);
+    nextState.companies.push(company);
+    if(legacyCompany.contact || legacyCompany.email){
+      nextState.contacts.push(normalizeContact({
+        id: nextState.nextIds.contact++,
+        companyId: company.id,
+        roleId: 0,
+        name: legacyCompany.contact || "",
+        email: legacyCompany.email || "",
+        title: "Company contact",
+        source: "imported",
+        notes: legacyCompany.notes || "",
+        createdAt: company.createdAt,
+        updatedAt: company.updatedAt
+      }));
+    }
+  });
+  const roleIndex = new Map();
+  (raw.positions || []).forEach(position => {
+    const companyId = Number(position.coId);
+    const company = companies.get(companyId);
+    if(!company) return;
+    const key = `${companyId}::${slug(position.title)}`;
+    let role = roleIndex.get(key);
+    if(!role){
+      role = normalizeRole({
+        id: nextState.nextIds.role++,
+        companyId,
+        title: position.title,
+        type: position.type || "internship",
+        location: position.loc || company.location,
+        notes: "",
+        createdAt: position.createdAt || nowIso(),
+        updatedAt: position.updatedAt || nowIso()
+      });
+      roleIndex.set(key, role);
+      nextState.roles.push(role);
+    }
+    const application = normalizeApplication({
+      id: nextState.nextIds.application++,
+      companyId,
+      roleId: role.id,
+      source: "imported",
+      status: mapLegacyStatus(position.status),
+      appliedAt: position.date || "",
+      sourceUrl: position.link || "",
+      location: position.loc || role.location || company.location,
+      compensation: position.pay || "",
+      nextStep: position.next || "",
+      nextStepAt: position.nextDate || "",
+      notes: position.notes || "",
+      lastSignalAt: position.updatedAt || position.createdAt || nowIso(),
+      createdAt: position.createdAt || nowIso(),
+      updatedAt: position.updatedAt || nowIso()
+    });
+    nextState.applications.push(application);
+    nextState.events.push(normalizeEvent({
+      id: nextState.nextIds.event++,
+      companyId,
+      roleId: role.id,
+      applicationId: application.id,
+      kind: "application",
+      channel: "imported",
+      occurredAt: application.appliedAt || application.createdAt,
+      summary: `${role.title} imported from legacy tracker`,
+      details: application.status !== "lead" ? `Status imported as ${statusLabel(application.status)}.` : "Imported as saved lead.",
+      createdAt: application.createdAt
+    }));
+    if(application.notes){
+      nextState.events.push(normalizeEvent({
+        id: nextState.nextIds.event++,
+        companyId,
+        roleId: role.id,
+        applicationId: application.id,
+        kind: "note",
+        channel: "imported",
+        occurredAt: application.updatedAt,
+        summary: "Imported legacy notes",
+        details: application.notes,
+        createdAt: application.updatedAt
+      }));
+    }
+  });
+  nextState.nextIds.company = Math.max(nextState.nextIds.company, ...nextState.companies.map(item => item.id + 1), 1);
+  nextState.settings = normalizeSettings(raw.settings);
+  nextState.sync = normalizeSync(raw.sync);
+  return nextState;
+}
+function normalizeState(raw){
+  if(!raw || typeof raw !== "object") return emptyState();
+  if(Array.isArray(raw.roles) && Array.isArray(raw.applications)){
+    const companies = (raw.companies || []).map(normalizeCompany);
+    const roles = (raw.roles || []).map(normalizeRole).filter(role => companies.some(company => company.id === role.companyId));
+    const applications = (raw.applications || []).map(normalizeApplication).filter(app => companies.some(company => company.id === app.companyId) && roles.some(role => role.id === app.roleId));
+    const events = (raw.events || []).map(normalizeEvent);
+    const contacts = (raw.contacts || []).map(normalizeContact);
+    const signals = (raw.signals || []).map(normalizeSignal);
+    return {
+      companies,
+      roles,
+      applications,
+      events,
+      contacts,
+      signals,
+      settings: normalizeSettings(raw.settings),
+      sync: normalizeSync(raw.sync),
+      nextIds: {
+        company: Math.max(raw.nextIds?.company || 1, ...companies.map(item => item.id + 1), 1),
+        role: Math.max(raw.nextIds?.role || 1, ...roles.map(item => item.id + 1), 1),
+        application: Math.max(raw.nextIds?.application || 1, ...applications.map(item => item.id + 1), 1),
+        event: Math.max(raw.nextIds?.event || 1, ...events.map(item => item.id + 1), 1),
+        contact: Math.max(raw.nextIds?.contact || 1, ...contacts.map(item => item.id + 1), 1),
+        signal: Math.max(raw.nextIds?.signal || 1, ...signals.map(item => item.id + 1), 1)
+      },
+      lastSavedAt: raw.lastSavedAt || "",
+      lastExportedAt: raw.lastExportedAt || "",
+      createdAt: raw.createdAt || nowIso()
+    };
+  }
+  if(Array.isArray(raw.companies) && Array.isArray(raw.positions)) return migrateLegacyState(raw);
+  return emptyState();
+}
+function loadState(){
+  try{
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if(stored){
+      state = normalizeState(JSON.parse(stored));
+      return;
+    }
+    for(const key of LEGACY_KEYS){
+      const legacy = localStorage.getItem(key);
+      if(legacy){
+        state = normalizeState(JSON.parse(legacy));
+        persistState("Migrated legacy tracker data into Surge.");
+        return;
+      }
+    }
+    if(STORAGE_SEED?.companies?.length){
+      state = normalizeState(STORAGE_SEED);
+      footer("Loaded spreadsheet seed data.");
+      return;
+    }
+    state = emptyState();
+  }catch{
+    state = emptyState();
+  }
+}
+function persistState(message){
+  state.lastSavedAt = nowIso();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  footer(message || "Saved locally.");
+}
+function exportState(){
+  const output = JSON.stringify(state, null, 2);
+  const blob = new Blob([output], { type:"application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `surge-backup-${todayIso()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  state.lastExportedAt = nowIso();
+  persistState("Backup exported.");
+  renderChrome();
+}
+function triggerImport(){ document.getElementById("import-file").click(); }
+function handleImport(event){
+  const file = event.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      state = normalizeState(JSON.parse(reader.result));
+      persistState("Backup imported.");
+      expandedCompanies = new Set(state.companies.slice(0,3).map(company => company.id));
+      renderAll();
+    }catch{
+      alert("That file could not be imported. Use a JSON backup exported from Surge.");
+      footer("Import failed.");
+    }finally{
+      event.target.value = "";
+    }
+  };
+  reader.readAsText(file);
+}
+function openSetup(){
+  hydrateSetupForm();
+  openModal("setup-modal");
+}
+function hydrateSetupForm(){
+  document.getElementById("setup-google-client-id").value = state.settings.googleClientId || "";
+  document.getElementById("setup-surge-url").value = state.settings.surgeUrl || inferCurrentSurgeUrl();
+  document.getElementById("setup-gmail-query").value = state.settings.gmailQuery || DEFAULT_SETTINGS.gmailQuery;
+  document.getElementById("setup-gmail-max-results").value = state.settings.gmailMaxResults;
+  document.getElementById("setup-calendar-window").value = state.settings.calendarLookaheadDays;
+}
+function inferCurrentSurgeUrl(){
+  try{
+    const url = new URL(window.location.href);
+    if(/\/surge-runtime\/job_tracker_v2\.html$/i.test(url.pathname)) return `${url.origin}/surge`;
+    return url.href.split("#")[0];
+  }catch{
+    return state.settings.surgeUrl || defaultSurgeUrl();
+  }
+}
+function saveSetup(){
+  state.settings = normalizeSettings({
+    googleClientId: document.getElementById("setup-google-client-id").value,
+    surgeUrl: document.getElementById("setup-surge-url").value || inferCurrentSurgeUrl(),
+    gmailQuery: document.getElementById("setup-gmail-query").value,
+    gmailMaxResults: document.getElementById("setup-gmail-max-results").value,
+    calendarLookaheadDays: document.getElementById("setup-calendar-window").value,
+    calendarLookbackDays: state.settings.calendarLookbackDays
+  });
+  persistState("Setup saved.");
+  closeModal("setup-modal");
+  renderAll();
+}
+function isSupportedOrigin(){
+  return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(window.location.origin || "") || /^https:\/\//i.test(window.location.origin || "");
+}
+function googleReady(){
+  return Boolean(window.google?.accounts?.oauth2);
+}
+function syncEnabled(){
+  return Boolean(state.settings.googleClientId) && isSupportedOrigin();
+}
+function trimSyncMemory(){
+  state.sync.gmailMessageIds = state.sync.gmailMessageIds.slice(-500);
+  state.sync.calendarEventIds = state.sync.calendarEventIds.slice(-500);
+}
+function rememberSyncId(bucket, value){
+  if(!value) return;
+  const list = state.sync[bucket];
+  if(!Array.isArray(list) || list.includes(value)) return;
+  list.push(value);
+  trimSyncMemory();
+}
+function connectGoogle(){
+  ensureGoogleToken().then(() => {
+    persistState("Google connected for this browser session.");
+    renderAll();
+  }).catch(handleSyncError);
+}
+function ensureGoogleToken(){
+  return new Promise((resolve, reject) => {
+    if(!isSupportedOrigin()){
+      reject(new Error("Open Surge from localhost or a secure HTTPS origin, not directly from a file."));
+      return;
+    }
+    if(!state.settings.googleClientId){
+      reject(new Error("Add your Google OAuth web client ID in Connections first."));
+      return;
+    }
+    if(!googleReady()){
+      reject(new Error("Google Identity Services has not loaded yet. Reload the page and try again."));
+      return;
+    }
+    if(googleAccessToken && Date.now() < googleTokenExpiresAt - 60000){
+      resolve(googleAccessToken);
+      return;
+    }
+    try{
+      if(!googleTokenClient || googleConfiguredClientId !== state.settings.googleClientId){
+        googleConfiguredClientId = state.settings.googleClientId;
+        googleTokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: state.settings.googleClientId,
+          scope: GOOGLE_SCOPES.join(" "),
+          callback: response => {
+            if(response?.error){
+              reject(new Error(response.error));
+              return;
+            }
+            googleAccessToken = response.access_token || "";
+            googleTokenExpiresAt = Date.now() + (Number(response.expires_in) || 3600) * 1000;
+            resolve(googleAccessToken);
+          },
+          error_callback: error => reject(new Error(error?.type || "Google auth failed"))
+        });
+      } else {
+        googleTokenClient.callback = response => {
+          if(response?.error){
+            reject(new Error(response.error));
+            return;
+          }
+          googleAccessToken = response.access_token || "";
+          googleTokenExpiresAt = Date.now() + (Number(response.expires_in) || 3600) * 1000;
+          resolve(googleAccessToken);
+        };
+      }
+      googleTokenClient.requestAccessToken({ prompt: googleAccessToken ? "" : "consent" });
+    }catch(error){
+      reject(error);
+    }
+  });
+}
+async function googleApiFetch(url){
+  const token = await ensureGoogleToken();
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if(!response.ok){
+    const details = await response.text();
+    throw new Error(`Google API ${response.status}: ${details || response.statusText}`);
+  }
+  return response.json();
+}
+function decodeBase64Url(value){
+  if(!value) return "";
+  const padded = value.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
+  try{
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }catch{
+    return "";
+  }
+}
+function stripHtml(value){
+  const node = document.createElement("div");
+  node.innerHTML = value || "";
+  return node.textContent || node.innerText || "";
+}
+function extractPayloadText(payload){
+  if(!payload) return "";
+  const texts = [];
+  const walk = part => {
+    if(!part) return;
+    const mime = String(part.mimeType || "");
+    const body = decodeBase64Url(part.body?.data || "");
+    if(body){
+      if(mime.includes("text/html")) texts.push(stripHtml(body));
+      else texts.push(body);
+    }
+    (part.parts || []).forEach(walk);
+  };
+  walk(payload);
+  return texts.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+function headerLookup(headers, name){
+  return headers?.find(header => String(header.name || "").toLowerCase() === String(name).toLowerCase())?.value || "";
+}
+function parseMailboxAddress(value){
+  const raw = String(value || "").trim();
+  const email = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || "";
+  const name = raw.replace(/<[^>]+>/g, "").replace(/"/g, "").trim();
+  return { name, email };
+}
+function firstUrlInText(value){
+  return String(value || "").match(/https?:\/\/[^\s)>"']+/i)?.[0] || "";
+}
+function likelyJobSignal(text){
+  return /(application|applied|interview|recruiter|talent acquisition|candidate|offer|phone screen|hiring|position|role|job)/i.test(String(text || ""));
+}
+async function syncGmail(){
+  if(!syncEnabled()) throw new Error("Finish Connections setup and open Surge from localhost or your secure production domain first.");
+  footer("Syncing Gmail...");
+  const maxResults = state.settings.gmailMaxResults;
+  const query = encodeURIComponent(state.settings.gmailQuery);
+  const list = await googleApiFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${maxResults}&q=${query}`);
+  const messages = list.messages || [];
+  let imported = 0;
+  for(const message of messages){
+    if(state.sync.gmailMessageIds.includes(String(message.id))) continue;
+    const details = await googleApiFetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${message.id}?format=full`);
+    const headers = details.payload?.headers || [];
+    const subject = headerLookup(headers, "Subject");
+    const fromValue = headerLookup(headers, "From");
+    const from = parseMailboxAddress(fromValue);
+    const body = extractPayloadText(details.payload) || details.snippet || "";
+    const combined = [subject, fromValue, body].filter(Boolean).join("\n\n");
+    if(!likelyJobSignal(combined)){
+      rememberSyncId("gmailMessageIds", String(message.id));
+      continue;
+    }
+    const parsed = parseEmailSignal(combined);
+    if(parsed.companyName === "Unknown company" && parsed.roleTitle === "Unknown role"){
+      rememberSyncId("gmailMessageIds", String(message.id));
+      continue;
+    }
+    const signalAt = details.internalDate ? new Date(Number(details.internalDate)).toISOString() : nowIso();
+    upsertApplicationSignal({
+      ...parsed,
+      companyName: parsed.companyName === "Unknown company" ? hostnameBrand(`https://${from.email.split("@")[1] || ""}`) || parsed.companyName : parsed.companyName,
+      contactName: from.name || parsed.contactName,
+      contactEmail: from.email || parsed.contactEmail,
+      source: "email",
+      status: parsed.status || "lead",
+      sourceUrl: firstUrlInText(body),
+      rawSignal: combined.slice(0, 8000),
+      signalSummary: subject ? `Gmail: ${subject}` : parsed.signalSummary,
+      eventSummary: subject || parsed.eventSummary,
+      eventDetails: body.slice(0, 1200),
+      channel: "email",
+      signalAt,
+      attachToExistingRole: true
+    });
+    rememberSyncId("gmailMessageIds", String(message.id));
+    imported += 1;
+  }
+  state.sync.lastGmailSyncAt = nowIso();
+  persistState(imported ? `Gmail sync added ${imported} signal${imported === 1 ? "" : "s"}.` : "Gmail sync found nothing new.");
+  renderAll();
+}
+function parseCalendarSignal(event){
+  const summary = String(event.summary || "").trim();
+  const description = String(event.description || "").trim();
+  const location = String(event.location || "").trim();
+  const organizer = parseMailboxAddress(event.organizer?.email || "");
+  const text = [summary, description, location, organizer.email].filter(Boolean).join("\n\n");
+  const parsed = parseEmailSignal(text);
+  const startValue = event.start?.dateTime || event.start?.date || "";
+  return {
+    ...parsed,
+    companyName: parsed.companyName === "Unknown company" ? hostnameBrand(`https://${organizer.email.split("@")[1] || ""}`) || parsed.companyName : parsed.companyName,
+    roleTitle: parsed.roleTitle === "Unknown role" ? summary || parsed.roleTitle : parsed.roleTitle,
+    contactName: organizer.name || parsed.contactName,
+    contactEmail: organizer.email || parsed.contactEmail,
+    source: "other",
+    status: "interview",
+    sourceUrl: event.htmlLink || "",
+    nextStep: summary || "Prepare for interview",
+    nextStepAt: startValue ? new Date(startValue).toISOString().slice(0, 10) : "",
+    eventKind: "interview",
+    signalSummary: `Calendar: ${summary || "Interview event"}`,
+    eventSummary: summary || "Calendar event imported",
+    eventDetails: [location, description].filter(Boolean).join("\n\n").slice(0, 1200),
+    rawSignal: text.slice(0, 8000),
+    channel: "other",
+    signalAt: startValue ? new Date(startValue).toISOString() : nowIso(),
+    attachToExistingRole: true
+  };
+}
+function likelyInterviewEvent(event){
+  const haystack = [event.summary, event.description, event.location, event.organizer?.email].filter(Boolean).join(" ");
+  return /(interview|phone screen|recruiter|hiring|candidate|onsite|virtual onsite|final round|assessment)/i.test(haystack);
+}
+async function syncCalendar(){
+  if(!syncEnabled()) throw new Error("Finish Connections setup and open Surge from localhost or your secure production domain first.");
+  footer("Syncing Calendar...");
+  const now = new Date();
+  const min = new Date(now.getTime() - state.settings.calendarLookbackDays * 86400000).toISOString();
+  const max = new Date(now.getTime() + state.settings.calendarLookaheadDays * 86400000).toISOString();
+  const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?singleEvents=true&orderBy=startTime&timeMin=${encodeURIComponent(min)}&timeMax=${encodeURIComponent(max)}&maxResults=100`;
+  const payload = await googleApiFetch(url);
+  const events = payload.items || [];
+  let imported = 0;
+  events.forEach(event => {
+    if(!likelyInterviewEvent(event)) return;
+    if(state.sync.calendarEventIds.includes(String(event.id))) return;
+    const parsed = parseCalendarSignal(event);
+    if(parsed.companyName === "Unknown company" && parsed.roleTitle === "Unknown role") return;
+    upsertApplicationSignal(parsed);
+    rememberSyncId("calendarEventIds", String(event.id));
+    imported += 1;
+  });
+  state.sync.lastCalendarSyncAt = nowIso();
+  persistState(imported ? `Calendar sync added ${imported} interview event${imported === 1 ? "" : "s"}.` : "Calendar sync found nothing new.");
+  renderAll();
+}
+function runGmailSync(){
+  syncGmail().catch(handleSyncError);
+}
+function runCalendarSync(){
+  syncCalendar().catch(handleSyncError);
+}
+function handleSyncError(error){
+  const message = error?.message || "Sync failed.";
+  footer(message);
+  alert(message);
+}
+function ensureCompany(input){
+  const name = String(input.name || "").trim();
+  if(!name) return null;
+  const host = domainFromUrl(input.website || "");
+  const existing = state.companies.find(company => {
+    if(slug(company.name) === slug(name)) return true;
+    const existingHost = domainFromUrl(company.website || "");
+    return host && existingHost && host === existingHost;
+  });
+  if(existing){
+    existing.category = input.category || existing.category;
+    existing.location = input.location || existing.location;
+    existing.housing = input.housing || existing.housing;
+    existing.website = input.website || existing.website;
+    existing.priority = input.priority || existing.priority;
+    if(input.notes && !existing.notes.includes(input.notes)) existing.notes = existing.notes ? `${existing.notes}\n${input.notes}` : input.notes;
+    existing.updatedAt = nowIso();
+    return existing;
+  }
+  const company = normalizeCompany({
+    id: state.nextIds.company++,
+    name,
+    category: input.category || "Other",
+    location: input.location || "",
+    housing: input.housing || "No",
+    website: input.website || "",
+    priority: input.priority || "med",
+    notes: input.notes || "",
+    createdAt: nowIso(),
+    updatedAt: nowIso()
+  });
+  state.companies.push(company);
+  return company;
+}
+function ensureRole(companyId, input){
+  const title = String(input.title || "").trim();
+  if(!companyId || !title) return null;
+  const key = `${companyId}::${slug(title)}`;
+  let role = state.roles.find(item => `${item.companyId}::${slug(item.title)}` === key);
+  if(role){
+    role.type = input.type || role.type;
+    role.location = input.location || role.location;
+    if(input.notes && !role.notes.includes(input.notes)) role.notes = role.notes ? `${role.notes}\n${input.notes}` : input.notes;
+    role.updatedAt = nowIso();
+    return role;
+  }
+  role = normalizeRole({
+    id: state.nextIds.role++,
+    companyId,
+    title,
+    type: input.type || "internship",
+    location: input.location || "",
+    notes: input.notes || "",
+    createdAt: nowIso(),
+    updatedAt: nowIso()
+  });
+  state.roles.push(role);
+  return role;
+}
+function ensureContact(input){
+  const name = String(input.name || "").trim();
+  const email = String(input.email || "").trim();
+  if(!name && !email) return null;
+  const existing = state.contacts.find(contact =>
+    contact.companyId === input.companyId &&
+    ((email && contact.email && contact.email.toLowerCase() === email.toLowerCase()) ||
+    (name && contact.name && slug(contact.name) === slug(name)))
+  );
+  if(existing){
+    existing.roleId = input.roleId || existing.roleId;
+    existing.title = input.title || existing.title;
+    existing.source = input.source || existing.source;
+    if(input.notes && !existing.notes.includes(input.notes)) existing.notes = existing.notes ? `${existing.notes}\n${input.notes}` : input.notes;
+    existing.updatedAt = nowIso();
+    return existing;
+  }
+  const contact = normalizeContact({
+    id: state.nextIds.contact++,
+    companyId: input.companyId,
+    roleId: input.roleId || 0,
+    name,
+    email,
+    title: input.title || "",
+    source: input.source || "other",
+    notes: input.notes || "",
+    createdAt: nowIso(),
+    updatedAt: nowIso()
+  });
+  state.contacts.push(contact);
+  return contact;
+}
+function addEvent(input){
+  const event = normalizeEvent({
+    id: state.nextIds.event++,
+    companyId: input.companyId || 0,
+    roleId: input.roleId || 0,
+    applicationId: input.applicationId || 0,
+    kind: input.kind || "note",
+    channel: input.channel || "other",
+    occurredAt: input.occurredAt || nowIso(),
+    summary: input.summary || "",
+    details: input.details || "",
+    createdAt: nowIso()
+  });
+  state.events.push(event);
+  return event;
+}
+function addSignal(input){
+  const signal = normalizeSignal({
+    id: state.nextIds.signal++,
+    channel: input.channel || "other",
+    source: input.source || "other",
+    raw: input.raw || "",
+    summary: input.summary || "",
+    resolvedAt: input.resolvedAt || nowIso(),
+    createdAt: nowIso(),
+    parsed: input.parsed || {}
+  });
+  state.signals.push(signal);
+  return signal;
+}
+function findApplicationMatch(roleId, source, sourceUrl, preferAnySource){
+  const candidates = state.applications.filter(app => app.roleId === roleId);
+  if(!candidates.length) return null;
+  if(sourceUrl){
+    const exactUrl = candidates.find(app => app.sourceUrl && app.sourceUrl === sourceUrl);
+    if(exactUrl) return exactUrl;
+  }
+  const exactSource = candidates.find(app => app.source === source);
+  if(exactSource) return exactSource;
+  if(preferAnySource){
+    return candidates.slice().sort((left,right) => APP_STATUS[left.status].rank - APP_STATUS[right.status].rank || String(right.updatedAt).localeCompare(String(left.updatedAt)))[0] || null;
+  }
+  return null;
+}
+function upsertApplicationSignal(payload){
+  const company = ensureCompany({
+    name: payload.companyName,
+    category: payload.category,
+    location: payload.location,
+    housing: payload.housing,
+    website: payload.website || payload.sourceUrl,
+    priority: payload.priority,
+    notes: payload.companyNotes || ""
+  });
+  if(!company) return null;
+  const role = ensureRole(company.id, {
+    title: payload.roleTitle,
+    type: payload.roleType,
+    location: payload.location,
+    notes: payload.roleNotes || ""
+  });
+  if(!role) return null;
+  ensureContact({
+    companyId: company.id,
+    roleId: role.id,
+    name: payload.contactName,
+    email: payload.contactEmail,
+    title: payload.contactTitle || "",
+    source: payload.source,
+    notes: payload.contactNotes || ""
+  });
+  const source = SOURCE_STYLES[payload.source] ? payload.source : "other";
+  let application = findApplicationMatch(role.id, source, payload.sourceUrl || "", Boolean(payload.attachToExistingRole));
+  const created = !application;
+  if(!application){
+    application = normalizeApplication({
+      id: state.nextIds.application++,
+      companyId: company.id,
+      roleId: role.id,
+      source,
+      status: payload.status || "lead",
+      appliedAt: payload.appliedAt || "",
+      sourceUrl: payload.sourceUrl || "",
+      location: payload.location || role.location || company.location,
+      compensation: payload.compensation || "",
+      nextStep: payload.nextStep || "",
+      nextStepAt: payload.nextStepAt || "",
+      notes: payload.notes || "",
+      lastSignalAt: payload.signalAt || nowIso(),
+      createdAt: nowIso(),
+      updatedAt: nowIso()
+    });
+    state.applications.push(application);
+  } else {
+    application.status = payload.status || application.status;
+    application.appliedAt = payload.appliedAt || application.appliedAt;
+    application.sourceUrl = payload.sourceUrl || application.sourceUrl;
+    application.location = payload.location || application.location;
+    application.compensation = payload.compensation || application.compensation;
+    application.nextStep = payload.nextStep || application.nextStep;
+    application.nextStepAt = payload.nextStepAt || application.nextStepAt;
+    if(payload.notes && !application.notes.includes(payload.notes)) application.notes = application.notes ? `${application.notes}\n${payload.notes}` : payload.notes;
+    application.lastSignalAt = payload.signalAt || nowIso();
+    application.updatedAt = nowIso();
+  }
+  company.updatedAt = nowIso();
+  role.updatedAt = nowIso();
+  addSignal({
+    channel: payload.channel || source,
+    source,
+    raw: payload.rawSignal || "",
+    summary: payload.signalSummary || `${payload.roleTitle} at ${payload.companyName}`,
+    parsed: {
+      companyName: payload.companyName,
+      roleTitle: payload.roleTitle,
+      status: payload.status,
+      source
+    }
+  });
+  addEvent({
+    companyId: company.id,
+    roleId: role.id,
+    applicationId: application.id,
+    kind: payload.eventKind || (created ? "application" : "signal"),
+    channel: payload.channel || source,
+    occurredAt: payload.signalAt || payload.appliedAt || nowIso(),
+    summary: payload.eventSummary || (created ? `New ${statusLabel(application.status).toLowerCase()} record created` : `Application updated from ${sourceStyle(source).label}`),
+    details: payload.eventDetails || payload.notes || ""
+  });
+  return { company, role, application };
+}
+function applicationSummary(application){
+  return {
+    application,
+    role: state.roles.find(item => item.id === application.roleId),
+    company: state.companies.find(item => item.id === application.companyId)
+  };
+}
+function companyBundle(company){
+  const roles = state.roles.filter(role => role.companyId === company.id);
+  const applications = state.applications.filter(app => app.companyId === company.id);
+  const bestApp = applications.slice().sort((left,right) => APP_STATUS[left.status].rank - APP_STATUS[right.status].rank || String(right.updatedAt).localeCompare(String(left.updatedAt)))[0] || null;
+  const contacts = state.contacts.filter(contact => contact.companyId === company.id);
+  return { roles, applications, bestApp, contacts };
+}
+function roleBundle(role){
+  const applications = state.applications.filter(app => app.roleId === role.id);
+  const contacts = state.contacts.filter(contact => contact.roleId === role.id || (contact.roleId === 0 && contact.companyId === role.companyId));
+  const bestApp = applications.slice().sort((left,right) => APP_STATUS[left.status].rank - APP_STATUS[right.status].rank || String(right.updatedAt).localeCompare(String(left.updatedAt)))[0] || null;
+  return { applications, contacts, bestApp };
+}
+function pendingActions(){
+  const actions = [];
+  state.applications.forEach(app => {
+    const bundle = applicationSummary(app);
+    const nextIn = daysUntil(app.nextStepAt);
+    if(app.nextStep && (!app.nextStepAt || (nextIn !== null && nextIn <= 2))){
+      actions.push({ tone: nextIn !== null && nextIn < 0 ? "hot" : "warn", title: `${bundle.company?.name || "Unknown"} — ${bundle.role?.title || "Role"}`, meta: app.nextStepAt ? `${app.nextStep} (${nextIn < 0 ? `${Math.abs(nextIn)}d overdue` : nextIn === 0 ? "today" : `${nextIn}d out`})` : app.nextStep, appId: app.id });
+    }
+    const stale = daysSince(app.lastSignalAt || app.appliedAt);
+    if(["applied","confirmed"].includes(app.status) && stale !== null && stale >= 7){
+      actions.push({ tone: stale >= 14 ? "hot" : "warn", title: `${bundle.company?.name || "Unknown"} — ${bundle.role?.title || "Role"}`, meta: `No fresh signal in ${stale} days`, appId: app.id });
+    }
+    if(app.status === "interview"){
+      actions.push({ tone:"ok", title: `${bundle.company?.name || "Unknown"} — ${bundle.role?.title || "Role"}`, meta:"Interview stage active", appId: app.id });
+    }
+  });
+  return actions.slice().sort((left,right) => (left.tone === "hot" ? -1 : 1) - (right.tone === "hot" ? -1 : 1)).slice(0,8);
+}
+function mergeSuggestions(){
+  const suggestions = [];
+  const rolesByCompany = new Map();
+  state.roles.forEach(role => {
+    const key = String(role.companyId);
+    if(!rolesByCompany.has(key)) rolesByCompany.set(key, []);
+    rolesByCompany.get(key).push(role);
+  });
+  rolesByCompany.forEach(roles => {
+    for(let index = 0; index < roles.length; index++){
+      for(let compare = index + 1; compare < roles.length; compare++){
+        const left = roles[index];
+        const right = roles[compare];
+        const leftSlug = slug(left.title);
+        const rightSlug = slug(right.title);
+        if(leftSlug === rightSlug || leftSlug.includes(rightSlug) || rightSlug.includes(leftSlug)){
+          suggestions.push({ type:"role", leftId:left.id, rightId:right.id, title:`Possible duplicate role: ${left.title} / ${right.title}`, detail:"Same company and near-identical role titles." });
+        }
+      }
+    }
+  });
+  for(let index = 0; index < state.companies.length; index++){
+    for(let compare = index + 1; compare < state.companies.length; compare++){
+      const left = state.companies[index];
+      const right = state.companies[compare];
+      const leftHost = domainFromUrl(left.website);
+      const rightHost = domainFromUrl(right.website);
+      if((leftHost && rightHost && leftHost === rightHost) || slug(left.name) === slug(right.name)){
+        suggestions.push({ type:"company", leftId:left.id, rightId:right.id, title:`Possible duplicate company: ${left.name} / ${right.name}`, detail:"Matching web domain or normalized company name." });
+      }
+    }
+  }
+  return suggestions.slice(0,8);
+}
+function mergeRoles(primaryId, secondaryId){
+  const primary = state.roles.find(role => role.id === primaryId);
+  const secondary = state.roles.find(role => role.id === secondaryId);
+  if(!primary || !secondary) return;
+  state.applications.forEach(app => { if(app.roleId === secondaryId) app.roleId = primaryId; });
+  state.contacts.forEach(contact => { if(contact.roleId === secondaryId) contact.roleId = primaryId; });
+  state.events.forEach(event => { if(event.roleId === secondaryId) event.roleId = primaryId; });
+  state.roles = state.roles.filter(role => role.id !== secondaryId);
+  primary.updatedAt = nowIso();
+  persistState(`Merged duplicate role into ${primary.title}.`);
+  renderAll();
+}
+function mergeCompanies(primaryId, secondaryId){
+  const primary = state.companies.find(company => company.id === primaryId);
+  const secondary = state.companies.find(company => company.id === secondaryId);
+  if(!primary || !secondary) return;
+  state.roles.forEach(role => { if(role.companyId === secondaryId) role.companyId = primaryId; });
+  state.applications.forEach(app => { if(app.companyId === secondaryId) app.companyId = primaryId; });
+  state.contacts.forEach(contact => { if(contact.companyId === secondaryId) contact.companyId = primaryId; });
+  state.events.forEach(event => { if(event.companyId === secondaryId) event.companyId = primaryId; });
+  if(secondary.notes && !primary.notes.includes(secondary.notes)) primary.notes = primary.notes ? `${primary.notes}\n${secondary.notes}` : secondary.notes;
+  primary.updatedAt = nowIso();
+  state.companies = state.companies.filter(company => company.id !== secondaryId);
+  persistState(`Merged ${secondary.name} into ${primary.name}.`);
+  renderAll();
+}
+function parseEmailSignal(text){
+  const raw = String(text || "").trim();
+  const normalized = raw.toLowerCase();
+  const lines = raw.split(/\n+/).map(line => line.trim()).filter(Boolean);
+  const companyMatch = raw.match(/(?:at|with|to)\s+([A-Z][A-Za-z0-9&'().,\- ]{2,})/);
+  const roleMatch = raw.match(/(?:for|regarding|about)\s+the\s+([A-Z][A-Za-z0-9/&'().,\- ]{3,})\s+(?:role|position)/i) || raw.match(/position[:\s]+([A-Z][A-Za-z0-9/&'().,\- ]{3,})/i);
+  const emailMatch = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/ig)?.[0] || "";
+  const signOff = lines.slice(-6).find(line => /^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+$/.test(line)) || "";
+  let status = "lead";
+  let eventKind = "email";
+  if(/regret|not selected|moving forward with other candidates|unfortunately/i.test(normalized)){ status = "rejected"; eventKind = "rejection"; }
+  else if(/offer|congratulations/i.test(normalized)){ status = "offer"; eventKind = "offer"; }
+  else if(/interview|schedule|availability|calendar invite|phone screen/i.test(normalized)){ status = "interview"; eventKind = "interview"; }
+  else if(/thank you for applying|application received|received your application|submission received/i.test(normalized)){ status = "confirmed"; eventKind = "confirmation"; }
+  else if(/review|reviewing your application|hiring team/i.test(normalized)){ status = "review"; eventKind = "review"; }
+  else if(/recruiter|talent acquisition|would love to connect|let's chat/i.test(normalized)){ status = "recruiter"; eventKind = "recruiter"; }
+  return {
+    companyName: companyMatch?.[1]?.trim() || signOff || hostnameBrand(emailMatch ? `https://${emailMatch.split("@")[1]}` : "") || "Unknown company",
+    roleTitle: roleMatch?.[1]?.trim() || lines.find(line => /intern|engineer|analyst|co-op|manager|coordinator|technician/i.test(line)) || "Unknown role",
+    source: "email",
+    status,
+    eventKind,
+    signalSummary: `${eventKind} email parsed`,
+    eventSummary: `${statusLabel(status)} signal captured from email`,
+    eventDetails: lines.slice(0,6).join(" "),
+    contactName: signOff,
+    contactEmail: emailMatch,
+    notes: lines.slice(0,10).join(" "),
+    rawSignal: raw,
+    channel: "email",
+    signalAt: nowIso()
+  };
+}
+function guessSourceFromUrl(url){
+  const host = domainFromUrl(url);
+  if(host.includes("linkedin")) return "linkedin";
+  if(host.includes("indeed")) return "indeed";
+  if(host) return "direct";
+  return "browser";
+}
+function parseBrowserSignal(input){
+  const raw = [input.url || "", input.title || "", input.body || ""].filter(Boolean).join("\n\n");
+  const titleLine = input.title || "";
+  const roleFromTitle = titleLine.match(/^(.+?)\s+(?:at|-|\|)/i)?.[1]?.trim() || "";
+  const companyFromTitle = titleLine.match(/\s(?:at|-|\|)\s(.+)$/i)?.[1]?.trim() || "";
+  const companyFromText = input.body.match(/company[:\s]+([A-Z][A-Za-z0-9&'().,\- ]+)/i)?.[1]?.trim() || "";
+  const locationFromText = input.body.match(/(?:location|based in)[:\s]+([A-Z][A-Za-z0-9,.\- ]+)/i)?.[1]?.trim() || "";
+  return {
+    companyName: companyFromTitle || companyFromText || titleLine.split("|")[1]?.trim() || hostnameBrand(input.url) || "Unknown company",
+    roleTitle: roleFromTitle || input.body.match(/([A-Z][A-Za-z0-9/&'().,\- ]+(?:Intern|Engineer|Analyst|Co-op|Coordinator|Manager))/)?.[1]?.trim() || "Unknown role",
+    source: input.source || guessSourceFromUrl(input.url),
+    status: input.mode || "lead",
+    category: "",
+    location: locationFromText,
+    sourceUrl: input.url || "",
+    signalSummary: `${sourceStyle(input.source || "browser").label} page parsed`,
+    eventSummary: `${statusLabel(input.mode || "lead")} signal captured from browser context`,
+    eventDetails: raw.slice(0,500),
+    rawSignal: raw,
+    channel: "browser",
+    signalAt: nowIso()
+  };
+}
+function previewMarkup(parsed){
+  return `
+    <div class="parser-title">Parser preview</div>
+    <div class="chips" style="margin-bottom:10px">
+      <span class="status-pill ${APP_STATUS[parsed.status]?.cls || APP_STATUS.lead.cls}">${escapeHtml(statusLabel(parsed.status))}</span>
+      <span class="source-pill ${sourceStyle(parsed.source).cls}">${escapeHtml(sourceStyle(parsed.source).label)}</span>
+    </div>
+    <div class="list">
+      <div class="item"><div class="item-title">${escapeHtml(parsed.companyName)}</div><div class="item-meta">${escapeHtml(parsed.roleTitle)}</div></div>
+      <div class="item"><div class="item-title">Event</div><div class="item-meta">${escapeHtml(parsed.eventSummary || parsed.signalSummary || "Structured signal ready")}</div></div>
+      ${parsed.contactEmail || parsed.contactName ? `<div class="item"><div class="item-title">Contact</div><div class="item-meta">${escapeHtml([parsed.contactName, parsed.contactEmail].filter(Boolean).join(" • "))}</div></div>` : ""}
+      ${parsed.sourceUrl ? `<div class="item"><div class="item-title">Source URL</div><div class="item-meta">${escapeHtml(parsed.sourceUrl)}</div></div>` : ""}
+    </div>
+  `;
+}
+function previewEmailCapture(){
+  lastEmailPreview = parseEmailSignal(document.getElementById("email-source").value);
+  const node = document.getElementById("email-preview");
+  node.style.display = "block";
+  node.innerHTML = previewMarkup(lastEmailPreview);
+}
+function previewBrowserCapture(){
+  lastBrowserPreview = parseBrowserSignal({
+    url: document.getElementById("browser-url").value.trim(),
+    title: document.getElementById("browser-title").value.trim(),
+    body: document.getElementById("browser-text").value.trim(),
+    source: document.getElementById("browser-source").value,
+    mode: document.getElementById("browser-mode").value
+  });
+  const node = document.getElementById("browser-preview");
+  node.style.display = "block";
+  node.innerHTML = previewMarkup(lastBrowserPreview);
+}
+function submitManualCapture(){
+  const companyName = document.getElementById("manual-company").value.trim();
+  const roleTitle = document.getElementById("manual-role").value.trim();
+  if(!companyName || !roleTitle){
+    alert("Company and role title are required.");
+    return;
+  }
+  const result = upsertApplicationSignal({
+    companyName,
+    roleTitle,
+    category: document.getElementById("manual-category").value,
+    location: document.getElementById("manual-location").value.trim(),
+    housing: "No",
+    website: document.getElementById("manual-url").value.trim(),
+    priority: document.getElementById("manual-priority").value,
+    roleType: document.getElementById("manual-type").value,
+    source: document.getElementById("manual-source").value,
+    status: document.getElementById("manual-status").value,
+    appliedAt: document.getElementById("manual-applied-at").value,
+    sourceUrl: document.getElementById("manual-url").value.trim(),
+    compensation: document.getElementById("manual-pay").value.trim(),
+    nextStep: document.getElementById("manual-next-step").value.trim(),
+    nextStepAt: document.getElementById("manual-next-at").value,
+    contactName: document.getElementById("manual-contact-name").value.trim(),
+    contactEmail: document.getElementById("manual-contact-email").value.trim(),
+    notes: document.getElementById("manual-notes").value.trim(),
+    rawSignal: JSON.stringify({ companyName, roleTitle, source:"manual" }),
+    signalSummary: `Manual capture for ${roleTitle}`,
+    eventSummary: `Manual capture recorded for ${roleTitle}`,
+    eventDetails: document.getElementById("manual-notes").value.trim(),
+    channel: "other",
+    signalAt: nowIso()
+  });
+  if(!result) return;
+  persistState(`Captured ${roleTitle} at ${companyName}.`);
+  closeModal("capture-modal");
+  clearCaptureForms();
+  renderAll();
+}
+function submitEmailCapture(){
+  const source = document.getElementById("email-source").value.trim();
+  if(!source){
+    alert("Paste the email text first.");
+    return;
+  }
+  const parsed = lastEmailPreview || parseEmailSignal(source);
+  if(!upsertApplicationSignal(parsed)) return;
+  persistState(`Ingested email signal for ${parsed.companyName}.`);
+  closeModal("capture-modal");
+  clearCaptureForms();
+  renderAll();
+}
+function submitBrowserCapture(){
+  const text = document.getElementById("browser-text").value.trim();
+  const title = document.getElementById("browser-title").value.trim();
+  if(!text && !title){
+    alert("Paste a page title or copied page text first.");
+    return;
+  }
+  const parsed = lastBrowserPreview || parseBrowserSignal({
+    url: document.getElementById("browser-url").value.trim(),
+    title,
+    body: text,
+    source: document.getElementById("browser-source").value,
+    mode: document.getElementById("browser-mode").value
+  });
+  if(!upsertApplicationSignal(parsed)) return;
+  persistState(`Ingested browser signal for ${parsed.companyName}.`);
+  closeModal("capture-modal");
+  clearCaptureForms();
+  renderAll();
+}
+function fillBrowserCaptureForm(payload){
+  document.getElementById("browser-url").value = String(payload.url || "").trim();
+  document.getElementById("browser-title").value = String(payload.title || "").trim();
+  document.getElementById("browser-text").value = String(payload.text || payload.body || "").trim();
+  document.getElementById("browser-source").value = SOURCE_STYLES[payload.source] ? payload.source : guessSourceFromUrl(payload.url || "");
+  document.getElementById("browser-mode").value = ["lead","applied","review"].includes(payload.mode) ? payload.mode : "lead";
+}
+function handleIncomingCapturePayload(){
+  if(!location.hash.startsWith("#surge-capture=")) return;
+  try{
+    const encoded = location.hash.slice("#surge-capture=".length);
+    const payload = JSON.parse(decodeURIComponent(encoded));
+    fillBrowserCaptureForm(payload);
+    state.sync.lastBrowserCaptureAt = nowIso();
+    state.sync.browserCaptureCount += 1;
+    persistState("Browser capture received.");
+    openCapture("browser");
+    previewBrowserCapture();
+  }catch{
+    footer("Browser capture payload could not be read.");
+  }finally{
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+}
+function openCapture(tab){
+  openModal("capture-modal");
+  switchCaptureTab(tab || "manual", document.querySelector(`.capture-tab[data-capture="${tab || "manual"}"]`));
+}
+function switchCaptureTab(tab, button){
+  captureMode = tab;
+  document.querySelectorAll(".capture-pane").forEach(node => node.classList.remove("on"));
+  document.querySelectorAll(".capture-tab").forEach(node => node.classList.remove("on"));
+  document.getElementById(`capture-${tab}`).classList.add("on");
+  if(button) button.classList.add("on");
+}
+function clearCaptureForms(){
+  ["manual-company","manual-role","manual-location","manual-url","manual-contact-name","manual-contact-email","manual-pay","manual-next-step","manual-notes","manual-applied-at","manual-next-at","email-source","browser-url","browser-title","browser-text"].forEach(id => {
+    const field = document.getElementById(id);
+    if(field) field.value = "";
+  });
+  document.getElementById("manual-source").value = "direct";
+  document.getElementById("manual-status").value = "lead";
+  document.getElementById("manual-priority").value = "med";
+  document.getElementById("manual-type").value = "internship";
+  document.getElementById("manual-category").value = COMPANY_CATEGORIES[0];
+  document.getElementById("browser-source").value = "browser";
+  document.getElementById("browser-mode").value = "lead";
+  document.getElementById("email-preview").style.display = "none";
+  document.getElementById("browser-preview").style.display = "none";
+  document.getElementById("email-preview").innerHTML = "";
+  document.getElementById("browser-preview").innerHTML = "";
+  lastEmailPreview = null;
+  lastBrowserPreview = null;
+}
+function openModal(id){ document.getElementById(id).classList.add("open"); }
+function closeModal(id){ document.getElementById(id).classList.remove("open"); }
+function nav(view, button){
+  currentView = view;
+  document.querySelectorAll(".view").forEach(node => node.classList.remove("on"));
+  document.querySelectorAll(".tnb").forEach(node => node.classList.remove("on"));
+  document.getElementById(`view-${view}`).classList.add("on");
+  if(button) button.classList.add("on");
+  renderView();
+}
+function navTo(view){ nav(view, document.querySelector(`.tnb[data-view="${view}"]`)); }
+function renderChrome(){
+  const applications = state.applications.length;
+  const active = state.applications.filter(app => !["rejected","withdrawn"].includes(app.status)).length;
+  const interviews = state.applications.filter(app => app.status === "interview").length;
+  const offers = state.applications.filter(app => app.status === "offer").length;
+  const signals = state.signals.length;
+  const due = pendingActions().length;
+  const backup = state.lastExportedAt ? `Last export ${fullDate(state.lastExportedAt)}.` : "No backup exported yet.";
+  document.getElementById("storage-summary").textContent = `${applications} application attempt${applications === 1 ? "" : "s"}, ${signals} captured signal${signals === 1 ? "" : "s"}, ${due} action item${due === 1 ? "" : "s"} due. ${backup}`;
+  document.getElementById("metrics").innerHTML = `
+    <div class="metric"><div class="metric-label">Companies</div><div class="metric-value">${state.companies.length}</div><div class="metric-sub">Canonical employer records</div></div>
+    <div class="metric"><div class="metric-label">Roles</div><div class="metric-value accent">${state.roles.length}</div><div class="metric-sub">Distinct role identities</div></div>
+    <div class="metric"><div class="metric-label">Applications</div><div class="metric-value blue">${applications}</div><div class="metric-sub">Attempt history by source</div></div>
+    <div class="metric"><div class="metric-label">Active</div><div class="metric-value green">${active}</div><div class="metric-sub">Open application attempts</div></div>
+    <div class="metric"><div class="metric-label">Interviews</div><div class="metric-value amber">${interviews}</div><div class="metric-sub">Interview-stage records</div></div>
+    <div class="metric"><div class="metric-label">Offers</div><div class="metric-value purple">${offers}</div><div class="metric-sub">Offer-stage records</div></div>
+  `;
+  renderBanner();
+}
+function renderBanner(){
+  const node = document.getElementById("hero-banner");
+  const actions = pendingActions();
+  if(!actions.length){
+    node.className = "hero-banner";
+    node.innerHTML = "";
+    return;
+  }
+  const hot = actions.filter(action => action.tone === "hot").length;
+  const warn = actions.filter(action => action.tone === "warn").length;
+  node.className = "hero-banner on";
+  node.innerHTML = `
+    <div class="hero-copy">
+      <div class="hero-icon">!</div>
+      <div>
+        <div class="hero-title">Surge attention queue</div>
+        <div class="hero-text">${hot} overdue item${hot === 1 ? "" : "s"} and ${warn} upcoming nudge${warn === 1 ? "" : "s"} need attention.</div>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button class="ghost" onclick="navTo('overview')">Open overview</button>
+      <button class="ghost" onclick="openCapture('email')">Parse email</button>
+    </div>
+  `;
+}
+function renderConnections(){
+  const node = document.getElementById("sync-setup");
+  if(!node) return;
+  const originReady = isSupportedOrigin();
+  const googleConfigured = Boolean(state.settings.googleClientId);
+  const gmailReady = syncEnabled();
+  const browserCount = state.sync.browserCaptureCount || 0;
+  node.innerHTML = `
+    <div class="item">
+      <div class="item-title">Origin</div>
+      <div class="item-meta">${originReady ? `Running from ${escapeHtml(window.location.origin)}` : "Open Surge from localhost or a secure HTTPS origin so Google OAuth can attach to a valid web origin."}</div>
+      <div class="meta-line"><span class="tag ${originReady ? "priority-high" : "priority-med"}">${originReady ? "Ready" : "Needs valid origin"}</span><button class="tiny" onclick="openSetup()">Setup</button></div>
+    </div>
+    <div class="item">
+      <div class="item-title">Google connection</div>
+      <div class="item-meta">${googleConfigured ? "OAuth client ID saved locally." : "Add your Google OAuth Web application client ID in Connections."}</div>
+      <div class="meta-line"><span class="tag ${googleConfigured ? "priority-high" : "priority-med"}">${googleConfigured ? "Configured" : "Missing client ID"}</span><button class="tiny" onclick="connectGoogle()">Connect Google</button></div>
+    </div>
+    <div class="item">
+      <div class="item-title">Mailbox and calendar sync</div>
+      <div class="item-meta">Gmail query: ${escapeHtml(state.settings.gmailQuery)}. Last Gmail sync: ${escapeHtml(state.sync.lastGmailSyncAt ? fullDate(state.sync.lastGmailSyncAt) : "Never")}. Last Calendar sync: ${escapeHtml(state.sync.lastCalendarSyncAt ? fullDate(state.sync.lastCalendarSyncAt) : "Never")}.</div>
+      <div class="meta-line"><button class="tiny" onclick="runGmailSync()" ${gmailReady ? "" : "disabled"}>Sync Gmail</button><button class="tiny" onclick="runCalendarSync()" ${gmailReady ? "" : "disabled"}>Sync Calendar</button></div>
+    </div>
+    <div class="item">
+      <div class="item-title">Browser capture handoff</div>
+      <div class="item-meta">${browserCount ? `${browserCount} extension capture${browserCount === 1 ? "" : "s"} received. Last handoff: ${escapeHtml(state.sync.lastBrowserCaptureAt ? fullDate(state.sync.lastBrowserCaptureAt) : "Never")}.` : `Install the companion extension and point it at ${escapeHtml(state.settings.surgeUrl)}.`}</div>
+      <div class="meta-line"><span class="tag">${escapeHtml(state.settings.surgeUrl)}</span></div>
+    </div>
+  `;
+}
+function renderView(){
+  if(currentView === "overview") renderOverview();
+  if(currentView === "pipeline") renderPipeline();
+  if(currentView === "companies") renderCompanies();
+  if(currentView === "activity") renderActivity();
+}
+function applicationAttention(app){
+  const nextIn = daysUntil(app.nextStepAt);
+  if(nextIn !== null && nextIn < 0) return { tone:"hot", text:`Next step overdue by ${Math.abs(nextIn)} day${Math.abs(nextIn) === 1 ? "" : "s"}` };
+  if(nextIn !== null && nextIn <= 2) return { tone:"warn", text:`Next step due ${nextIn === 0 ? "today" : `in ${nextIn} day${nextIn === 1 ? "" : "s"}`}` };
+  const stale = daysSince(app.lastSignalAt || app.appliedAt);
+  if(["applied","confirmed"].includes(app.status) && stale !== null && stale >= 7) return { tone:stale >= 14 ? "hot" : "warn", text:`No signal in ${stale} days` };
+  if(app.status === "interview") return { tone:"ok", text:"Interview flow active" };
+  if(app.nextStep) return { tone:"ok", text:app.nextStep };
+  return null;
+}
+function roleCard(role){
+  const bundle = roleBundle(role);
+  const company = state.companies.find(item => item.id === role.companyId);
+  const attention = bundle.bestApp ? applicationAttention(bundle.bestApp) : null;
+  return `<div class="role-card"><div class="role-head"><div class="role-main"><div class="role-title">${escapeHtml(role.title)}</div><div class="role-meta">${escapeHtml(role.location || company?.location || "Location TBD")} • ${bundle.applications.length} application attempt${bundle.applications.length === 1 ? "" : "s"}</div><div class="tag-row" style="margin-top:8px"><span class="tag">${escapeHtml(ROLE_TYPES[role.type])}</span>${bundle.bestApp ? `<span class="status-pill ${APP_STATUS[bundle.bestApp.status].cls}">${escapeHtml(statusLabel(bundle.bestApp.status))}</span>` : ""}${bundle.bestApp ? `<span class="source-pill ${sourceStyle(bundle.bestApp.source).cls}">${escapeHtml(sourceStyle(bundle.bestApp.source).label)}</span>` : ""}</div>${attention ? `<div class="attention ${attention.tone}">${escapeHtml(attention.text)}</div>` : ""}</div></div><div class="meta-line">${bundle.applications.map(app => `<span class="tag">${escapeHtml(sourceStyle(app.source).label)}${app.appliedAt ? ` • ${escapeHtml(shortDate(app.appliedAt))}` : ""}</span>`).join("")}</div></div>`;
+}
+function renderOverview(){
+  renderConnections();
+  const actionQueue = pendingActions();
+  document.getElementById("action-queue").innerHTML = actionQueue.length ? actionQueue.map(action => `<div class="action-card"><div class="action-head"><div><div class="item-title">${escapeHtml(action.title)}</div><div class="action-meta">${escapeHtml(action.meta)}</div></div><button class="tiny" onclick="focusApplication(${action.appId})">Open</button></div><div class="attention ${action.tone}" style="margin-top:10px">${escapeHtml(action.tone === "hot" ? "Needs attention now" : action.tone === "warn" ? "Plan the next move" : "Healthy cadence")}</div></div>`).join("") : `<div class="empty">No urgent actions. Surge is caught up.</div>`;
+  const signals = state.signals.slice().sort((left,right) => String(right.createdAt).localeCompare(String(left.createdAt))).slice(0,8);
+  document.getElementById("signal-inbox").innerHTML = signals.length ? signals.map(signal => `<div class="signal-card"><div class="signal-head"><div><div class="signal-title">${escapeHtml(signal.summary || "Captured signal")}</div><div class="signal-meta">${escapeHtml(sourceStyle(signal.source).label)} • ${escapeHtml(fullDate(signal.createdAt))}</div></div><span class="source-pill ${sourceStyle(signal.source).cls}">${escapeHtml(sourceStyle(signal.source).label)}</span></div><div class="signal-meta" style="margin-top:10px">${escapeHtml(signal.raw.slice(0,180) || "Structured capture")}${signal.raw.length > 180 ? "..." : ""}</div></div>`).join("") : `<div class="empty">No signals yet. Capture an application, paste an email, or paste a page.</div>`;
+  const merges = mergeSuggestions();
+  document.getElementById("merge-queue").innerHTML = merges.length ? merges.map(suggestion => `<div class="merge-card"><div class="item-title">${escapeHtml(suggestion.title)}</div><div class="item-meta">${escapeHtml(suggestion.detail)}</div><div class="meta-line"><button class="tiny" onclick="${suggestion.type === "role" ? `mergeRoles(${suggestion.leftId}, ${suggestion.rightId})` : `mergeCompanies(${suggestion.leftId}, ${suggestion.rightId})`}">Merge</button></div></div>`).join("") : `<div class="empty">No obvious duplicates right now.</div>`;
+  const topCompanies = state.companies.map(company => ({ company, bundle: companyBundle(company) })).sort((left,right) => { const leftRank = left.bundle.bestApp ? APP_STATUS[left.bundle.bestApp.status].rank : 99; const rightRank = right.bundle.bestApp ? APP_STATUS[right.bundle.bestApp.status].rank : 99; return leftRank - rightRank || String(right.company.updatedAt).localeCompare(String(left.company.updatedAt)); }).slice(0,6);
+  document.getElementById("overview-companies").innerHTML = topCompanies.length ? topCompanies.map(({company, bundle}) => { const [bg, ink] = CATEGORY_COLORS[company.category] || CATEGORY_COLORS.Other; return `<div class="company-card"><div class="company-head"><div class="avatar" style="background:${bg};color:${ink}">${escapeHtml(initials(company.name))}</div><div class="company-main"><div class="company-name">${escapeHtml(company.name)}</div><div class="company-meta">${escapeHtml(company.category)} • ${escapeHtml(company.location || "Location TBD")}</div><div class="tag-row" style="margin-top:8px"><span class="tag priority-${company.priority}">${company.priority === "high" ? "High priority" : company.priority === "med" ? "Medium" : "Low"}</span>${bundle.bestApp ? `<span class="status-pill ${APP_STATUS[bundle.bestApp.status].cls}">${escapeHtml(statusLabel(bundle.bestApp.status))}</span>` : `<span class="tag">No application yet</span>`}</div></div></div><div class="role-stack">${bundle.roles.slice(0,2).map(roleCard).join("")}</div></div>`; }).join("") : `<div class="empty">No companies yet. Start with a manual, email, or browser capture.</div>`;
+}
+function focusApplication(appId){
+  const app = state.applications.find(item => item.id === appId);
+  if(!app) return;
+  expandedCompanies.add(app.companyId);
+  navTo("companies");
+}
+function renderPipeline(){
+  document.getElementById("pipeline-grid").innerHTML = PIPELINE_COLUMNS.map(column => {
+    const apps = state.applications.filter(app => APP_STATUS[app.status].pipeline === column.key).sort((left,right) => APP_STATUS[left.status].rank - APP_STATUS[right.status].rank || String(right.updatedAt).localeCompare(String(left.updatedAt)));
+    return `<div class="bucket"><div class="bucket-head"><div class="bucket-title">${escapeHtml(column.label)}</div><span class="tag">${apps.length}</span></div><div class="bucket-list">${apps.length ? apps.map(app => { const bundle = applicationSummary(app); return `<div class="bucket-card"><strong>${escapeHtml(bundle.role?.title || "Role")}</strong><span>${escapeHtml(bundle.company?.name || "Unknown company")}</span><span>${escapeHtml(sourceStyle(app.source).label)}${app.appliedAt ? ` • ${escapeHtml(shortDate(app.appliedAt))}` : ""}</span><div style="margin-top:8px"><button class="tiny" onclick="focusApplication(${app.id})">Open</button></div></div>`; }).join("") : `<div class="empty">Nothing here.</div>`}</div></div>`;
+  }).join("");
+}
+function renderCompanies(){
+  const query = normalizeText(document.getElementById("company-search").value);
+  const priority = document.getElementById("company-priority").value;
+  const sort = document.getElementById("company-sort").value;
+  let companies = state.companies.slice();
+  if(query){
+    companies = companies.filter(company => {
+      const bundle = companyBundle(company);
+      const searchSpace = [company.name, company.category, company.location, company.notes, ...bundle.roles.map(role => role.title), ...bundle.applications.flatMap(app => [app.notes, app.nextStep, app.source, app.sourceUrl]), ...bundle.contacts.flatMap(contact => [contact.name, contact.email, contact.title])].join(" ");
+      return normalizeText(searchSpace).includes(query);
+    });
+  }
+  if(priority) companies = companies.filter(company => company.priority === priority);
+  companies.sort((left,right) => {
+    const leftBundle = companyBundle(left);
+    const rightBundle = companyBundle(right);
+    if(sort === "name") return left.name.localeCompare(right.name);
+    if(sort === "activity") return String(right.updatedAt).localeCompare(String(left.updatedAt));
+    if(sort === "stage"){
+      const leftRank = leftBundle.bestApp ? APP_STATUS[leftBundle.bestApp.status].rank : 99;
+      const rightRank = rightBundle.bestApp ? APP_STATUS[rightBundle.bestApp.status].rank : 99;
+      return leftRank - rightRank;
+    }
+    const ranks = { high:0, med:1, low:2 };
+    return (ranks[left.priority] ?? 9) - (ranks[right.priority] ?? 9) || String(right.updatedAt).localeCompare(String(left.updatedAt));
+  });
+  const list = document.getElementById("company-list");
+  if(!companies.length){
+    list.innerHTML = `<div class="empty">No companies match that search.</div>`;
+    return;
+  }
+  list.innerHTML = companies.map(company => {
+    const bundle = companyBundle(company);
+    const [bg, ink] = CATEGORY_COLORS[company.category] || CATEGORY_COLORS.Other;
+    const open = expandedCompanies.has(company.id);
+    const topStatus = bundle.bestApp ? statusLabel(bundle.bestApp.status) : "No application";
+    return `<div class="company-card"><div class="company-head"><div class="avatar" style="background:${bg};color:${ink}">${escapeHtml(initials(company.name))}</div><div class="company-main"><div class="row"><div class="company-name">${escapeHtml(company.name)}</div><span class="tag priority-${company.priority}">${company.priority === "high" ? "High priority" : company.priority === "med" ? "Medium" : "Low"}</span>${bundle.bestApp ? `<span class="status-pill ${APP_STATUS[bundle.bestApp.status].cls}">${escapeHtml(topStatus)}</span>` : ""}</div><div class="company-meta">${escapeHtml(company.category)} • ${escapeHtml(company.location || "Location TBD")} • ${escapeHtml(company.housing)} housing/relocation</div>${company.notes ? `<div class="muted" style="margin-top:8px">${escapeHtml(company.notes)}</div>` : ""}<div class="tag-row" style="margin-top:10px"><span class="tag">${bundle.roles.length} role${bundle.roles.length === 1 ? "" : "s"}</span><span class="tag">${bundle.applications.length} application attempt${bundle.applications.length === 1 ? "" : "s"}</span><span class="tag">${bundle.contacts.length} contact${bundle.contacts.length === 1 ? "" : "s"}</span></div></div><div class="stack-row"><button class="tiny" onclick="toggleCompany(${company.id})">${open ? "Collapse" : "Expand"}</button><button class="tiny" onclick="prefillManualForCompany(${company.id})">Add role</button></div></div>${open ? `<div class="role-stack">${bundle.roles.length ? bundle.roles.map(roleCard).join("") : `<div class="empty">No roles at this company yet.</div>`}</div>` : ""}</div>`;
+  }).join("");
+}
+function toggleCompany(companyId){
+  if(expandedCompanies.has(companyId)) expandedCompanies.delete(companyId);
+  else expandedCompanies.add(companyId);
+  renderCompanies();
+}
+function prefillManualForCompany(companyId){
+  const company = state.companies.find(item => item.id === companyId);
+  if(!company) return;
+  document.getElementById("manual-company").value = company.name;
+  document.getElementById("manual-category").value = company.category;
+  document.getElementById("manual-location").value = company.location;
+  document.getElementById("manual-url").value = company.website;
+  document.getElementById("manual-priority").value = company.priority;
+  openCapture("manual");
+}
+function renderActivity(){
+  const events = state.events.slice().sort((left,right) => String(right.occurredAt).localeCompare(String(left.occurredAt))).slice(0,40);
+  document.getElementById("activity-timeline").innerHTML = events.length ? events.map(event => { const company = state.companies.find(item => item.id === event.companyId); const role = state.roles.find(item => item.id === event.roleId); return `<div class="event-card"><div class="timeline-row"><div class="event-main"><div class="event-title">${escapeHtml(event.summary)}</div><div class="event-meta">${escapeHtml(company?.name || "Unknown company")}${role ? ` • ${escapeHtml(role.title)}` : ""}</div>${event.details ? `<div class="muted" style="margin-top:8px">${escapeHtml(event.details)}</div>` : ""}</div><div class="chips"><span class="source-pill ${sourceStyle(event.channel).cls}">${escapeHtml(sourceStyle(event.channel).label)}</span><span class="tag">${escapeHtml(fullDate(event.occurredAt))}</span></div></div></div>`; }).join("") : `<div class="empty">No events yet.</div>`;
+  const contacts = state.contacts.slice().sort((left,right) => String(right.updatedAt).localeCompare(String(left.updatedAt)));
+  document.getElementById("contact-list").innerHTML = contacts.length ? contacts.map(contact => { const company = state.companies.find(item => item.id === contact.companyId); const role = state.roles.find(item => item.id === contact.roleId); return `<div class="item"><div class="item-title">${escapeHtml(contact.name || contact.email || "Unnamed contact")}</div><div class="item-meta">${escapeHtml(contact.title || "Contact")} • ${escapeHtml(company?.name || "Unknown company")}${role ? ` • ${escapeHtml(role.title)}` : ""}</div>${contact.email ? `<div class="muted" style="margin-top:8px">${escapeHtml(contact.email)}</div>` : ""}</div>`; }).join("") : `<div class="empty">No contacts captured yet.</div>`;
+}
+function attachStaticOptions(){
+  document.getElementById("manual-category").innerHTML = COMPANY_CATEGORIES.map(category => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
+  document.getElementById("manual-type").innerHTML = Object.entries(ROLE_TYPES).map(([value,label]) => `<option value="${value}">${escapeHtml(label)}</option>`).join("");
+}
+function hookModalDismiss(){
+  document.querySelectorAll(".modal-wrap").forEach(modal => {
+    modal.addEventListener("click", event => {
+      if(event.target === modal) modal.classList.remove("open");
+    });
+  });
+}
+function renderAll(){
+  renderChrome();
+  renderView();
+}
+document.getElementById("import-file").addEventListener("change", handleImport);
+document.addEventListener("keydown", event => {
+  if(event.key === "Escape") closeModal("capture-modal");
+  if(event.key === "/" && !["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)){
+    event.preventDefault();
+    if(currentView !== "companies") navTo("companies");
+    document.getElementById("company-search").focus();
+  }
+});
+window.addEventListener("hashchange", handleIncomingCapturePayload);
+attachStaticOptions();
+hookModalDismiss();
+clearCaptureForms();
+loadState();
+if(/^https?:/i.test(window.location.origin || "")) state.settings.surgeUrl = inferCurrentSurgeUrl();
+expandedCompanies = new Set(state.companies.slice(0,3).map(company => company.id));
+renderAll();
+handleIncomingCapturePayload();
+</script>
+</body>
+</html>

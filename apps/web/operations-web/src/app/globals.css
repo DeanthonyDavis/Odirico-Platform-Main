@@ -678,6 +678,24 @@ button {
   gap: 1.2rem;
 }
 
+.surge-runtime-stack {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.surge-runtime-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.surge-runtime-frame {
+  display: block;
+  width: 100%;
+  min-height: calc(100vh - 18rem);
+  border: 0;
+  background: transparent;
+}
+
 .stats-grid,
 .panel-grid,
 .detail-grid,
