@@ -14,10 +14,16 @@ function resolveNextPath(nextPath: string | null) {
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
   const nextPath = resolveNextPath(request.nextUrl.searchParams.get("next"));
+  const providerError =
+    request.nextUrl.searchParams.get("error_description") ??
+    request.nextUrl.searchParams.get("error");
 
   if (!code) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("error", "Missing OAuth callback code.");
+    loginUrl.searchParams.set(
+      "error",
+      providerError ?? "Google sign-in did not complete. Start again from the login page.",
+    );
     return NextResponse.redirect(loginUrl);
   }
 
