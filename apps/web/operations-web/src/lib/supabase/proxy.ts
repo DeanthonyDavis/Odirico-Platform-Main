@@ -30,9 +30,11 @@ export async function updateSession(request: NextRequest) {
   const isProtected = PROTECTED_PATHS.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
+  const isAuthEntry =
+    request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup";
   const resolvedNextPath = resolveNextPath(request.nextUrl.searchParams.get("next"));
 
-  if (hasDemoSession && request.nextUrl.pathname === "/login") {
+  if (hasDemoSession && isAuthEntry) {
     return NextResponse.redirect(new URL(resolvedNextPath, request.url));
   }
 
@@ -70,7 +72,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (user && request.nextUrl.pathname === "/login") {
+  if (user && isAuthEntry) {
     return NextResponse.redirect(new URL(resolvedNextPath, request.url));
   }
 

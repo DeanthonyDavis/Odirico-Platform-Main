@@ -263,6 +263,24 @@ button {
   font-size: 0.95rem;
 }
 
+.auth-mode-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.auth-footnote {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+.auth-footnote a {
+  color: var(--brand);
+  font-weight: 600;
+}
+
 .landing-actions,
 .auth-actions,
 .toolbar-actions,

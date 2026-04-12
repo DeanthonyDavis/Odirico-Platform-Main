@@ -1,15 +1,32 @@
 "use client";
 
+import Link from "next/link";
 import type { Route } from "next";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
 import { createClientSupabaseClient } from "@/lib/supabase/client";
 
-export function LoginForm() {
+type LoginFormProps = {
+  mode?: "signin" | "signup";
+};
+
+function buildAuthHref(pathname: "/login" | "/signup", nextPath: Route) {
+  const search = new URLSearchParams();
+
+  if (nextPath !== "/overview") {
+    search.set("next", nextPath);
+  }
+
+  const query = search.toString();
+  return query ? `${pathname}?${query}` : pathname;
+}
+
+export function LoginForm({ mode = "signin" }: LoginFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const demoModeEnabled = process.env.NEXT_PUBLIC_ENABLE_DEMO_AUTH === "true";
+  const isSignup = mode === "signup";
   const [isPending, startTransition] = useTransition();
   const [isGooglePending, setIsGooglePending] = useState(false);
   const [email, setEmail] = useState("");
@@ -20,6 +37,8 @@ export function LoginForm() {
   const callbackMessage = searchParams.get("message");
 
   const nextPath = ((searchParams.get("next") as Route | null) ?? "/overview") as Route;
+  const signInHref = buildAuthHref("/login", nextPath);
+  const signUpHref = buildAuthHref("/signup", nextPath);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,6 +46,37 @@ export function LoginForm() {
     setMessage(null);
 
     const supabase = createClientSupabaseClient();
+
+    if (isSignup) {
+      const confirmationUrl = new URL("/login", window.location.origin);
+      confirmationUrl.searchParams.set("message", "Email confirmed. Sign in to continue.");
+      confirmationUrl.searchParams.set("next", nextPath);
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: confirmationUrl.toString(),
+        },
+      });
+
+      if (signUpError) {
+        setError(signUpError.message);
+        return;
+      }
+
+      if (data.session) {
+        startTransition(() => {
+          router.replace(nextPath);
+          router.refresh();
+        });
+        return;
+      }
+
+      setMessage("Check your email to confirm your account, then return here to sign in.");
+      return;
+    }
+
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -110,8 +160,21 @@ export function LoginForm() {
     <form className="auth-card" onSubmit={handleSubmit}>
       <div className="auth-heading">
         <p className="eyebrow">Odirico Platform</p>
-        <h1>Sign in</h1>
-        <p>Use your account to enter the connected Ember, Sol, and Surge ecosystem.</p>
+        <h1>{isSignup ? "Create your account" : "Sign in"}</h1>
+        <p>
+          {isSignup
+            ? "Use Google or email to create one account for the connected Ember, Sol, and Surge ecosystem."
+            : "Use your account to enter the connected Ember, Sol, and Surge ecosystem."}
+        </p>
+      </div>
+
+      <div className="auth-mode-switch">
+        <Link className={!isSignup ? "chip-button active" : "chip-button"} href={signInHref}>
+          Sign in
+        </Link>
+        <Link className={isSignup ? "chip-button active" : "chip-button"} href={signUpHref}>
+          Create account
+        </Link>
       </div>
 
       <label className="field">
@@ -146,8 +209,16 @@ export function LoginForm() {
         onClick={handleGoogleLogin}
         type="button"
       >
-        {isGooglePending ? "Redirecting to Google..." : "Continue with Google"}
+        {isGooglePending
+          ? "Redirecting to Google..."
+          : isSignup
+            ? "Sign up with Google"
+            : "Continue with Google"}
       </button>
+
+      <p className="auth-footnote">
+        First-time Google use creates your account automatically. After that, it works like sign in.
+      </p>
 
       {error || callbackError ? <p className="form-error">{error ?? callbackError}</p> : null}
       {message || callbackMessage ? (
@@ -156,16 +227,18 @@ export function LoginForm() {
 
       <div className="auth-actions">
         <button className="primary-button" disabled={isPending} type="submit">
-          {isPending ? "Signing in..." : "Sign in"}
+          {isPending ? (isSignup ? "Creating account..." : "Signing in...") : isSignup ? "Create account" : "Sign in"}
         </button>
-        <button
-          className="ghost-button"
-          disabled={!email || isPending}
-          onClick={handleResetPassword}
-          type="button"
-        >
-          Send reset link
-        </button>
+        {!isSignup ? (
+          <button
+            className="ghost-button"
+            disabled={!email || isPending}
+            onClick={handleResetPassword}
+            type="button"
+          >
+            Send reset link
+          </button>
+        ) : null}
         {demoModeEnabled ? (
           <button
             className="ghost-button"
@@ -177,6 +250,18 @@ export function LoginForm() {
           </button>
         ) : null}
       </div>
+
+      <p className="auth-footnote">
+        {isSignup ? (
+          <>
+            Already have an account? <Link href={signInHref}>Sign in</Link>.
+          </>
+        ) : (
+          <>
+            Need an account? <Link href={signUpHref}>Create one</Link>.
+          </>
+        )}
+      </p>
 
       {demoModeEnabled ? (
         <p className="form-message">

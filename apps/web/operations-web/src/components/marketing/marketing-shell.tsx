@@ -94,7 +94,7 @@ export function MarketingShell({ children }: MarketingShellProps) {
               </Link>
               <Link
                 className="marketing-button marketing-button-primary"
-                href="/login"
+                href="/signup"
                 onClick={() => setIsOpen(false)}
               >
                 Get Started
@@ -161,6 +161,9 @@ export function MarketingShell({ children }: MarketingShellProps) {
           <div>
             <h3>Access</h3>
             <ul className="marketing-footer-list">
+              <li>
+                <Link href="/signup">Create account</Link>
+              </li>
               <li>
                 <Link href="/login">Sign in</Link>
               </li>

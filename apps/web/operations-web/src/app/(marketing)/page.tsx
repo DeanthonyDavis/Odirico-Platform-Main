@@ -16,8 +16,8 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const user = await getSession();
-  const primaryHref = user ? "/overview" : "/login";
-  const primaryLabel = user ? "Open Platform" : "Start Free";
+  const primaryHref = user ? "/overview" : "/signup";
+  const primaryLabel = user ? "Open Platform" : "Create your account";
 
   return (
     <>

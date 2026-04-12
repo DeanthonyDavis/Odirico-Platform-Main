@@ -57,8 +57,8 @@ export default function AboutPage() {
             <h2>Enter the ecosystem or review the app layer first.</h2>
           </div>
           <div className="platform-hero-actions">
-            <Link className="marketing-button marketing-button-primary" href="/login">
-              Get Started
+            <Link className="marketing-button marketing-button-primary" href="/signup">
+              Create account
             </Link>
             <Link className="marketing-button marketing-button-secondary" href="/apps">
               Explore Apps
