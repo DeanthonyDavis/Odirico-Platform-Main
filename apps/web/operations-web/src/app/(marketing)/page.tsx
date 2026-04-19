@@ -44,7 +44,7 @@ export default async function HomePage() {
                 Explore Apps
               </Link>
               <Link className="marketing-button marketing-button-ghost" href="/install">
-                Install or download
+                Install platform
               </Link>
             </div>
 

@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { WINDOWS_PORTABLE_RELEASE } from "@/components/marketing/ecosystem-data";
-
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{
@@ -42,7 +40,7 @@ function detectPlatform(): DetectedPlatform {
   }
 
   if (/windows/.test(userAgent)) {
-    return { label: "Windows", family: "desktop", href: WINDOWS_PORTABLE_RELEASE.href };
+    return { label: "Windows", family: "desktop", href: "#desktop-guide" };
   }
 
   if (/linux|x11/.test(userAgent)) {
@@ -69,10 +67,6 @@ function buildLabel(platform: DetectedPlatform, installReady: boolean, installed
 
   if (platform.label === "iPhone") {
     return "Open iPhone install steps";
-  }
-
-  if (platform.label === "Windows") {
-    return "Download for Windows";
   }
 
   if (platform.family === "desktop") {

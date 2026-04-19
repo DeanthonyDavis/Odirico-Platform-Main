@@ -49,7 +49,7 @@ export const PLATFORM_SUPPORT_POINTS = [
   },
   {
     title: "Low-friction installs",
-    copy: "Start in the browser anywhere, then move into the Windows desktop build or mobile install flow when you are ready.",
+    copy: "Start in the browser anywhere, then use the install flow in Chrome, Edge, or Safari when you are ready to pin the platform to desktop or mobile.",
   },
   {
     title: "Shared memory by design",
@@ -198,7 +198,7 @@ export const INSTALL_SURFACES = [
   {
     id: "desktop",
     label: "Desktop",
-    copy: "Windows now has a native portable desktop build. macOS and Linux still use the browser install path while their native packaging flow is staged next.",
+    copy: "Use Edge or Chrome to install the platform on desktop today. Signed native Windows distribution is being prepared before it is offered publicly again.",
   },
   {
     id: "web",
@@ -207,25 +207,17 @@ export const INSTALL_SURFACES = [
   },
 ] as const;
 
-export const WINDOWS_PORTABLE_RELEASE = {
-  version: "0.1.0",
-  href: "/downloads/desktop/windows/Odirico-Desktop_0.1.0_x64_portable.zip",
-  checksumHref: "/downloads/desktop/windows/Odirico-Desktop_0.1.0_x64_portable.sha256.txt",
-  sizeLabel: "2.4 MB zip",
-  detail: "Portable Windows desktop build",
-} as const;
-
 export const INSTALL_DESTINATIONS: readonly InstallDestination[] = [
   {
     id: "windows",
     label: "Windows desktop",
     family: "desktop",
-    summary: "Download the native Windows desktop build right now.",
-    detail: `${WINDOWS_PORTABLE_RELEASE.detail} · ${WINDOWS_PORTABLE_RELEASE.version} · ${WINDOWS_PORTABLE_RELEASE.sizeLabel}. MSI installer packaging is the remaining Windows release task.`,
-    statusLabel: "Available now",
-    availability: "available",
-    ctaLabel: "Download for Windows",
-    href: WINDOWS_PORTABLE_RELEASE.href,
+    summary: "Install the platform from Chrome or Edge on Windows today.",
+    detail: "The public binary download has been paused while code signing and trusted Windows distribution are being put in place.",
+    statusLabel: "Recommended now",
+    availability: "guide",
+    ctaLabel: "Windows steps",
+    href: "#desktop-guide",
   },
   {
     id: "macos",
@@ -327,7 +319,7 @@ export const PUBLIC_SEARCH_DESTINATIONS: readonly RouteSearchDestination[] = [
   {
     href: "/install",
     label: "Install",
-    description: "Download the Windows desktop build, see mobile install paths, or keep using the browser.",
+    description: "See desktop and mobile install steps, or keep using the browser.",
     tag: "Setup",
   },
   {
