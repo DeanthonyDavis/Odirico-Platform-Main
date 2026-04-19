@@ -714,6 +714,30 @@
   font-weight: 600;
 }
 
+.platform-install-release-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.platform-install-release-row span,
+.platform-install-release-row a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--marketing-line);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.72rem 1rem;
+  color: var(--marketing-ink);
+  font-weight: 600;
+}
+
+.platform-install-release-row a:hover {
+  background: white;
+}
+
 .install-destination-grid,
 .install-guide-grid {
   display: grid;
@@ -737,6 +761,37 @@
   border-radius: 30px;
   background: rgba(255, 255, 255, 0.94);
   box-shadow: var(--marketing-shadow);
+}
+
+.install-destination-head {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.install-status {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.install-status-available {
+  background: rgba(36, 164, 127, 0.12);
+  color: var(--marketing-accent);
+}
+
+.install-status-guide {
+  background: rgba(21, 55, 44, 0.08);
+  color: var(--marketing-ink);
+}
+
+.install-status-soon {
+  background: rgba(97, 112, 106, 0.12);
+  color: var(--marketing-muted);
 }
 
 .install-destination-detail {

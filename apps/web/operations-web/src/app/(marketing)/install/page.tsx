@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   INSTALL_DESTINATIONS,
   INSTALL_SURFACES,
+  WINDOWS_PORTABLE_RELEASE,
 } from "@/components/marketing/ecosystem-data";
 import { InstallCta } from "@/components/platform/install-cta";
 import { ODIRICO_ECOSYSTEM_APPS } from "@odirico/core/apps";
@@ -28,19 +29,24 @@ export default function InstallPage() {
         <div className="marketing-shell platform-install-hero-grid">
           <div className="platform-install-copy">
             <p className="platform-kicker">Install everywhere</p>
-            <h1>Install Odirico on desktop, phone, or stay in the browser.</h1>
+            <h1>Download Odirico for Windows, install on phone, or stay in the browser.</h1>
             <p className="platform-lead">
-              The current install path is the shared Odirico platform itself. You install one
-              platform shell, then move across Ember, Sol, and Surge without switching products.
+              Odirico now has a live portable Windows desktop build, active mobile web install
+              flows, and the same browser routes underneath all of them. The shared platform shell
+              still keeps Ember, Sol, and Surge inside one product.
             </p>
 
             <div className="platform-hero-actions">
               <InstallCta />
-              <Link className="marketing-button marketing-button-secondary" href="/login?next=/overview">
+              <a
+                className="marketing-button marketing-button-secondary"
+                download
+                href={WINDOWS_PORTABLE_RELEASE.href}
+              >
+                Download Windows build
+              </a>
+              <Link className="marketing-button marketing-button-ghost" href="/login?next=/overview">
                 Open in browser
-              </Link>
-              <Link className="marketing-button marketing-button-ghost" href="#desktop-guide">
-                Desktop steps
               </Link>
             </div>
 
@@ -52,16 +58,23 @@ export default function InstallPage() {
               <span>Android</span>
               <span>Browser</span>
             </div>
+
+            <div className="platform-install-release-row">
+              <span>Windows portable live</span>
+              <span>v{WINDOWS_PORTABLE_RELEASE.version}</span>
+              <span>{WINDOWS_PORTABLE_RELEASE.sizeLabel}</span>
+              <a href={WINDOWS_PORTABLE_RELEASE.checksumHref}>SHA-256</a>
+            </div>
           </div>
 
           <aside className="platform-install-highlight">
-            <p className="platform-module-kicker">What install means today</p>
-            <h2>There is one platform shell, not separate app downloads.</h2>
+            <p className="platform-module-kicker">Availability now</p>
+            <h2>Windows native download is live. Mobile store packaging is next.</h2>
             <ul className="platform-detail-list">
-              <li>Desktop uses the browser install flow from Chrome or Edge.</li>
-              <li>iPhone and iPad use Add to Home Screen from Safari.</li>
-              <li>Android can use the install prompt or Add to Home screen from Chrome.</li>
-              <li>Browser access stays live if you are not ready to install yet.</li>
+              <li>Windows can download the portable native desktop build right now.</li>
+              <li>MSI installer packaging is the remaining Windows release task.</li>
+              <li>iPhone and Android currently use the web install flow while store packages are finalized.</li>
+              <li>Browser access stays live on every platform if you do not want to install yet.</li>
             </ul>
           </aside>
         </div>
@@ -72,26 +85,43 @@ export default function InstallPage() {
           <div className="platform-section-head">
             <div>
               <p className="platform-kicker">Install surfaces</p>
-              <h2>Desktop and mobile options are visible up front now.</h2>
+              <h2>Native Windows download plus honest mobile and browser paths.</h2>
             </div>
             <p>
-              This is the install layer the platform was missing. Instead of hiding desktop access
-              in generic text, the page now shows the current supported surfaces directly.
+              The install layer now shows what is truly live: a Windows portable build, mobile web
+              install paths, and the browser shell. Anything that is not finished yet is labeled as
+              the next release step instead of being implied.
             </p>
           </div>
 
           <div className="install-destination-grid">
             {INSTALL_DESTINATIONS.map((destination) => (
               <article className="install-destination-card" key={destination.id}>
-                <div>
+                <div className="install-destination-head">
                   <p className="platform-module-kicker">{destination.family}</p>
+                  <span className={`install-status install-status-${destination.availability}`}>
+                    {destination.statusLabel}
+                  </span>
                   <h3>{destination.label}</h3>
                 </div>
                 <p>{destination.summary}</p>
                 <p className="install-destination-detail">{destination.detail}</p>
-                <Link className="marketing-button marketing-button-secondary install-destination-cta" href={destination.href}>
-                  {destination.ctaLabel}
-                </Link>
+                {destination.href.startsWith("/downloads/") ? (
+                  <a
+                    className="marketing-button marketing-button-secondary install-destination-cta"
+                    download
+                    href={destination.href}
+                  >
+                    {destination.ctaLabel}
+                  </a>
+                ) : (
+                  <Link
+                    className="marketing-button marketing-button-secondary install-destination-cta"
+                    href={destination.href}
+                  >
+                    {destination.ctaLabel}
+                  </Link>
+                )}
               </article>
             ))}
           </div>
@@ -103,11 +133,12 @@ export default function InstallPage() {
           <div className="platform-section-head">
             <div>
               <p className="platform-kicker">Guides</p>
-              <h2>Platform-specific install instructions.</h2>
+              <h2>Platform-specific setup instructions.</h2>
             </div>
             <p>
-              These are the current instructions for the shared Odirico platform shell. Once you
-              install it, the same account and route structure follow you across devices.
+              These are the current live paths for the shared platform shell. Native Windows now
+              exists as a portable desktop build, while the browser install flow still covers the
+              rest of the active surfaces.
             </p>
           </div>
 
@@ -135,8 +166,9 @@ export default function InstallPage() {
               <h2>Open the module you want after install.</h2>
             </div>
             <p>
-              The web routes are live now. Desktop and mobile install still land in the same shared
-              platform, then route you into the module you want to use.
+              The routes stay shared underneath every access layer. Downloading Windows, installing
+              the mobile web app, or staying in the browser still lands you in the same connected
+              Odirico platform.
             </p>
           </div>
 

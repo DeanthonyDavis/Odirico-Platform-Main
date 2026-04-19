@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { WINDOWS_PORTABLE_RELEASE } from "@/components/marketing/ecosystem-data";
+
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{
@@ -13,7 +15,7 @@ type BeforeInstallPromptEvent = Event & {
 type DetectedPlatform = {
   label: string;
   family: "desktop" | "mobile" | "browser";
-  anchor: string;
+  href: string;
 };
 
 type InstallCtaProps = {
@@ -22,32 +24,32 @@ type InstallCtaProps = {
 
 function detectPlatform(): DetectedPlatform {
   if (typeof navigator === "undefined") {
-    return { label: "desktop", family: "desktop", anchor: "#desktop-guide" };
+    return { label: "desktop", family: "desktop", href: "#desktop-guide" };
   }
 
   const userAgent = navigator.userAgent.toLowerCase();
 
   if (/iphone|ipad|ipod/.test(userAgent)) {
-    return { label: "iPhone", family: "mobile", anchor: "#ios-guide" };
+    return { label: "iPhone", family: "mobile", href: "#ios-guide" };
   }
 
   if (/android/.test(userAgent)) {
-    return { label: "Android", family: "mobile", anchor: "#android-guide" };
+    return { label: "Android", family: "mobile", href: "#android-guide" };
   }
 
   if (/mac os x|macintosh/.test(userAgent)) {
-    return { label: "macOS", family: "desktop", anchor: "#desktop-guide" };
+    return { label: "macOS", family: "desktop", href: "#desktop-guide" };
   }
 
   if (/windows/.test(userAgent)) {
-    return { label: "Windows", family: "desktop", anchor: "#desktop-guide" };
+    return { label: "Windows", family: "desktop", href: WINDOWS_PORTABLE_RELEASE.href };
   }
 
   if (/linux|x11/.test(userAgent)) {
-    return { label: "Linux", family: "desktop", anchor: "#desktop-guide" };
+    return { label: "Linux", family: "desktop", href: "#desktop-guide" };
   }
 
-  return { label: "browser", family: "browser", anchor: "/login?next=/overview" };
+  return { label: "browser", family: "browser", href: "/login?next=/overview" };
 }
 
 function buildLabel(platform: DetectedPlatform, installReady: boolean, installed: boolean) {
@@ -67,6 +69,10 @@ function buildLabel(platform: DetectedPlatform, installReady: boolean, installed
 
   if (platform.label === "iPhone") {
     return "Open iPhone install steps";
+  }
+
+  if (platform.label === "Windows") {
+    return "Download for Windows";
   }
 
   if (platform.family === "desktop") {
@@ -125,7 +131,7 @@ export function InstallCta({ className }: InstallCtaProps) {
       return;
     }
 
-    window.location.assign(platform.anchor);
+    window.location.assign(platform.href);
   }
 
   const buttonClassName = className ? `marketing-button marketing-button-primary ${className}` : "marketing-button marketing-button-primary";

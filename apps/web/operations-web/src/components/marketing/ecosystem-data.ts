@@ -28,6 +28,8 @@ export type InstallDestination = {
   family: "desktop" | "mobile" | "browser";
   summary: string;
   detail: string;
+  statusLabel: string;
+  availability: "available" | "guide" | "soon";
   ctaLabel: string;
   href: string;
 };
@@ -47,7 +49,7 @@ export const PLATFORM_SUPPORT_POINTS = [
   },
   {
     title: "Low-friction installs",
-    copy: "Start in the browser, then install the same platform to desktop or phone when you are ready.",
+    copy: "Start in the browser anywhere, then move into the Windows desktop build or mobile install flow when you are ready.",
   },
   {
     title: "Shared memory by design",
@@ -186,17 +188,17 @@ export const INSTALL_SURFACES = [
   {
     id: "iphone",
     label: "iPhone / iPad",
-    copy: "Open the platform in Safari, tap Share, then Add to Home Screen. Once installed, launch into Ember, Sol, or Surge from the platform navigation.",
+    copy: "Open the platform in Safari, tap Share, then Add to Home Screen. App Store packaging is still being prepared, so the web install is the live iPhone path today.",
   },
   {
     id: "android",
     label: "Android / Samsung",
-    copy: "Open the platform in Chrome, use Install App or Add to Home screen, then launch any module from the same installed platform shell.",
+    copy: "Open the platform in Chrome, use Install App or Add to Home screen, then launch any module from the same shared shell. Play Store submission is the next mobile release step.",
   },
   {
     id: "desktop",
-    label: "Mac / Windows",
-    copy: "Use Chrome or Edge to install the Odirico Platform as a desktop app, then pin the modules you use most often in the sidebar.",
+    label: "Desktop",
+    copy: "Windows now has a native portable desktop build. macOS and Linux still use the browser install path while their native packaging flow is staged next.",
   },
   {
     id: "web",
@@ -205,40 +207,56 @@ export const INSTALL_SURFACES = [
   },
 ] as const;
 
+export const WINDOWS_PORTABLE_RELEASE = {
+  version: "0.1.0",
+  href: "/downloads/desktop/windows/Odirico-Desktop_0.1.0_x64_portable.zip",
+  checksumHref: "/downloads/desktop/windows/Odirico-Desktop_0.1.0_x64_portable.sha256.txt",
+  sizeLabel: "2.4 MB zip",
+  detail: "Portable Windows desktop build",
+} as const;
+
 export const INSTALL_DESTINATIONS: readonly InstallDestination[] = [
   {
     id: "windows",
     label: "Windows desktop",
     family: "desktop",
-    summary: "Install the shared Odirico platform from Chrome or Edge on Windows.",
-    detail: "Best for a pinned desktop experience with the full consumer shell, route launcher, and shared account.",
-    ctaLabel: "Desktop steps",
-    href: "#desktop-guide",
+    summary: "Download the native Windows desktop build right now.",
+    detail: `${WINDOWS_PORTABLE_RELEASE.detail} · ${WINDOWS_PORTABLE_RELEASE.version} · ${WINDOWS_PORTABLE_RELEASE.sizeLabel}. MSI installer packaging is the remaining Windows release task.`,
+    statusLabel: "Available now",
+    availability: "available",
+    ctaLabel: "Download for Windows",
+    href: WINDOWS_PORTABLE_RELEASE.href,
   },
   {
     id: "macos",
     label: "macOS desktop",
     family: "desktop",
-    summary: "Install the same platform shell from Chrome on macOS.",
-    detail: "Use the browser install flow once, then open Ember, Sol, or Surge inside the same installed app shell.",
-    ctaLabel: "Desktop steps",
+    summary: "Keep using the browser install flow on macOS for now.",
+    detail: "The shared platform works in the browser today, and native macOS packaging is staged after the Windows installer path is finished.",
+    statusLabel: "Guide available",
+    availability: "guide",
+    ctaLabel: "macOS steps",
     href: "#desktop-guide",
   },
   {
     id: "linux",
     label: "Linux desktop",
     family: "desktop",
-    summary: "Keep the same browser-based install path on Linux.",
-    detail: "The current desktop experience is browser-install based rather than a separate native package.",
-    ctaLabel: "Desktop steps",
+    summary: "Use the browser-based platform on Linux today.",
+    detail: "Linux stays on the browser install path while the native desktop release flow is expanded beyond Windows.",
+    statusLabel: "Guide available",
+    availability: "guide",
+    ctaLabel: "Linux steps",
     href: "#desktop-guide",
   },
   {
     id: "iphone-download",
     label: "iPhone and iPad",
     family: "mobile",
-    summary: "Use Add to Home Screen from Safari for the installed mobile experience.",
-    detail: "You keep the same shared account and land in the same product shell after install.",
+    summary: "Use Add to Home Screen from Safari today.",
+    detail: "The mobile web install is live now, and the App Store package is still being finalized.",
+    statusLabel: "Web install live",
+    availability: "guide",
     ctaLabel: "iPhone steps",
     href: "#ios-guide",
   },
@@ -246,8 +264,10 @@ export const INSTALL_DESTINATIONS: readonly InstallDestination[] = [
     id: "android-download",
     label: "Android",
     family: "mobile",
-    summary: "Use Chrome's install prompt or Add to Home screen on Android devices.",
-    detail: "Android can use the browser install flow directly once the install prompt is available.",
+    summary: "Use Chrome install or Add to Home screen on Android today.",
+    detail: "The Android mobile web path is live now, and the Play Store package is the next release step.",
+    statusLabel: "Web install live",
+    availability: "guide",
     ctaLabel: "Android steps",
     href: "#android-guide",
   },
@@ -257,6 +277,8 @@ export const INSTALL_DESTINATIONS: readonly InstallDestination[] = [
     family: "browser",
     summary: "Start in the browser immediately if you are not ready to install yet.",
     detail: "Open the same routes on the web first, then install later without changing products.",
+    statusLabel: "Always available",
+    availability: "available",
     ctaLabel: "Open browser",
     href: "/login?next=/overview",
   },
@@ -305,7 +327,7 @@ export const PUBLIC_SEARCH_DESTINATIONS: readonly RouteSearchDestination[] = [
   {
     href: "/install",
     label: "Install",
-    description: "See how to install Odirico on desktop, iPhone, Android, or keep using the browser.",
+    description: "Download the Windows desktop build, see mobile install paths, or keep using the browser.",
     tag: "Setup",
   },
   {
