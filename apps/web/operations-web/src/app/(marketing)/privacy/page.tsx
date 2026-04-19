@@ -99,10 +99,15 @@ export default function PrivacyPage() {
           </article>
 
           <article className="policy-card">
-            <h3>Security and your choices</h3>
+            <h3>Data security basics</h3>
             <ul className="policy-list">
+              <li>Production web traffic is served over HTTPS.</li>
               <li>We use reasonable technical and organizational safeguards to protect data.</li>
               <li>We limit access to user information to authorized systems and personnel.</li>
+              <li>
+                Authentication, hosting, and application storage rely on managed platform
+                providers and their security controls.
+              </li>
               <li>
                 You can request account support, data access, or deletion help by contacting
                 Odirico.

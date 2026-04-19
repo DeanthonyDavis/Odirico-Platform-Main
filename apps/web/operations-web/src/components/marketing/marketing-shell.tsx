@@ -145,7 +145,25 @@ export function MarketingShell({ children }: MarketingShellProps) {
                 <Link href="/install">Install</Link>
               </li>
               <li>
+                <Link href="/about">About</Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>Trust</h3>
+            <ul className="marketing-footer-list">
+              <li>
                 <Link href="/privacy">Privacy policy</Link>
+              </li>
+              <li>
+                <Link href="/terms">Terms &amp; conditions</Link>
+              </li>
+              <li>
+                <Link href="/cookies">Cookie policy</Link>
+              </li>
+              <li>
+                <Link href="/disclaimer">Disclaimer</Link>
               </li>
             </ul>
           </div>

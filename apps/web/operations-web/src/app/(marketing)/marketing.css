@@ -692,7 +692,7 @@
 }
 
 .marketing-footer-grid {
-  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.65fr));
+  grid-template-columns: minmax(0, 1.2fr) repeat(4, minmax(0, 0.62fr));
 }
 
 .marketing-footer-brand-row {
