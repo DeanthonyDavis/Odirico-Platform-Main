@@ -43,8 +43,8 @@ export default async function HomePage() {
               <Link className="marketing-button marketing-button-secondary" href="/apps">
                 Explore Apps
               </Link>
-              <Link className="marketing-button marketing-button-ghost" href="/pricing">
-                View pricing
+              <Link className="marketing-button marketing-button-ghost" href="/install">
+                Install platform
               </Link>
             </div>
 

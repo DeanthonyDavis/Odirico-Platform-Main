@@ -22,6 +22,16 @@ export type PricingPlan = {
   badge?: string;
 };
 
+export type InstallDestination = {
+  id: string;
+  label: string;
+  family: "desktop" | "mobile" | "browser";
+  summary: string;
+  detail: string;
+  ctaLabel: string;
+  href: string;
+};
+
 export const ECOSYSTEM_TAGLINE =
   "Plan your time, manage your money, and track your future across one connected system.";
 
@@ -192,6 +202,63 @@ export const INSTALL_SURFACES = [
     id: "web",
     label: "Browser access",
     copy: "If you are not ready to install, open the platform in the browser and route directly into the module you want to use.",
+  },
+] as const;
+
+export const INSTALL_DESTINATIONS: readonly InstallDestination[] = [
+  {
+    id: "windows",
+    label: "Windows desktop",
+    family: "desktop",
+    summary: "Install the shared Odirico platform from Chrome or Edge on Windows.",
+    detail: "Best for a pinned desktop experience with the full consumer shell, route launcher, and shared account.",
+    ctaLabel: "Desktop steps",
+    href: "#desktop-guide",
+  },
+  {
+    id: "macos",
+    label: "macOS desktop",
+    family: "desktop",
+    summary: "Install the same platform shell from Chrome on macOS.",
+    detail: "Use the browser install flow once, then open Ember, Sol, or Surge inside the same installed app shell.",
+    ctaLabel: "Desktop steps",
+    href: "#desktop-guide",
+  },
+  {
+    id: "linux",
+    label: "Linux desktop",
+    family: "desktop",
+    summary: "Keep the same browser-based install path on Linux.",
+    detail: "The current desktop experience is browser-install based rather than a separate native package.",
+    ctaLabel: "Desktop steps",
+    href: "#desktop-guide",
+  },
+  {
+    id: "iphone-download",
+    label: "iPhone and iPad",
+    family: "mobile",
+    summary: "Use Add to Home Screen from Safari for the installed mobile experience.",
+    detail: "You keep the same shared account and land in the same product shell after install.",
+    ctaLabel: "iPhone steps",
+    href: "#ios-guide",
+  },
+  {
+    id: "android-download",
+    label: "Android",
+    family: "mobile",
+    summary: "Use Chrome's install prompt or Add to Home screen on Android devices.",
+    detail: "Android can use the browser install flow directly once the install prompt is available.",
+    ctaLabel: "Android steps",
+    href: "#android-guide",
+  },
+  {
+    id: "browser-download",
+    label: "Browser access",
+    family: "browser",
+    summary: "Start in the browser immediately if you are not ready to install yet.",
+    detail: "Open the same routes on the web first, then install later without changing products.",
+    ctaLabel: "Open browser",
+    href: "/login?next=/overview",
   },
 ] as const;
 

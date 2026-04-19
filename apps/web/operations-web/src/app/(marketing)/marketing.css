@@ -576,7 +576,9 @@
 .platform-priority h3,
 .pricing-proof-card h3,
 .pricing-faq-card h3,
-.platform-trust-card h3 {
+.platform-trust-card h3,
+.install-destination-card h3,
+.install-guide-card h3 {
   margin: 0;
   font-family: "Aptos Display", "Space Grotesk", "Segoe UI", sans-serif;
   font-size: 1.4rem;
@@ -658,6 +660,94 @@
   font-size: 0.95rem;
 }
 
+.platform-page-hero-install {
+  padding-bottom: 4.5rem;
+}
+
+.platform-install-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.82fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.platform-install-copy {
+  max-width: 42rem;
+}
+
+.platform-install-highlight {
+  display: grid;
+  gap: 1rem;
+  padding: 1.9rem;
+  border: 1px solid var(--marketing-line);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top right, rgba(36, 164, 127, 0.12), transparent 34%),
+    rgba(255, 255, 255, 0.96);
+  box-shadow: var(--marketing-shadow);
+}
+
+.platform-install-highlight h2 {
+  margin: 0;
+  font-family: "Aptos Display", "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.platform-install-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.4rem;
+}
+
+.platform-install-platforms span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--marketing-line);
+  background: rgba(255, 255, 255, 0.88);
+  padding: 0.72rem 1rem;
+  color: var(--marketing-ink);
+  font-weight: 600;
+}
+
+.install-destination-grid,
+.install-guide-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.install-destination-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.install-guide-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.install-destination-card,
+.install-guide-card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.75rem;
+  border: 1px solid var(--marketing-line);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--marketing-shadow);
+}
+
+.install-destination-detail {
+  color: var(--marketing-muted);
+}
+
+.install-destination-cta {
+  width: fit-content;
+  margin-top: 0.25rem;
+}
+
 .pricing-card {
   position: relative;
   display: grid;
@@ -736,7 +826,8 @@
 }
 
 .install-app-card,
-.contact-path-card {
+.contact-path-card,
+.install-guide-card {
   gap: 0.85rem;
 }
 
@@ -820,6 +911,7 @@
 @media (max-width: 1180px) {
   .platform-hero-grid,
   .platform-page-hero-grid,
+  .platform-install-hero-grid,
   .platform-section-head,
   .platform-final-grid,
   .marketing-footer-grid,
@@ -847,9 +939,11 @@
   .platform-app-showcase,
   .platform-support-strip,
   .platform-trust-grid,
+  .install-destination-grid,
   .pricing-faq-grid,
   .install-surface-grid,
   .install-app-grid,
+  .install-guide-grid,
   .contact-path-grid {
     grid-template-columns: 1fr;
   }

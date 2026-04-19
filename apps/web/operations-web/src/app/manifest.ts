@@ -6,10 +6,10 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Odirico",
     description:
       "A connected platform for Ember, Sol, and Surge so planning, money, and momentum can live in one system.",
-    start_url: "/overview",
+    start_url: "/",
     display: "standalone",
-    background_color: "#f6f1e8",
-    theme_color: "#ff5a43",
+    background_color: "#f7f6f3",
+    theme_color: "#24a47f",
     icons: [
       {
         src: "/branding/odirico-platform.jpg",

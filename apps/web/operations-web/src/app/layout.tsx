@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 import { CookieConsentBanner } from "@/components/marketing/cookie-consent-banner";
+import { PwaRegistration } from "@/components/platform/pwa-registration";
 
 export const metadata: Metadata = {
   title: {
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ff5a43",
+  themeColor: "#24a47f",
 };
 
 export default function RootLayout({
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <PwaRegistration />
         {children}
         <CookieConsentBanner />
       </body>
