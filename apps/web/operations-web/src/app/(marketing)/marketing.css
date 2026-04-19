@@ -1,0 +1,820 @@
+.marketing-site {
+  --marketing-bg: #f5f2ee;
+  --marketing-surface: rgba(255, 255, 255, 0.8);
+  --marketing-panel: #ffffff;
+  --marketing-dark: #121313;
+  --marketing-dark-soft: #1a1714;
+  --marketing-ink: #121313;
+  --marketing-muted: #6b6f72;
+  --marketing-line: #e7e3de;
+  --marketing-accent: #ff6a3d;
+  --marketing-accent-strong: #f25f31;
+  --marketing-yellow: #f5cb48;
+  --marketing-blue: #1e2e56;
+  --marketing-shadow: 0 24px 60px rgba(18, 19, 19, 0.08);
+  --marketing-shadow-deep: 0 36px 110px rgba(18, 19, 19, 0.18);
+  --marketing-max: 1440px;
+  min-height: 100vh;
+  color: var(--marketing-ink);
+  background:
+    radial-gradient(circle at top left, rgba(255, 106, 61, 0.1), transparent 28rem),
+    radial-gradient(circle at top right, rgba(255, 106, 61, 0.06), transparent 22rem),
+    linear-gradient(180deg, #fcf8f4 0%, var(--marketing-bg) 52%, #efeae5 100%);
+}
+
+.marketing-shell {
+  width: min(calc(100% - 3rem), var(--marketing-max));
+  margin: 0 auto;
+}
+
+.marketing-skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 100;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  background: var(--marketing-dark);
+  color: white;
+}
+
+.marketing-skip-link:focus {
+  top: 1rem;
+}
+
+.marketing-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 1.4rem 1.5rem 0;
+}
+
+.marketing-nav-shell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.35rem;
+  min-height: 78px;
+  padding: 1rem 1.4rem;
+  border: 1px solid rgba(18, 19, 19, 0.05);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--marketing-shadow);
+}
+
+.marketing-brand,
+.marketing-nav-group,
+.marketing-nav-links,
+.marketing-nav-actions,
+.platform-hero-actions,
+.marketing-footer-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+}
+
+.marketing-brand {
+  min-width: 0;
+}
+
+.marketing-brand-mark,
+.marketing-footer-mark {
+  border-radius: 50%;
+  box-shadow: 0 18px 40px rgba(18, 18, 20, 0.12);
+  clip-path: circle(38.5% at 50% 50%);
+}
+
+.marketing-brand-copy,
+.platform-module-head,
+.platform-app-brand,
+.platform-app-actions,
+.pricing-price,
+.contact-path-card,
+.install-app-card li {
+  display: grid;
+}
+
+.marketing-brand-copy strong,
+.marketing-footer-brand strong {
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 1.08rem;
+  letter-spacing: -0.03em;
+}
+
+.marketing-brand-copy span {
+  color: var(--marketing-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+.marketing-nav-links {
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.marketing-nav-link {
+  padding: 0.82rem 1rem;
+  border-radius: 999px;
+  color: var(--marketing-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.marketing-nav-link:hover,
+.marketing-nav-link.is-active {
+  color: var(--marketing-ink);
+  background: rgba(245, 242, 238, 0.95);
+}
+
+.marketing-nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--marketing-line);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.marketing-nav-toggle span {
+  width: 18px;
+  height: 2px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: var(--marketing-ink);
+}
+
+.marketing-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.88rem 1.45rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.marketing-button:hover,
+.platform-inline-link:hover,
+.contact-path-card:hover {
+  transform: translateY(-1px);
+}
+
+.marketing-button-primary {
+  color: white;
+  background: linear-gradient(135deg, var(--marketing-accent) 0%, var(--marketing-accent-strong) 100%);
+  box-shadow: 0 18px 36px rgba(255, 90, 67, 0.28);
+}
+
+.marketing-button-primary:hover {
+  background: linear-gradient(135deg, var(--marketing-accent-strong) 0%, #e8552b 100%);
+}
+
+.marketing-button-secondary {
+  color: var(--marketing-ink);
+  border-color: var(--marketing-line);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.marketing-button-ghost {
+  color: var(--marketing-ink);
+  background: rgba(255, 255, 255, 0.72);
+  border-color: var(--marketing-line);
+}
+
+.platform-kicker,
+.platform-module-kicker {
+  margin: 0 0 0.7rem;
+  color: var(--marketing-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.platform-hero {
+  padding: 2.2rem 0 3rem;
+}
+
+.platform-hero-grid,
+.platform-page-hero-grid,
+.platform-section-head,
+.platform-final-grid,
+.marketing-footer-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.platform-hero-grid {
+  grid-template-columns: minmax(0, 620px) minmax(0, 560px);
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(4rem, 8vw, 7rem);
+  min-height: calc(100svh - 144px);
+  padding: 3rem 0 5.5rem;
+}
+
+.platform-hero-copy h1,
+.platform-page-hero h1,
+.platform-section h2,
+.platform-app-detail h2,
+.platform-app-row h3,
+.pricing-card h2,
+.contact-path-card h2 {
+  margin: 0;
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  letter-spacing: -0.05em;
+  line-height: 1.06;
+}
+
+.platform-hero-copy {
+  max-width: 620px;
+}
+
+.platform-hero-copy .platform-kicker {
+  margin-bottom: 0;
+}
+
+.platform-hero-copy h1 {
+  font-size: clamp(4.2rem, 8vw, 6.85rem);
+  max-width: 7ch;
+  line-height: 1.12;
+}
+
+.platform-lead,
+.platform-page-hero p,
+.platform-section-head p,
+.platform-pillar p,
+.connection-flow p,
+.platform-app-row p,
+.platform-app-detail p,
+.pricing-card ul,
+.platform-why-list p,
+.platform-priority p,
+.install-surface-card p,
+.install-app-card p,
+.install-app-card span,
+.contact-path-card p,
+.marketing-footer p,
+.marketing-footer-note {
+  margin: 0;
+  color: var(--marketing-muted);
+  line-height: 1.7;
+}
+
+.platform-lead {
+  max-width: 35rem;
+  margin-top: 1.5rem;
+  font-size: 1.12rem;
+  line-height: 1.8;
+}
+
+.platform-hero-actions {
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 2rem;
+}
+
+.platform-hero-actions .marketing-button {
+  min-height: 3.4rem;
+  padding: 1rem 1.55rem;
+  font-size: 1rem;
+}
+
+.platform-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.35rem;
+}
+
+.platform-trust-row span,
+.platform-inline-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--marketing-line);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.82rem 1.12rem;
+  font-weight: 600;
+}
+
+.platform-inline-link {
+  min-width: 148px;
+  color: var(--marketing-ink);
+}
+
+.platform-hero-visual {
+  position: relative;
+  display: grid;
+  gap: 1.3rem;
+  width: 100%;
+  max-width: 560px;
+  justify-self: end;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 40px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 61, 0.24), transparent 18rem),
+    linear-gradient(180deg, rgba(15, 16, 20, 0.98), rgba(23, 24, 28, 1));
+  box-shadow: var(--marketing-shadow-deep);
+}
+
+.platform-mark-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.35rem 1rem 0.85rem;
+}
+
+.platform-mark-image {
+  width: min(48vw, 240px);
+  height: auto;
+  border-radius: 50%;
+  clip-path: circle(38.5% at 50% 50%);
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.3);
+}
+
+.platform-hero-modules,
+.platform-pillars,
+.platform-priority-list,
+.pricing-grid,
+.install-surface-grid,
+.contact-path-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.platform-hero-modules {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.15rem;
+}
+
+.platform-module,
+.platform-pillar,
+.pricing-card,
+.platform-priority,
+.install-surface-card,
+.install-app-card,
+.contact-path-card {
+  border: 1px solid var(--marketing-line);
+  background: var(--marketing-panel);
+  box-shadow: var(--marketing-shadow);
+}
+
+.platform-module {
+  display: grid;
+  align-content: start;
+  gap: 1.55rem;
+  min-height: 18rem;
+  padding: 1.35rem 1.3rem 1.45rem;
+  border-radius: 30px;
+  background: rgba(245, 242, 238, 0.96);
+}
+
+.platform-module p {
+  max-width: 18ch;
+}
+
+.platform-module-head {
+  grid-template-columns: auto 1fr;
+  gap: 0.95rem;
+  align-items: center;
+}
+
+.platform-module-head h2,
+.platform-app-row h3,
+.platform-app-detail h2,
+.pricing-card h2,
+.connection-flow h3,
+.platform-priority h3,
+.install-app-card h3,
+.contact-path-card h2 {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+}
+
+.platform-module-logo,
+.platform-app-logo {
+  border-radius: 50%;
+  box-shadow: 0 18px 42px rgba(18, 18, 20, 0.16);
+}
+
+.platform-section,
+.platform-page-hero {
+  padding: clamp(5rem, 8vw, 7rem) 0;
+}
+
+.platform-page-hero {
+  padding-top: 2rem;
+}
+
+.platform-page-hero-grid,
+.platform-section-head,
+.platform-final-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
+  align-items: start;
+}
+
+.platform-section-head {
+  margin-bottom: 3.5rem;
+}
+
+.platform-section-head p {
+  max-width: 34rem;
+}
+
+.platform-page-hero h1,
+.platform-section h2 {
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+}
+
+.platform-section-contrast {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(240, 231, 220, 0.7)),
+    linear-gradient(180deg, rgba(255, 90, 67, 0.04), rgba(30, 46, 86, 0.06));
+}
+
+.platform-pillars {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.platform-pillar,
+.pricing-card,
+.platform-priority,
+.install-surface-card,
+.install-app-card,
+.contact-path-card {
+  padding: 1.75rem;
+  border-radius: 28px;
+}
+
+.platform-pillar h3,
+.platform-priority h3 {
+  margin: 0 0 0.65rem;
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 1.28rem;
+  letter-spacing: -0.03em;
+}
+
+.connection-flow-list,
+.platform-app-stack {
+  display: grid;
+  gap: 1.35rem;
+}
+
+.connection-flow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: 1.2rem 0;
+  border-top: 1px solid rgba(23, 20, 18, 0.12);
+}
+
+.connection-flow:last-child {
+  border-bottom: 1px solid rgba(23, 20, 18, 0.12);
+}
+
+.connection-flow-index {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 90, 67, 0.12);
+  color: var(--marketing-accent);
+  font-weight: 700;
+}
+
+.platform-app-row,
+.platform-app-detail {
+  display: grid;
+  gap: 1.2rem;
+  padding: 1.6rem 0;
+  border-top: 1px solid rgba(23, 20, 18, 0.12);
+}
+
+.platform-app-row:last-child,
+.platform-app-detail:last-child {
+  border-bottom: 1px solid rgba(23, 20, 18, 0.12);
+}
+
+.platform-app-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.platform-app-detail {
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+}
+
+.platform-app-detail-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.platform-app-brand {
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.platform-app-actions {
+  gap: 1.1rem;
+  justify-items: end;
+}
+
+.platform-detail-list,
+.pricing-card ul,
+.install-link-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.72rem;
+}
+
+.platform-app-detail-side {
+  display: grid;
+  gap: 1rem;
+}
+
+.platform-app-note {
+  font-size: 0.95rem;
+}
+
+.platform-section-pricing {
+  padding-bottom: clamp(5rem, 8vw, 7rem);
+}
+
+.pricing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pricing-card {
+  gap: 0.9rem;
+}
+
+.pricing-price {
+  gap: 0.4rem;
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 3rem;
+  letter-spacing: -0.05em;
+  color: var(--marketing-ink);
+}
+
+.pricing-price span {
+  font-size: 1rem;
+  letter-spacing: 0;
+  color: var(--marketing-muted);
+}
+
+.platform-section-final {
+  padding-bottom: clamp(5.5rem, 8vw, 7.5rem);
+}
+
+.platform-final-grid {
+  padding: 1.5rem 0 0;
+  border-top: 1px solid rgba(23, 20, 18, 0.12);
+}
+
+.platform-why-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.install-surface-grid,
+.install-app-grid,
+.contact-path-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.install-app-card,
+.contact-path-card {
+  gap: 0.85rem;
+}
+
+.install-link-list a {
+  font-weight: 700;
+  color: var(--marketing-ink);
+}
+
+.install-link-list span {
+  display: block;
+}
+
+.contact-path-card {
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease;
+}
+
+.contact-path-card:hover {
+  border-color: rgba(255, 90, 67, 0.2);
+}
+
+.policy-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.policy-card {
+  padding: 1.75rem;
+  border: 1px solid var(--marketing-line);
+  border-radius: 28px;
+  background: var(--marketing-panel);
+  box-shadow: var(--marketing-shadow);
+}
+
+.policy-card h3 {
+  margin: 0 0 0.9rem;
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 1.45rem;
+  letter-spacing: -0.03em;
+}
+
+.policy-card p {
+  margin: 0;
+  color: var(--marketing-muted);
+  line-height: 1.8;
+}
+
+.policy-list {
+  margin: 1rem 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.75rem;
+  color: var(--marketing-muted);
+  line-height: 1.8;
+}
+
+.policy-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.marketing-footer {
+  padding: 4rem 0 4.2rem;
+  background:
+    radial-gradient(circle at top right, rgba(255, 90, 67, 0.18), transparent 18rem),
+    linear-gradient(180deg, rgba(13, 13, 15, 0.98), rgba(20, 17, 16, 1));
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.marketing-footer-grid {
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.65fr));
+}
+
+.marketing-footer-brand-row {
+  margin-bottom: 0.8rem;
+}
+
+.marketing-footer h3 {
+  margin: 0 0 0.8rem;
+  font-family: "Space Grotesk", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 1rem;
+  color: white;
+}
+
+.marketing-footer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.marketing-footer-list a:hover {
+  color: white;
+}
+
+@media (max-width: 1100px) {
+  .platform-hero-grid,
+  .platform-page-hero-grid,
+  .platform-section-head,
+  .platform-final-grid,
+  .marketing-footer-grid,
+  .platform-app-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-hero-copy h1 {
+    max-width: none;
+  }
+
+  .platform-hero-visual {
+    justify-self: stretch;
+  }
+
+  .platform-pillars,
+  .pricing-grid,
+  .install-surface-grid,
+  .install-app-grid,
+  .contact-path-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .platform-hero-grid,
+  .platform-app-row {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-app-actions {
+    justify-items: start;
+  }
+
+  .platform-hero-modules {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .marketing-header {
+    padding-inline: 0.9rem;
+  }
+
+  .marketing-nav-toggle {
+    display: inline-flex;
+  }
+
+  .marketing-nav-group {
+    position: absolute;
+    top: calc(100% + 0.8rem);
+    left: 0.9rem;
+    right: 0.9rem;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    padding: 1rem;
+    border: 1px solid var(--marketing-line);
+    border-radius: 28px;
+    background: rgba(255, 251, 246, 0.98);
+    box-shadow: var(--marketing-shadow);
+  }
+
+  .marketing-nav-group.is-open {
+    display: flex;
+  }
+
+  .marketing-nav-links,
+  .marketing-nav-actions,
+  .platform-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .marketing-nav-link,
+  .marketing-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 720px) {
+  .platform-hero-copy h1,
+  .platform-page-hero h1,
+  .platform-section h2 {
+    font-size: clamp(2.4rem, 13vw, 4rem);
+  }
+
+  .platform-section,
+  .platform-page-hero {
+    padding: 4rem 0;
+  }
+
+  .platform-pillars,
+  .platform-priority-list,
+  .pricing-grid,
+  .install-surface-grid,
+  .install-app-grid,
+  .contact-path-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-mark-image {
+    width: min(70vw, 220px);
+  }
+
+  .platform-hero {
+    padding-top: 1.4rem;
+  }
+
+  .marketing-shell {
+    width: min(calc(100% - 1.6rem), var(--marketing-max));
+  }
+}
