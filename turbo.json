@@ -1,5 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "ALLOWED_ORIGINS",
+    "SUPABASE_SERVICE_ROLE_KEY"
+  ],
   "tasks": {
     "build": {
       "dependsOn": [
