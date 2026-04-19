@@ -6,6 +6,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { ODIRICO_ECOSYSTEM_APPS } from "@odirico/core/apps";
+import { AccountMenu } from "@/components/layout/account-menu";
+import { RouteSearchLauncher } from "@/components/layout/route-search-launcher";
+import { PLATFORM_SEARCH_DESTINATIONS } from "@/components/marketing/ecosystem-data";
 import { canManageOrganization, type UserContext } from "@/lib/auth/roles";
 import { useSettings } from "@/lib/settings/client";
 
@@ -28,11 +31,15 @@ const operationsNavItems: Array<{ href: string; label: string }> = [
 ];
 
 const ecosystemNavItems: Array<{ href: string; label: string }> = [
-  { href: "/overview", label: "Overview" },
   { href: "/ember", label: "Ember" },
   { href: "/sol", label: "Sol" },
   { href: "/surge", label: "Surge" },
+];
+
+const ecosystemUtilityLinks: Array<{ href: string; label: string }> = [
+  { href: "/overview", label: "Overview" },
   { href: "/billing", label: "Billing" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function AppShell({
@@ -47,64 +54,136 @@ export function AppShell({
   const settings = useSettings(userContext.user.email);
   const canManageOrg = canManageOrganization(userContext.roles);
   const roleSummary = userContext.roles.map((role) => settings.roleLabel(role)).join(" | ");
-  const navItems = variant === "ecosystem" ? ecosystemNavItems : operationsNavItems;
   const defaultEyebrow = variant === "ecosystem" ? "Odirico / Platform" : "Odirico / Operations";
 
-  return (
-    <div className={variant === "ecosystem" ? "app-shell app-shell-ecosystem" : "app-shell app-shell-operations"}>
-      <aside className={variant === "ecosystem" ? "sidebar sidebar-ecosystem" : "sidebar sidebar-operations"}>
-        <div className="brand-block">
-          {variant === "ecosystem" ? (
-            <Image alt="" className="brand-mark-image" height={58} src="/branding/odirico-platform.jpg" width={58} />
-          ) : (
-            <div className="brand-mark brand-mark-operations">PQ</div>
-          )}
+  if (variant === "ecosystem") {
+    return (
+      <div className="app-shell app-shell-ecosystem">
+        <aside className="sidebar sidebar-ecosystem sidebar-ecosystem-slim">
+          <Link className="brand-block brand-block-ecosystem" href="/overview">
+            <Image alt="" className="brand-mark-image" height={52} src="/branding/odirico-platform.jpg" width={52} />
 
-          <div>
-            <div className="brand-name">{variant === "ecosystem" ? "Odirico Platform" : "PoleQA"}</div>
-            <div className="brand-subtitle">
-              {variant === "ecosystem"
-                ? "Ember, Sol, and Surge under one connected system."
-                : "Inspection and QA/QC operations inside the Odirico company stack."}
+            <div>
+              <div className="brand-name">Odirico</div>
+              <div className="brand-subtitle">Connected platform</div>
             </div>
-          </div>
-        </div>
+          </Link>
 
-        <div className="sidebar-module-panel">
-          <p className="sidebar-label">{variant === "ecosystem" ? "Modules" : "Workspace"}</p>
-          <div className="sidebar-module-list">
-            {variant === "ecosystem" ? (
-              ODIRICO_ECOSYSTEM_APPS.map((item) => {
+          <div className="sidebar-module-panel sidebar-module-panel-ecosystem">
+            <p className="sidebar-label">Platform</p>
+            <Link
+              className={currentPath === "/overview" ? "sidebar-home-link active" : "sidebar-home-link"}
+              href="/overview"
+            >
+              <span className="sidebar-home-icon">O</span>
+              <span>Overview</span>
+            </Link>
+          </div>
+
+          <div className="sidebar-module-panel sidebar-module-panel-ecosystem">
+            <p className="sidebar-label">Apps</p>
+            <div className="sidebar-module-list sidebar-module-list-slim">
+              {ODIRICO_ECOSYSTEM_APPS.map((item) => {
                 const active = currentPath === item.href || currentPath.startsWith(`${item.href}/`);
 
                 return (
                   <Link
                     key={item.key}
-                    className={active ? "sidebar-module-link active" : "sidebar-module-link"}
+                    className={active ? "sidebar-module-link sidebar-module-link-slim active" : "sidebar-module-link sidebar-module-link-slim"}
                     href={item.href as never}
                   >
                     <span className="sidebar-module-copy">
-                      <Image alt="" className="sidebar-module-logo" height={28} src={item.logoPath} width={28} />
+                      <Image alt="" className="sidebar-module-logo" height={30} src={item.logoPath} width={30} />
                       <span>{item.label}</span>
                     </span>
                     <span className="module-pill">{item.statusLabel}</span>
                   </Link>
                 );
-              })
-            ) : (
-              <Link
-                className={currentPath.startsWith("/dashboard") || currentPath.startsWith("/tickets") ? "sidebar-module-link active" : "sidebar-module-link"}
-                href="/dashboard"
-              >
-                <span>PoleQA</span>
-                <span className="module-pill live">Live</span>
-              </Link>
-            )}
+              })}
+            </div>
+          </div>
+
+          <div className="sidebar-footer sidebar-footer-ecosystem">
+            <p>{roleSummary}</p>
+            <p>{userContext.displayName}</p>
+            <p>Move across planning, money, and applications without changing products or projects.</p>
+          </div>
+        </aside>
+
+        <main className="page-frame page-frame-ecosystem">
+          <header className="page-header page-header-ecosystem">
+            <div className="page-header-main">
+              <div>
+                <p className="eyebrow">{eyebrow ?? defaultEyebrow}</p>
+                <h1>{title}</h1>
+                <p>{subtitle}</p>
+              </div>
+            </div>
+
+            <div className="page-utility-bar">
+              <RouteSearchLauncher
+                className="page-search-trigger"
+                items={PLATFORM_SEARCH_DESTINATIONS}
+                label="Search routes"
+                title="Search the Odirico platform"
+              />
+
+              <nav aria-label="Utility" className="page-utility-links">
+                {ecosystemUtilityLinks.map((item) => {
+                  const active =
+                    item.href === "/overview"
+                      ? currentPath === item.href
+                      : currentPath === item.href || currentPath.startsWith(`${item.href}/`);
+
+                  return (
+                    <Link
+                      className={active ? "page-utility-link active" : "page-utility-link"}
+                      href={item.href as never}
+                      key={item.href}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              <AccountMenu displayName={userContext.displayName} email={userContext.user.email} />
+            </div>
+          </header>
+
+          <section className="page-content">{children}</section>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-shell app-shell-operations">
+      <aside className="sidebar sidebar-operations">
+        <div className="brand-block">
+          <div className="brand-mark brand-mark-operations">PQ</div>
+
+          <div>
+            <div className="brand-name">PoleQA</div>
+            <div className="brand-subtitle">Inspection and QA/QC operations inside the Odirico company stack.</div>
+          </div>
+        </div>
+
+        <div className="sidebar-module-panel">
+          <p className="sidebar-label">Workspace</p>
+          <div className="sidebar-module-list">
+            <Link
+              className={currentPath.startsWith("/dashboard") || currentPath.startsWith("/tickets") ? "sidebar-module-link active" : "sidebar-module-link"}
+              href="/dashboard"
+            >
+              <span>PoleQA</span>
+              <span className="module-pill live">Live</span>
+            </Link>
           </div>
         </div>
 
         <nav className="sidebar-nav">
-          {navItems.map((item) => {
+          {operationsNavItems.map((item) => {
             const active =
               item.href === "/overview"
                 ? currentPath === item.href
@@ -126,11 +205,9 @@ export function AppShell({
           <p>{roleSummary}</p>
           <p>{userContext.displayName}</p>
           <p>
-            {variant === "ecosystem"
-              ? "Your shared account moves across Ember, Sol, Surge, and billing without changing projects."
-              : canManageOrg
-                ? "Use Settings to manage teams, rename role labels, and tune the operations workspace."
-                : "Use Settings to tune the operations workspace and your personal layout preferences."}
+            {canManageOrg
+              ? "Use Settings to manage teams, rename role labels, and tune the operations workspace."
+              : "Use Settings to tune the operations workspace and your personal layout preferences."}
           </p>
         </div>
       </aside>

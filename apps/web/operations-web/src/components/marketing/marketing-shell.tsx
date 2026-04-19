@@ -6,19 +6,20 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import { ODIRICO_ECOSYSTEM_APPS } from "@odirico/core/apps";
+import { AccountMenu } from "@/components/layout/account-menu";
+import { RouteSearchLauncher } from "@/components/layout/route-search-launcher";
+import {
+  MARKETING_PRIMARY_LINKS,
+  PUBLIC_SEARCH_DESTINATIONS,
+} from "@/components/marketing/ecosystem-data";
+import type { UserContext } from "@/lib/auth/roles";
 
 type MarketingShellProps = {
   children: ReactNode;
+  userContext: UserContext | null;
 };
 
-const navItems = [
-  { href: "/system", label: "System" },
-  { href: "/apps", label: "Apps" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
-] as const;
-
-export function MarketingShell({ children }: MarketingShellProps) {
+export function MarketingShell({ children, userContext }: MarketingShellProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const currentYear = new Date().getFullYear();
@@ -72,7 +73,7 @@ export function MarketingShell({ children }: MarketingShellProps) {
 
           <div className={isOpen ? "marketing-nav-group is-open" : "marketing-nav-group"}>
             <nav aria-label="Primary" className="marketing-nav-links">
-              {navItems.map((item) => (
+              {MARKETING_PRIMARY_LINKS.map((item) => (
                 <Link
                   key={item.href}
                   className={isActive(item.href) ? "marketing-nav-link is-active" : "marketing-nav-link"}
@@ -84,21 +85,43 @@ export function MarketingShell({ children }: MarketingShellProps) {
               ))}
             </nav>
 
-            <div className="marketing-nav-actions">
-              <Link
-                className="marketing-button marketing-button-secondary"
-                href="/install"
-                onClick={() => setIsOpen(false)}
-              >
-                Install
-              </Link>
-              <Link
-                className="marketing-button marketing-button-primary"
-                href="/signup"
-                onClick={() => setIsOpen(false)}
-              >
-                Get Started
-              </Link>
+            <div className="marketing-nav-actions marketing-nav-actions-utility">
+              <RouteSearchLauncher
+                className="marketing-search-trigger"
+                items={PUBLIC_SEARCH_DESTINATIONS}
+                label="Search"
+                title="Search Odirico routes"
+              />
+
+              {userContext ? (
+                <>
+                  <Link
+                    className="marketing-button marketing-button-secondary"
+                    href="/overview"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Open platform
+                  </Link>
+                  <AccountMenu
+                    className="account-menu-trigger-marketing"
+                    displayName={userContext.displayName}
+                    email={userContext.user.email}
+                  />
+                </>
+              ) : (
+                <>
+                  <Link className="marketing-utility-link" href="/login" onClick={() => setIsOpen(false)}>
+                    Log in
+                  </Link>
+                  <Link
+                    className="marketing-button marketing-button-primary"
+                    href="/signup"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Get started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -130,7 +153,7 @@ export function MarketingShell({ children }: MarketingShellProps) {
           </div>
 
           <div>
-            <h3>Explore</h3>
+            <h3>Product</h3>
             <ul className="marketing-footer-list">
               <li>
                 <Link href="/system">System</Link>
@@ -183,16 +206,16 @@ export function MarketingShell({ children }: MarketingShellProps) {
             <h3>Access</h3>
             <ul className="marketing-footer-list">
               <li>
-                <Link href="/signup">Create account</Link>
+                <Link href="/signup">Get started</Link>
               </li>
               <li>
-                <Link href="/login">Sign in</Link>
+                <Link href="/login">Log in</Link>
+              </li>
+              <li>
+                <Link href="/overview">Overview</Link>
               </li>
               <li>
                 <Link href="/contact">Contact</Link>
-              </li>
-              <li>
-                <Link href="/install">Platform install</Link>
               </li>
             </ul>
             <p className="marketing-footer-note">&copy; {currentYear} Odirico</p>

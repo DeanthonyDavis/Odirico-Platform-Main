@@ -1,14 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { AppAccessLinks } from "@/components/platform/app-access-links";
 import {
   CONNECTION_FLOWS,
   ECOSYSTEM_APP_STORIES,
   ECOSYSTEM_TAGLINE,
   PRICING_PLANS,
-  SYSTEM_PILLARS,
-  WHY_IT_EXISTS,
+  PLATFORM_SUPPORT_POINTS,
+  PRICING_PROOF_POINTS,
+  TRUST_PROMISES,
 } from "@/components/marketing/ecosystem-data";
 import { getSession } from "@/lib/auth/session";
 
@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const user = await getSession();
   const primaryHref = user ? "/overview" : "/signup";
-  const primaryLabel = user ? "Open Platform" : "Create your account";
+  const primaryLabel = user ? "Open platform" : "Get started";
 
   return (
     <>
@@ -43,8 +43,8 @@ export default async function HomePage() {
               <Link className="marketing-button marketing-button-secondary" href="/apps">
                 Explore Apps
               </Link>
-              <Link className="marketing-button marketing-button-ghost" href="/install">
-                Install Platform
+              <Link className="marketing-button marketing-button-ghost" href="/pricing">
+                View pricing
               </Link>
             </div>
 
@@ -83,25 +83,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="platform-section">
+      <section className="platform-section platform-section-support">
         <div className="marketing-shell">
-          <div className="platform-section-head">
-            <div>
-              <p className="platform-kicker">System</p>
-              <h2>Three focused products. One connected platform.</h2>
-            </div>
-            <p>
-              Ember handles your week. Sol handles your money and direction. Surge handles
-              opportunities and execution. The platform ties them together so the same context does
-              not need to be rebuilt three times.
-            </p>
-          </div>
-
-          <div className="platform-pillars">
-            {SYSTEM_PILLARS.map((pillar) => (
-              <article className="platform-pillar" key={pillar.title}>
-                <h3>{pillar.title}</h3>
-                <p>{pillar.copy}</p>
+          <div className="platform-support-strip">
+            {PLATFORM_SUPPORT_POINTS.map((point) => (
+              <article className="platform-support-card" key={point.title}>
+                <p className="platform-module-kicker">Platform support</p>
+                <h2>{point.title}</h2>
+                <p>{point.copy}</p>
               </article>
             ))}
           </div>
@@ -112,12 +101,50 @@ export default async function HomePage() {
         <div className="marketing-shell">
           <div className="platform-section-head">
             <div>
-              <p className="platform-kicker">Connection</p>
-              <h2>The value is in how the apps connect.</h2>
+              <p className="platform-kicker">Apps</p>
+              <h2>Each app keeps one pressure zone clear.</h2>
             </div>
             <p>
-              This only works if the handoff between modules feels natural. The ecosystem is meant
-              to remember what happened and move the next useful signal into the right place.
+              Ember handles weekly load. Sol keeps money and direction legible. Surge holds
+              applications and outward momentum. The platform matters because these jobs stay
+              distinct while the account stays shared.
+            </p>
+          </div>
+
+          <div className="platform-app-showcase">
+            {ECOSYSTEM_APP_STORIES.map((app) => (
+              <article className="platform-app-card" id={app.key} key={app.key}>
+                <div className="platform-app-card-head">
+                  <Image alt="" className="platform-app-logo" height={72} src={app.logoPath} width={72} />
+                  <div>
+                    <p className="platform-module-kicker">{app.platformRole}</p>
+                    <h3>{app.label}</h3>
+                  </div>
+                </div>
+                <p>{app.summary}</p>
+                <div className="platform-card-footer">
+                  <span className="platform-status-pill">{app.statusLabel}</span>
+                  <Link className="platform-inline-link" href={app.accessHref}>
+                    Enter {app.label}
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="platform-section">
+        <div className="marketing-shell">
+          <div className="platform-section-head">
+            <div>
+              <p className="platform-kicker">How it connects</p>
+              <h2>The value grows when one useful signal moves into the next app.</h2>
+            </div>
+            <p>
+              Search, planning, money direction, and follow-through are usually overlapping
+              pressures. The platform should reduce setup cost between them instead of creating one
+              more dashboard to babysit.
             </p>
           </div>
 
@@ -139,53 +166,24 @@ export default async function HomePage() {
         <div className="marketing-shell">
           <div className="platform-section-head">
             <div>
-              <p className="platform-kicker">Apps</p>
-              <h2>Each module has a clear job inside the system.</h2>
+              <p className="platform-kicker">Pricing</p>
+              <h2>One plan model across the connected system.</h2>
             </div>
             <p>
-              The platform should feel like one place to live, not a random pile of tools. Each
-              module owns a different pressure zone in real life.
+              Pricing stays visible, but it should communicate one ecosystem instead of separate app
+              billing. Free comes first, one paid plan is clearly recommended, and the rest stays
+              easy to understand.
             </p>
-          </div>
-
-          <div className="platform-app-stack">
-            {ECOSYSTEM_APP_STORIES.map((app) => (
-              <article className="platform-app-row" id={app.key} key={app.key}>
-                <div className="platform-app-brand">
-                  <Image alt="" className="platform-app-logo" height={76} src={app.logoPath} width={76} />
-                  <div>
-                    <p className="platform-module-kicker">{app.integrationRole}</p>
-                    <h3>{app.label}</h3>
-                    <p>{app.summary}</p>
-                  </div>
-                </div>
-
-                <div className="platform-app-actions">
-                  <AppAccessLinks compact targets={app.installTargets} />
-                  <Link className="platform-inline-link" href={app.accessHref}>
-                    Enter {app.label}
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="platform-section platform-section-pricing">
-        <div className="marketing-shell">
-          <div className="platform-section-head">
-            <div>
-              <p className="platform-kicker">Pricing</p>
-              <h2>One plan model for the whole ecosystem.</h2>
-            </div>
-            <p>Pricing applies across Ember, Sol, and Surge instead of splitting access by module.</p>
           </div>
 
           <div className="pricing-grid">
             {PRICING_PLANS.map((plan) => (
-              <article className="pricing-card" key={plan.name}>
+              <article
+                className={plan.highlight ? "pricing-card pricing-card-highlight" : "pricing-card"}
+                key={plan.name}
+              >
                 <p className="platform-module-kicker">{plan.audience}</p>
+                {plan.badge ? <span className="pricing-badge">{plan.badge}</span> : null}
                 <h3>{plan.name}</h3>
                 <p className="pricing-price">
                   {plan.price}
@@ -196,8 +194,29 @@ export default async function HomePage() {
                     <li key={feature}>{feature}</li>
                   ))}
                 </ul>
+                <Link className="marketing-button marketing-button-secondary pricing-card-cta" href={plan.ctaHref}>
+                  {plan.ctaLabel}
+                </Link>
               </article>
             ))}
+          </div>
+
+          <div className="pricing-proof-strip">
+            {PRICING_PROOF_POINTS.map((point) => (
+              <article className="pricing-proof-card" key={point.title}>
+                <h3>{point.title}</h3>
+                <p>{point.copy}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="platform-section-cta-row">
+            <Link className="marketing-button marketing-button-primary" href="/pricing">
+              See full pricing
+            </Link>
+            <Link className="marketing-button marketing-button-secondary" href={primaryHref}>
+              {primaryLabel}
+            </Link>
           </div>
         </div>
       </section>
@@ -205,23 +224,28 @@ export default async function HomePage() {
       <section className="platform-section platform-section-final">
         <div className="marketing-shell platform-final-grid">
           <div>
-            <p className="platform-kicker">Why this exists</p>
-            <h2>Most apps only solve one piece of life at a time.</h2>
+            <p className="platform-kicker">Trust and next step</p>
+            <h2>A calmer system only works if the shell feels trustworthy too.</h2>
           </div>
 
-          <div className="platform-why-list">
-            {WHY_IT_EXISTS.map((item) => (
-              <p key={item}>{item}</p>
+          <div className="platform-trust-grid">
+            {TRUST_PROMISES.map((promise) => (
+              <article className="platform-trust-card" key={promise.title}>
+                <h3>{promise.title}</h3>
+                <p>{promise.copy}</p>
+              </article>
             ))}
+          </div>
+        </div>
 
-            <div className="platform-hero-actions">
-              <Link className="marketing-button marketing-button-primary" href={primaryHref}>
-                {primaryLabel}
-              </Link>
-              <Link className="marketing-button marketing-button-secondary" href="/pricing">
-                View Pricing
-              </Link>
-            </div>
+        <div className="marketing-shell platform-final-cta">
+          <div className="platform-hero-actions">
+            <Link className="marketing-button marketing-button-primary" href={primaryHref}>
+              {primaryLabel}
+            </Link>
+            <Link className="marketing-button marketing-button-secondary" href="/privacy">
+              Review privacy
+            </Link>
           </div>
         </div>
       </section>

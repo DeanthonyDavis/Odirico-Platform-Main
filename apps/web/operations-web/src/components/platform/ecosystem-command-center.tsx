@@ -17,22 +17,22 @@ export function EcosystemCommandCenter() {
         <article className="stat-card">
           <span className="sidebar-label">Momentum score</span>
           <strong>{snapshot.overview.momentumScore}</strong>
-          <p className="muted">Cross-app operating pulse driven by school load, money stability, and career motion.</p>
+          <p className="muted">Shared pulse across school load, money stability, and outward career motion.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Savings rate</span>
           <strong>{percent(snapshot.sol.summary.savingsRate)}</strong>
-          <p className="muted">Sol is still protecting forward motion even with bills and semester pressure stacking up.</p>
+          <p className="muted">Sol is still protecting runway even while bills and semester pressure stack up.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Due this week</span>
           <strong>{snapshot.ember.summary.dueThisWeek}</strong>
-          <p className="muted">Ember is prioritizing academic deadlines first so the week does not collapse under backlog.</p>
+          <p className="muted">Ember is keeping academic deadlines visible before the week turns into backlog.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Active applications</span>
           <strong>{snapshot.surge.summary.activeApplications}</strong>
-          <p className="muted">Surge is holding the opportunity pipeline steady while Ember protects time to actually respond.</p>
+          <p className="muted">Surge is holding the pipeline steady while Ember protects time to actually respond.</p>
         </article>
       </div>
 
@@ -41,8 +41,8 @@ export function EcosystemCommandCenter() {
           <p className="sidebar-label">System focus</p>
           <h3>{snapshot.overview.dailyFocus}</h3>
           <p className="muted">
-            The ecosystem is acting like one operating system now: Ember handles the week,
-            Sol guards financial direction, and Surge keeps outward opportunity from getting dropped.
+            The platform is doing its job when Ember handles the week, Sol guards financial
+            direction, and Surge keeps outward opportunity from getting dropped.
           </p>
         </div>
         <div className="context-row">
@@ -57,7 +57,7 @@ export function EcosystemCommandCenter() {
           <div className="panel-header">
             <div>
               <p className="sidebar-label">Live modules</p>
-              <h3>Open the right system for the job in front of you</h3>
+              <h3>Open the right system for the pressure zone in front of you</h3>
             </div>
           </div>
           <div className="module-story-grid">
@@ -96,7 +96,7 @@ export function EcosystemCommandCenter() {
             <article className="workspace-module workspace-module-surge">
               <p className="workspace-module-kicker">Surge</p>
               <h4>Career momentum, applications, and recruiter memory</h4>
-              <p className="muted">The opportunity layer is already live and now tied back into the academic and financial systems.</p>
+              <p className="muted">The opportunity layer is already live and tied back into the academic and financial systems.</p>
               <ul className="feature-list">
                 {topApplications.map((application) => (
                   <li key={application.id}>

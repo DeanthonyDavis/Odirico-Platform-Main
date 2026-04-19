@@ -2,8 +2,48 @@ import { ODIRICO_ECOSYSTEM_APPS } from "@odirico/core/apps";
 
 export const ECOSYSTEM_NAME = "Odirico Platform";
 
+export type RouteSearchDestination = {
+  href: string;
+  label: string;
+  description: string;
+  tag: string;
+  requiresAuth?: boolean;
+};
+
+export type PricingPlan = {
+  name: string;
+  price: string;
+  cadence: string;
+  audience: string;
+  ctaLabel: string;
+  ctaHref: string;
+  features: readonly string[];
+  highlight?: boolean;
+  badge?: string;
+};
+
 export const ECOSYSTEM_TAGLINE =
   "Plan your time, manage your money, and track your future across one connected system.";
+
+export const MARKETING_PRIMARY_LINKS = [
+  { href: "/system", label: "System" },
+  { href: "/apps", label: "Apps" },
+] as const;
+
+export const PLATFORM_SUPPORT_POINTS = [
+  {
+    title: "One account everywhere",
+    copy: "Move from planning to money to applications without rebuilding the same context three times.",
+  },
+  {
+    title: "Low-friction installs",
+    copy: "Start in the browser, then install the same platform to desktop or phone when you are ready.",
+  },
+  {
+    title: "Shared memory by design",
+    copy: "The important signal from one app can follow you into the next instead of disappearing in another tool.",
+  },
+] as const;
 
 export const SYSTEM_PILLARS = [
   {
@@ -50,12 +90,14 @@ export const PLATFORM_PRIORITIES = [
   },
 ] as const;
 
-export const PRICING_PLANS = [
+export const PRICING_PLANS: readonly PricingPlan[] = [
   {
     name: "Free",
     price: "$0",
     cadence: "to start",
     audience: "Explore the system and open the web platform.",
+    ctaLabel: "Start free",
+    ctaHref: "/signup",
     features: [
       "Web access to Ember, Sol, and Surge routes",
       "Shared account and core ecosystem navigation",
@@ -67,6 +109,10 @@ export const PRICING_PLANS = [
     price: "$14.99",
     cadence: "per month",
     audience: "For consistent weekly use across the full ecosystem.",
+    ctaLabel: "Choose Pro",
+    ctaHref: "/signup",
+    highlight: true,
+    badge: "Recommended",
     features: [
       "Applies across Ember, Sol, and Surge",
       "Shared upgrades, sync surfaces, and automation layers",
@@ -78,11 +124,51 @@ export const PRICING_PLANS = [
     price: "$59",
     cadence: "per term",
     audience: "For school cycles, internships, and focused growth windows.",
+    ctaLabel: "Choose Semester",
+    ctaHref: "/signup",
     features: [
       "Discounted ecosystem access for longer planning cycles",
       "Ideal for school plus work plus application seasons",
       "One plan that covers all current consumer modules",
     ],
+  },
+] as const;
+
+export const PRICING_PROOF_POINTS = [
+  {
+    title: "One plan across the ecosystem",
+    copy: "You are unlocking Ember, Sol, and Surge together instead of stacking separate subscriptions for separate life problems.",
+  },
+  {
+    title: "Start free without getting stranded",
+    copy: "The free tier is meant to let you understand the shell, routes, and install flow before you commit to a paid rhythm.",
+  },
+  {
+    title: "Built for overlapping seasons",
+    copy: "School pressure, money pressure, and application pressure usually happen at the same time. The pricing model is shaped around that reality.",
+  },
+] as const;
+
+export const PRICING_FAQS = [
+  {
+    question: "Does one subscription unlock every app?",
+    answer:
+      "Yes. Paid ecosystem access applies across Ember, Sol, and Surge instead of making you manage separate consumer subscriptions.",
+  },
+  {
+    question: "Can I start on the free plan?",
+    answer:
+      "Yes. The free tier is the entry point for exploring the web platform, shared account shell, and current install flow before upgrading.",
+  },
+  {
+    question: "Will pricing change by app later?",
+    answer:
+      "The current direction is one connected consumer plan model. If pricing changes in the future, it will still be framed around the platform, not disconnected app billing.",
+  },
+  {
+    question: "Do I need to install the app to use it?",
+    answer:
+      "No. You can start in the browser first and install the platform later on desktop or mobile without changing the product you are using.",
   },
 ] as const;
 
@@ -113,6 +199,128 @@ export const WHY_IT_EXISTS = [
   "Most products only solve one category of life pressure at a time.",
   "Students and early-career users end up rebuilding the same context across schedules, money tools, and opportunity trackers.",
   "Odirico Platform exists to make Ember, Sol, and Surge feel like one connected system instead of three disconnected apps.",
+] as const;
+
+export const TRUST_PROMISES = [
+  {
+    title: "Private by default",
+    copy: "Trust, privacy, and browser consent are treated as part of the product baseline, not an afterthought.",
+  },
+  {
+    title: "Accessible enough to grow with",
+    copy: "The shared shell is being shaped around readable structure, keyboard reachability, and clear focus states.",
+  },
+  {
+    title: "Built for real life overlap",
+    copy: "The platform is meant to help when school, money, and opportunity are all moving at once, not only when life is tidy.",
+  },
+] as const;
+
+export const PUBLIC_SEARCH_DESTINATIONS: readonly RouteSearchDestination[] = [
+  {
+    href: "/system",
+    label: "System",
+    description: "See how Ember, Sol, and Surge fit together inside one connected product.",
+    tag: "Public",
+  },
+  {
+    href: "/apps",
+    label: "Apps",
+    description: "Browse the three consumer apps and what each one owns inside the ecosystem.",
+    tag: "Public",
+  },
+  {
+    href: "/pricing",
+    label: "Pricing",
+    description: "Compare the Free, Pro, and Semester plans for the connected platform.",
+    tag: "Plans",
+  },
+  {
+    href: "/install",
+    label: "Install",
+    description: "See how to install Odirico on desktop, iPhone, Android, or keep using the browser.",
+    tag: "Setup",
+  },
+  {
+    href: "/about",
+    label: "About",
+    description: "Read the platform story and why Odirico exists as one connected system.",
+    tag: "Public",
+  },
+  {
+    href: "/privacy",
+    label: "Privacy policy",
+    description: "Review data handling, security basics, and platform privacy commitments.",
+    tag: "Trust",
+  },
+  {
+    href: "/terms",
+    label: "Terms & conditions",
+    description: "Read the baseline terms for using Odirico across web, mobile, and desktop.",
+    tag: "Trust",
+  },
+  {
+    href: "/cookies",
+    label: "Cookie policy",
+    description: "Learn how browser storage and consent work on the platform today.",
+    tag: "Trust",
+  },
+  {
+    href: "/disclaimer",
+    label: "Disclaimer",
+    description: "Review product, AI, accessibility, and reliance limitations.",
+    tag: "Trust",
+  },
+  {
+    href: "/login",
+    label: "Log in",
+    description: "Sign in to the shared Odirico platform shell.",
+    tag: "Access",
+  },
+  {
+    href: "/signup",
+    label: "Get started",
+    description: "Create an account and open the platform.",
+    tag: "Access",
+  },
+  ...ODIRICO_ECOSYSTEM_APPS.map((app) => ({
+    href: app.href,
+    label: app.label,
+    description: app.summary,
+    tag: "App",
+    requiresAuth: true,
+  })),
+] as const;
+
+export const PLATFORM_SEARCH_DESTINATIONS: readonly RouteSearchDestination[] = [
+  {
+    href: "/overview",
+    label: "Overview",
+    description: "Open the shared consumer command center for Ember, Sol, and Surge.",
+    tag: "Platform",
+    requiresAuth: true,
+  },
+  {
+    href: "/billing",
+    label: "Billing",
+    description: "Review plans, entitlements, and the shared ecosystem billing surface.",
+    tag: "Platform",
+    requiresAuth: true,
+  },
+  {
+    href: "/settings",
+    label: "Settings",
+    description: "Adjust account-level settings and platform preferences.",
+    tag: "Platform",
+    requiresAuth: true,
+  },
+  ...ODIRICO_ECOSYSTEM_APPS.map((app) => ({
+    href: app.href,
+    label: app.label,
+    description: app.summary,
+    tag: "App",
+    requiresAuth: true,
+  })),
 ] as const;
 
 export const ECOSYSTEM_APP_STORIES = ODIRICO_ECOSYSTEM_APPS.map((app) => ({

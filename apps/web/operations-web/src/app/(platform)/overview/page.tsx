@@ -12,8 +12,8 @@ export default async function OverviewPage() {
   return (
     <AppShell
       currentPath="/overview"
-      title="Your ecosystem"
-      subtitle="One connected platform for assignments, money, and opportunity momentum across Ember, Sol, and Surge."
+      title="Overview"
+      subtitle="Your shared command center for assignments, money direction, and application momentum across Ember, Sol, and Surge."
       userContext={userContext}
       variant="ecosystem"
     >
@@ -23,7 +23,7 @@ export default async function OverviewPage() {
         <div className="panel-header">
           <div>
             <p className="sidebar-label">Platform install</p>
-            <h3>Install one system and move across all three products</h3>
+            <h3>Install one platform and keep the same account everywhere</h3>
           </div>
         </div>
         <div className="access-link-row access-link-row-compact">
