@@ -23,6 +23,10 @@ function run(command, args, env) {
   });
 }
 
+async function runNode(scriptPath, scriptArgs, env) {
+  return run(process.execPath, [scriptPath, ...scriptArgs], env);
+}
+
 async function main() {
   const cwd = process.cwd();
   const shouldUseNtfsMirror =
@@ -37,16 +41,16 @@ async function main() {
         ["-ExecutionPolicy", "Bypass", "-File", path.join(cwd, "scripts", "build-on-ntfs.ps1")],
         process.env,
       )
-    : await run(
-        "cmd.exe",
-        [
-          "/d",
-          "/s",
-          "/c",
-          `node "${path.join(cwd, "node_modules", "typescript", "bin", "tsc")}" && node "${path.join(cwd, "node_modules", "vite", "bin", "vite.js")}" build`,
-        ],
-        process.env,
-      );
+    : await runNode(path.join(cwd, "node_modules", "typescript", "bin", "tsc"), [], process.env);
+
+  if (!shouldUseNtfsMirror && code === 0) {
+    const viteCode = await runNode(
+      path.join(cwd, "node_modules", "vite", "bin", "vite.js"),
+      ["build"],
+      process.env,
+    );
+    process.exit(viteCode);
+  }
 
   process.exit(code);
 }

@@ -1,0 +1,94 @@
+name: windows-desktop-release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "desktop-v*"
+
+jobs:
+  build-windows-desktop:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    env:
+      ODIRICO_WINDOWS_SIGNING_MODE: ${{ secrets.ODIRICO_WINDOWS_SIGNING_MODE }}
+      ODIRICO_WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.ODIRICO_WINDOWS_CERTIFICATE_PASSWORD }}
+      ODIRICO_WINDOWS_CERTIFICATE_THUMBPRINT: ${{ secrets.ODIRICO_WINDOWS_CERTIFICATE_THUMBPRINT }}
+      ODIRICO_WINDOWS_CERTIFICATE_STORE: ${{ secrets.ODIRICO_WINDOWS_CERTIFICATE_STORE }}
+      ODIRICO_WINDOWS_CERTIFICATE_STORE_LOCATION: ${{ secrets.ODIRICO_WINDOWS_CERTIFICATE_STORE_LOCATION }}
+      ODIRICO_WINDOWS_TIMESTAMP_URL: ${{ secrets.ODIRICO_WINDOWS_TIMESTAMP_URL }}
+      ODIRICO_WINDOWS_TRUSTED_SIGNING_ACCOUNT: ${{ secrets.ODIRICO_WINDOWS_TRUSTED_SIGNING_ACCOUNT }}
+      ODIRICO_WINDOWS_TRUSTED_SIGNING_ENDPOINT: ${{ secrets.ODIRICO_WINDOWS_TRUSTED_SIGNING_ENDPOINT }}
+      ODIRICO_WINDOWS_TRUSTED_SIGNING_PROFILE: ${{ secrets.ODIRICO_WINDOWS_TRUSTED_SIGNING_PROFILE }}
+      ODIRICO_WINDOWS_SIGNING_DESCRIPTION: Odirico Desktop
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust artifacts
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./apps/desktop/odirico-desktop/src-tauri -> target"
+
+      - name: Materialize PFX certificate
+        if: env.ODIRICO_WINDOWS_SIGNING_MODE == 'signtool-pfx'
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace("${{ secrets.ODIRICO_WINDOWS_PFX_BASE64 }}")) {
+            throw "ODIRICO_WINDOWS_PFX_BASE64 is required when ODIRICO_WINDOWS_SIGNING_MODE=signtool-pfx."
+          }
+
+          $certificatePath = Join-Path $env:RUNNER_TEMP "odirico-desktop-signing.pfx"
+          [System.IO.File]::WriteAllBytes(
+            $certificatePath,
+            [System.Convert]::FromBase64String("${{ secrets.ODIRICO_WINDOWS_PFX_BASE64 }}")
+          )
+
+          "ODIRICO_WINDOWS_CERTIFICATE_PATH=$certificatePath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Validate workflow signing mode
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:ODIRICO_WINDOWS_SIGNING_MODE)) {
+            throw "ODIRICO_WINDOWS_SIGNING_MODE is required for the release workflow."
+          }
+
+          if ($env:ODIRICO_WINDOWS_SIGNING_MODE -eq "trusted-signing-cli") {
+            throw "The repo signing hook supports trusted-signing-cli, but this workflow is currently wired for signtool-based signing. Use signtool-pfx in GitHub Actions or extend the workflow to install trusted-signing-cli first."
+          }
+
+      - name: Install desktop dependencies
+        working-directory: apps/desktop/odirico-desktop
+        run: npm install --workspaces=false --no-audit --no-fund
+
+      - name: Build signed NSIS installer
+        working-directory: apps/desktop/odirico-desktop
+        run: npm run release:windows
+
+      - name: Upload Windows desktop artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: odirico-desktop-windows
+          path: |
+            apps/desktop/odirico-desktop/src-tauri/target/release/bundle/nsis/*
+          if-no-files-found: error
+
+      - name: Publish draft GitHub release
+        if: startsWith(github.ref, 'refs/tags/desktop-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true
+          files: |
+            apps/desktop/odirico-desktop/src-tauri/target/release/bundle/nsis/*
