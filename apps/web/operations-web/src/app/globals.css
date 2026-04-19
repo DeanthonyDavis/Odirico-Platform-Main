@@ -1037,6 +1037,409 @@ button {
   padding: 0.35rem 0;
 }
 
+.workspace-banner {
+  display: grid;
+  gap: 1rem;
+  border-color: rgba(10, 10, 15, 0.08);
+}
+
+.workspace-banner-overview {
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.12), transparent 28%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 245, 240, 0.94));
+}
+
+.workspace-banner-sol {
+  background:
+    radial-gradient(circle at top right, rgba(174, 122, 45, 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(255, 252, 245, 0.98), rgba(247, 241, 232, 0.96));
+}
+
+.workspace-banner-ember {
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 28%),
+    linear-gradient(135deg, rgba(247, 250, 255, 0.98), rgba(239, 244, 255, 0.96));
+}
+
+.module-story-grid,
+.workspace-insight-grid,
+.goal-grid,
+.study-grid,
+.course-grid,
+.task-list-grid,
+.connector-list,
+.signal-list,
+.progress-stack,
+.energy-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.module-story-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.workspace-module,
+.workspace-insight,
+.goal-card,
+.signal-card-mini,
+.task-card,
+.study-card,
+.course-card,
+.progress-row-card,
+.connector-row,
+.semester-progress-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.workspace-module,
+.workspace-insight,
+.goal-card,
+.signal-card-mini,
+.task-card,
+.study-card,
+.course-card,
+.progress-row-card,
+.connector-row,
+.semester-progress-card {
+  padding: 1rem;
+}
+
+.workspace-module {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.workspace-module h4,
+.workspace-insight h4,
+.goal-card h4,
+.task-card strong,
+.study-card h4,
+.course-card h4,
+.semester-progress-card h4 {
+  margin: 0;
+  font-family: "Aptos Display", "Segoe UI", sans-serif;
+}
+
+.workspace-module-kicker,
+.mini-meta {
+  margin: 0;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mini-meta {
+  color: var(--brand-2);
+}
+
+.workspace-module-ember {
+  background:
+    linear-gradient(180deg, rgba(240, 245, 255, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.workspace-module-sol {
+  background:
+    linear-gradient(180deg, rgba(255, 248, 236, 0.98), rgba(255, 255, 255, 0.96));
+}
+
+.workspace-module-surge {
+  background:
+    linear-gradient(180deg, rgba(255, 244, 240, 0.98), rgba(255, 255, 255, 0.96));
+}
+
+.workspace-insight-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.workspace-insight {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.workspace-insight-good {
+  border-color: rgba(29, 122, 86, 0.18);
+  background: rgba(240, 250, 246, 0.94);
+}
+
+.workspace-insight-watch {
+  border-color: rgba(143, 100, 0, 0.18);
+  background: rgba(255, 248, 234, 0.96);
+}
+
+.workspace-insight-urgent {
+  border-color: rgba(187, 77, 53, 0.18);
+  background: rgba(255, 241, 237, 0.96);
+}
+
+.workspace-insight-info {
+  border-color: rgba(37, 99, 235, 0.16);
+  background: rgba(240, 246, 255, 0.96);
+}
+
+.connector-list,
+.signal-list {
+  gap: 0.75rem;
+}
+
+.connector-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.connector-row strong,
+.signal-card-mini strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.connector-pill-connected {
+  background: rgba(29, 122, 86, 0.12);
+  color: var(--success);
+}
+
+.connector-pill-syncing {
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--accent);
+}
+
+.connector-pill-attention {
+  background: rgba(187, 77, 53, 0.12);
+  color: var(--danger);
+}
+
+.signal-card-mini {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.signal-card-head,
+.task-card-top,
+.progress-row-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.source-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-top: 0.35rem;
+}
+
+.source-dot-ember {
+  background: var(--accent);
+}
+
+.source-dot-sol {
+  background: var(--gold);
+}
+
+.source-dot-surge {
+  background: var(--brand-2);
+}
+
+.progress-row-card {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(10, 10, 15, 0.08);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--brand-2), #ff8d66);
+}
+
+.trend-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.trend-pill-up {
+  background: rgba(187, 77, 53, 0.12);
+  color: var(--danger);
+}
+
+.trend-pill-flat {
+  background: rgba(10, 10, 15, 0.08);
+  color: var(--muted);
+}
+
+.trend-pill-down {
+  background: rgba(29, 122, 86, 0.12);
+  color: var(--success);
+}
+
+.goal-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.goal-card {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.goal-ring {
+  width: 84px;
+  height: 84px;
+  border-radius: 999px;
+  border: 8px solid rgba(255, 90, 53, 0.18);
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.energy-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.energy-cell {
+  border-radius: 18px;
+  padding: 0.95rem;
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.energy-cell p,
+.study-card p,
+.workspace-insight p,
+.task-card p,
+.course-card p {
+  margin: 0;
+}
+
+.energy-cell-low {
+  background: rgba(255, 243, 238, 0.9);
+}
+
+.energy-cell-medium {
+  background: rgba(255, 250, 240, 0.9);
+}
+
+.energy-cell-high {
+  background: rgba(239, 247, 255, 0.94);
+}
+
+.task-list-grid,
+.study-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.task-card,
+.study-card,
+.course-card,
+.semester-progress-card {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.task-status-pill {
+  color: var(--ink);
+}
+
+.task-status-not-started {
+  background: rgba(10, 10, 15, 0.08);
+  color: var(--muted);
+}
+
+.task-status-in-progress {
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--accent);
+}
+
+.task-status-submitted {
+  background: rgba(29, 122, 86, 0.12);
+  color: var(--success);
+}
+
+.risk-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.28rem 0.62rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.risk-pill-healthy,
+.risk-pill-high {
+  background: rgba(29, 122, 86, 0.12);
+  color: var(--success);
+}
+
+.risk-pill-watch,
+.risk-pill-medium {
+  background: rgba(143, 100, 0, 0.12);
+  color: var(--warning);
+}
+
+.risk-pill-urgent,
+.risk-pill-low {
+  background: rgba(187, 77, 53, 0.12);
+  color: var(--danger);
+}
+
+.study-card-ember {
+  background: rgba(244, 248, 255, 0.96);
+}
+
+.study-card-sol {
+  background: rgba(255, 250, 240, 0.98);
+}
+
+.study-card-surge {
+  background: rgba(255, 244, 240, 0.98);
+}
+
+.semester-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.5fr);
+  gap: 1rem;
+}
+
+.course-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  .module-story-grid,
+  .workspace-insight-grid,
+  .goal-grid,
+  .energy-grid,
+  .task-list-grid,
+  .study-grid,
+  .semester-grid,
+  .course-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1100px) {
   .app-shell {
     grid-template-columns: 1fr;

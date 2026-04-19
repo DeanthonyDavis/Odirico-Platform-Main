@@ -22,22 +22,22 @@
         "./src/*"
       ],
       "@odirico/core": [
-        "../../../packages/core/src/index.ts"
+        "./src/vendor/odirico/core"
       ],
       "@odirico/core/*": [
-        "../../../packages/core/src/*"
+        "./src/vendor/odirico/core/*"
       ],
       "@odirico/auth": [
-        "../../../packages/auth/src/index.ts"
+        "./src/vendor/odirico/auth"
       ],
       "@odirico/auth/*": [
-        "../../../packages/auth/src/*"
+        "./src/vendor/odirico/auth/*"
       ],
       "@odirico/api": [
-        "../../../packages/api/src/index.ts"
+        "./src/vendor/odirico/api"
       ],
       "@odirico/api/*": [
-        "../../../packages/api/src/*"
+        "./src/vendor/odirico/api/*"
       ]
     },
     "plugins": [

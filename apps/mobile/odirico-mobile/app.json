@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Odirico Mobile",
+    "slug": "odirico-mobile",
+    "scheme": "odirico",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.odirico.mobile"
+    },
+    "android": {
+      "package": "com.odirico.mobile"
+    }
+  }
+}

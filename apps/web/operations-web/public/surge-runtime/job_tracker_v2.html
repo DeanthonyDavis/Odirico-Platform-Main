@@ -251,6 +251,31 @@ button,input,select,textarea{font:inherit}a{color:inherit}.sr-only{position:abso
   </div>
 </div>
 
+<div id="application-modal" class="modal-wrap">
+  <div class="modal">
+    <div id="application-modal-title" class="modal-title">Application details</div>
+    <div id="application-modal-sub" class="modal-sub">Edit the live application record and keep Surge in sync across web, vault, and mobile.</div>
+    <div class="capture-note" style="margin-bottom:14px">
+      <div id="application-modal-meta" class="item-meta">Choose an application from the pipeline, action queue, or company view to edit it here.</div>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label for="application-status">Status</label><select id="application-status"><option value="lead">Saved lead</option><option value="applied">Applied</option><option value="confirmed">Confirmed</option><option value="review">Under review</option><option value="recruiter">Recruiter reached out</option><option value="interview">Interview</option><option value="offer">Offer</option><option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option></select></div>
+      <div class="field"><label for="application-location">Location</label><input id="application-location" placeholder="Houston, TX"></div>
+      <div class="field"><label for="application-applied-at">Applied on</label><input id="application-applied-at" type="date"></div>
+      <div class="field"><label for="application-next-at">Next action date</label><input id="application-next-at" type="date"></div>
+      <div class="field"><label for="application-pay">Compensation</label><input id="application-pay" placeholder="$25/hr or $70k"></div>
+      <div class="field"><label for="application-next-step">Next step</label><input id="application-next-step" placeholder="Follow up, prep interview, send transcript"></div>
+      <div class="field full"><label for="application-url">Source URL</label><input id="application-url" placeholder="https://company.com/jobs/..."></div>
+      <div class="field full"><label for="application-notes">Notes</label><textarea id="application-notes" placeholder="Keep the latest context, recruiter notes, or reminders here."></textarea></div>
+    </div>
+    <div class="modal-actions" style="margin-top:18px">
+      <button class="btn pri" onclick="saveApplicationEditor()">Save changes</button>
+      <button class="btn" onclick="syncActiveApplicationWorkspace()">Sync workspace</button>
+      <button class="ghost" onclick="closeApplicationEditor()">Close</button>
+    </div>
+  </div>
+</div>
+
 <input id="import-file" type="file" accept="application/json,.json" style="display:none">
 <script src="./job_tracker_seed.js"></script>
 <script async defer src="https://accounts.google.com/gsi/client"></script>
@@ -261,6 +286,7 @@ const LEGACY_KEYS = ["jobboard_tracker_v3"];
 const COMPANY_CATEGORIES = ["Oil & Gas","Oilfield Services","Utilities / Grid","Construction / EPC","Engineering / Industrial","Renewables","Government / National Lab","Other"];
 const HOUSING_OPTIONS = ["No","Yes","Stipend","Partial","TBD"];
 const ROLE_TYPES = { internship:"Internship", entry:"Entry-level", ft:"Full-time", "co-op":"Co-op" };
+const DOCUMENT_TYPES = ["Resume","CV","Cover Letter","Portfolio","Writing Sample","Transcript","Certifications","References","Job Posting","Notes","Other"];
 const APP_STATUS = {
   lead:{ label:"Lead", cls:"status-lead", rank:6, pipeline:"lead" },
   applied:{ label:"Applied", cls:"status-applied", rank:5, pipeline:"applied" },
@@ -319,16 +345,44 @@ let currentView = "overview";
 let state = emptyState();
 let expandedCompanies = new Set();
 let captureMode = "manual";
+let activeApplicationId = 0;
 let lastEmailPreview = null;
 let lastBrowserPreview = null;
 let googleTokenClient = null;
 let googleConfiguredClientId = "";
 let googleAccessToken = "";
 let googleTokenExpiresAt = 0;
+let careerVaultStatus = {
+  rootPath: "",
+  applicationRoot: "",
+  counts: { totalTemplates: 0, byType: {} },
+  templates: [],
+  generatedAt: "",
+  loading: false,
+  error: ""
+};
+let remoteSnapshotStatus = {
+  loading: false,
+  connected: false,
+  generatedAt: "",
+  error: ""
+};
 
 function nowIso(){ return new Date().toISOString(); }
 function todayIso(){ return new Date().toISOString().split("T")[0]; }
 function footer(text){ document.getElementById("footer-status").textContent = text; }
+function stableId(value){
+  let hash = 0;
+  const text = String(value || "");
+  for(let index = 0; index < text.length; index += 1){
+    hash = (hash * 31 + text.charCodeAt(index)) % 2147483647;
+  }
+  return Math.max(1, hash);
+}
+function positiveId(value, fallback){
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? Math.floor(number) : stableId(fallback || value || "surge");
+}
 function escapeHtml(value){
   return String(value ?? "")
     .replaceAll("&","&amp;")
@@ -398,6 +452,7 @@ function emptyState(){
     companies: [],
     roles: [],
     applications: [],
+    documents: [],
     events: [],
     contacts: [],
     signals: [],
@@ -410,7 +465,7 @@ function emptyState(){
       lastBrowserCaptureAt: "",
       browserCaptureCount: 0
     },
-    nextIds: { company:1, role:1, application:1, event:1, contact:1, signal:1 },
+    nextIds: { company:1, role:1, application:1, event:1, contact:1, signal:1, document:1 },
     lastSavedAt: "",
     lastExportedAt: "",
     createdAt: nowIso()
@@ -452,7 +507,8 @@ function statusLabel(key){ return APP_STATUS[key]?.label || key; }
 function sourceStyle(key){ return SOURCE_STYLES[key] || SOURCE_STYLES.other; }
 function normalizeCompany(record){
   return {
-    id: Number(record.id),
+    id: positiveId(record.id, record.remoteId ?? record.remote_id ?? record.name),
+    remoteId: String((record.remoteId ?? record.remote_id ?? (typeof record.id === "string" ? record.id : "")) || "").trim(),
     name: String(record.name || "").trim(),
     category: COMPANY_CATEGORIES.includes(record.category) ? record.category : COMPANY_CATEGORIES.includes(record.cat) ? record.cat : "Other",
     location: String(record.location ?? record.loc ?? "").trim(),
@@ -460,39 +516,101 @@ function normalizeCompany(record){
     website: String(record.website ?? record.link ?? "").trim(),
     priority: ["high","med","low"].includes(record.priority) ? record.priority : "med",
     notes: String(record.notes || "").trim(),
-    createdAt: record.createdAt || nowIso(),
-    updatedAt: record.updatedAt || nowIso()
+    createdAt: record.createdAt || record.created_at || nowIso(),
+    updatedAt: record.updatedAt || record.updated_at || nowIso()
   };
 }
 function normalizeRole(record){
   return {
-    id: Number(record.id),
-    companyId: Number(record.companyId ?? record.coId),
+    id: positiveId(record.id, record.remoteId ?? record.remote_id ?? record.title),
+    remoteId: String((record.remoteId ?? record.remote_id ?? (typeof record.id === "string" ? record.id : "")) || "").trim(),
+    companyId: positiveId(record.companyId ?? record.coId ?? record.company_id, record.remoteCompanyId ?? record.company_id ?? record.coId),
+    remoteCompanyId: String(record.remoteCompanyId ?? record.remote_company_id ?? record.company_id ?? "").trim(),
     title: String(record.title || "").trim(),
-    type: ROLE_TYPES[record.type] ? record.type : "internship",
+    type: ROLE_TYPES[record.type ?? record.role_type] ? (record.type ?? record.role_type) : "internship",
     location: String(record.location ?? record.loc ?? "").trim(),
     notes: String(record.notes || "").trim(),
-    createdAt: record.createdAt || nowIso(),
-    updatedAt: record.updatedAt || nowIso()
+    createdAt: record.createdAt || record.created_at || nowIso(),
+    updatedAt: record.updatedAt || record.updated_at || nowIso()
   };
 }
 function normalizeApplication(record){
   return {
-    id: Number(record.id),
-    companyId: Number(record.companyId ?? record.coId),
-    roleId: Number(record.roleId),
+    id: positiveId(record.id, record.remoteId ?? record.remote_id ?? record.sourceUrl ?? record.source_url ?? record.notes),
+    remoteId: String((record.remoteId ?? record.remote_id ?? (typeof record.id === "string" ? record.id : "")) || "").trim(),
+    workspaceKey: positiveId(record.workspaceKey ?? record.workspace_key ?? record.id, `${record.remoteId ?? record.id}:${record.sourceUrl ?? record.source_url}`),
+    companyId: positiveId(record.companyId ?? record.coId ?? record.company_id, record.remoteCompanyId ?? record.company_id ?? record.coId),
+    remoteCompanyId: String(record.remoteCompanyId ?? record.remote_company_id ?? record.company_id ?? "").trim(),
+    roleId: positiveId(record.roleId ?? record.role_id, record.remoteRoleId ?? record.role_id),
+    remoteRoleId: String(record.remoteRoleId ?? record.remote_role_id ?? record.role_id ?? "").trim(),
     source: SOURCE_STYLES[record.source] ? record.source : "other",
     status: APP_STATUS[record.status] ? record.status : "lead",
-    appliedAt: String(record.appliedAt ?? record.date ?? "").trim(),
-    sourceUrl: String(record.sourceUrl ?? record.link ?? "").trim(),
+    appliedAt: String(record.appliedAt ?? record.applied_at ?? record.date ?? "").trim(),
+    sourceUrl: String(record.sourceUrl ?? record.source_url ?? record.link ?? "").trim(),
     location: String(record.location ?? record.loc ?? "").trim(),
     compensation: String(record.compensation ?? record.pay ?? "").trim(),
-    nextStep: String(record.nextStep ?? record.next ?? "").trim(),
-    nextStepAt: String(record.nextStepAt ?? record.nextDate ?? "").trim(),
+    nextStep: String(record.nextStep ?? record.next_step ?? record.next ?? "").trim(),
+    nextStepAt: String(record.nextStepAt ?? record.next_step_at ?? record.nextDate ?? "").trim(),
     notes: String(record.notes || "").trim(),
-    lastSignalAt: String(record.lastSignalAt ?? record.updatedAt ?? record.createdAt ?? nowIso()).trim(),
-    createdAt: record.createdAt || nowIso(),
-    updatedAt: record.updatedAt || nowIso()
+    jobDescription: String(record.jobDescription ?? record.job_description ?? "").trim(),
+    lastSignalAt: String(record.lastSignalAt ?? record.last_signal_at ?? record.updatedAt ?? record.updated_at ?? record.createdAt ?? record.created_at ?? nowIso()).trim(),
+    workspace: normalizeWorkspace(record.workspace),
+    tailoring: normalizeTailoring(record.tailoring),
+    createdAt: record.createdAt || record.created_at || nowIso(),
+    updatedAt: record.updatedAt || record.updated_at || nowIso()
+  };
+}
+function normalizeTailoring(record){
+  if(!record || typeof record !== "object") return null;
+  return {
+    status: String(record.status || "").trim() || "ready",
+    provider: String(record.provider || "").trim() || "anthropic",
+    model: String(record.model || "").trim(),
+    generatedAt: String(record.generatedAt || nowIso()).trim(),
+    resumeFileName: String(record.resumeFileName || "").trim(),
+    coverLetterFileName: String(record.coverLetterFileName || "").trim(),
+    atsKeywords: Array.isArray(record.atsKeywords) ? record.atsKeywords.map(String).filter(Boolean) : [],
+    notes: Array.isArray(record.notes) ? record.notes.map(String).filter(Boolean) : []
+  };
+}
+function normalizeWorkspace(record){
+  if(!record || typeof record !== "object") return null;
+  return {
+    name: String(record.name || "").trim(),
+    rootPath: String(record.rootPath || "").trim(),
+    relativePath: String(record.relativePath || "").trim(),
+    companyDir: String(record.companyDir || "").trim(),
+    workspaceDir: String(record.workspaceDir || record.workingDir || "").trim(),
+    createdAt: String(record.createdAt || nowIso()).trim(),
+    syncedAt: String(record.syncedAt || nowIso()).trim(),
+    copiedTemplates: Array.isArray(record.copiedTemplates)
+      ? record.copiedTemplates.map(item => ({
+          type: DOCUMENT_TYPES.includes(item?.type) ? item.type : "Other",
+          fileName: String(item?.fileName || "").trim(),
+          relativePath: String(item?.relativePath || "").trim()
+        }))
+      : [],
+    missingTemplateTypes: Array.isArray(record.missingTemplateTypes)
+      ? record.missingTemplateTypes.filter(type => DOCUMENT_TYPES.includes(type))
+      : []
+  };
+}
+function normalizeDocument(record){
+  return {
+    id: positiveId(record.id, record.remoteId ?? record.remote_id ?? record.fileName ?? record.file_name),
+    remoteId: String((record.remoteId ?? record.remote_id ?? (typeof record.id === "string" ? record.id : "")) || "").trim(),
+    applicationId: positiveId(record.applicationId ?? record.application_id ?? 0, record.remoteApplicationId ?? record.application_id),
+    remoteApplicationId: String(record.remoteApplicationId ?? record.remote_application_id ?? record.application_id ?? "").trim(),
+    type: DOCUMENT_TYPES.includes(record.type ?? record.document_type) ? (record.type ?? record.document_type) : "Other",
+    stage: ["working","final","extras"].includes(record.stage) ? record.stage : "extras",
+    fileName: String(record.fileName ?? record.file_name ?? "").trim(),
+    absolutePath: String(record.absolutePath ?? record.absolute_path ?? "").trim(),
+    relativePath: String(record.relativePath ?? record.relative_path ?? "").trim(),
+    extension: String(record.extension || "").trim(),
+    tags: Array.isArray(record.tags) ? record.tags.map(String).filter(Boolean) : [],
+    sourceTemplate: String(record.sourceTemplate ?? record.source_template ?? "").trim(),
+    createdAt: record.createdAt || record.created_at || nowIso(),
+    updatedAt: record.updatedAt || record.updated_at || nowIso()
   };
 }
 function normalizeEvent(record){
@@ -637,6 +755,7 @@ function normalizeState(raw){
     const companies = (raw.companies || []).map(normalizeCompany);
     const roles = (raw.roles || []).map(normalizeRole).filter(role => companies.some(company => company.id === role.companyId));
     const applications = (raw.applications || []).map(normalizeApplication).filter(app => companies.some(company => company.id === app.companyId) && roles.some(role => role.id === app.roleId));
+    const documents = (raw.documents || []).map(normalizeDocument).filter(doc => applications.some(app => app.id === doc.applicationId));
     const events = (raw.events || []).map(normalizeEvent);
     const contacts = (raw.contacts || []).map(normalizeContact);
     const signals = (raw.signals || []).map(normalizeSignal);
@@ -644,6 +763,7 @@ function normalizeState(raw){
       companies,
       roles,
       applications,
+      documents,
       events,
       contacts,
       signals,
@@ -655,7 +775,8 @@ function normalizeState(raw){
         application: Math.max(raw.nextIds?.application || 1, ...applications.map(item => item.id + 1), 1),
         event: Math.max(raw.nextIds?.event || 1, ...events.map(item => item.id + 1), 1),
         contact: Math.max(raw.nextIds?.contact || 1, ...contacts.map(item => item.id + 1), 1),
-        signal: Math.max(raw.nextIds?.signal || 1, ...signals.map(item => item.id + 1), 1)
+        signal: Math.max(raw.nextIds?.signal || 1, ...signals.map(item => item.id + 1), 1),
+        document: Math.max(raw.nextIds?.document || 1, ...documents.map(item => item.id + 1), 1)
       },
       lastSavedAt: raw.lastSavedAt || "",
       lastExportedAt: raw.lastExportedAt || "",
@@ -690,10 +811,85 @@ function loadState(){
     state = emptyState();
   }
 }
-function persistState(message){
+function cacheStateSilently(){
   state.lastSavedAt = nowIso();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function persistState(message){
+  cacheStateSilently();
   footer(message || "Saved locally.");
+}
+function mergeRemoteSnapshot(remoteState, generatedAt){
+  const localCompanies = state.companies.filter(company => !company.remoteId);
+  const localRoles = state.roles.filter(role => !role.remoteId);
+  const localApplications = state.applications.filter(application => !application.remoteId);
+  const localDocuments = state.documents.filter(document => !document.remoteId);
+  state = normalizeState({
+    companies: [...remoteState.companies, ...localCompanies],
+    roles: [...remoteState.roles, ...localRoles],
+    applications: [...remoteState.applications, ...localApplications],
+    documents: [...remoteState.documents, ...localDocuments],
+    events: state.events,
+    contacts: state.contacts,
+    signals: state.signals,
+    settings: state.settings,
+    sync: state.sync,
+    lastSavedAt: state.lastSavedAt,
+    lastExportedAt: state.lastExportedAt,
+    createdAt: state.createdAt || generatedAt || nowIso()
+  });
+}
+async function loadRemoteApplications(options){
+  const settings = options || {};
+  remoteSnapshotStatus.loading = true;
+  remoteSnapshotStatus.error = "";
+  renderConnections();
+  try{
+    const response = await fetch("/api/surge/applications", { credentials:"same-origin" });
+    const payload = await response.json().catch(() => null);
+    if(response.status === 401){
+      remoteSnapshotStatus = {
+        loading: false,
+        connected: false,
+        generatedAt: "",
+        error: ""
+      };
+      renderConnections();
+      return false;
+    }
+    if(!response.ok){
+      throw new Error(payload?.error || `Shared Surge snapshot failed (${response.status}).`);
+    }
+    const remoteState = normalizeState(payload);
+    mergeRemoteSnapshot(remoteState, payload?.generatedAt || nowIso());
+    cacheStateSilently();
+    remoteSnapshotStatus = {
+      loading: false,
+      connected: true,
+      generatedAt: String(payload?.generatedAt || nowIso()),
+      error: ""
+    };
+    renderAll();
+    if(settings.toast){
+      footer(settings.toast);
+    }else if(!settings.silent){
+      const count = remoteState.applications.length;
+      footer(`Loaded ${count} shared application${count === 1 ? "" : "s"} from the Surge backend.`);
+    }
+    return true;
+  }catch(error){
+    remoteSnapshotStatus = {
+      loading: false,
+      connected: false,
+      generatedAt: "",
+      error: error?.message || "Unable to load the shared Surge backend."
+    };
+    renderConnections();
+    if(!settings.silent){
+      footer(remoteSnapshotStatus.error);
+    }
+    return false;
+  }
 }
 function exportState(){
   const output = JSON.stringify(state, null, 2);
@@ -1137,6 +1333,411 @@ function addSignal(input){
   state.signals.push(signal);
   return signal;
 }
+function documentsForApplication(applicationId){
+  return state.documents
+    .filter(document => document.applicationId === applicationId)
+    .slice()
+    .sort((left,right) => String(left.relativePath).localeCompare(String(right.relativePath)));
+}
+function replaceDocumentsForApplication(applicationId, nextDocuments){
+  state.documents = state.documents.filter(document => document.applicationId !== applicationId);
+  (nextDocuments || []).forEach(document => {
+    state.documents.push(normalizeDocument({
+      ...document,
+      id: state.nextIds.document++,
+      applicationId
+    }));
+  });
+}
+function stageDocumentCount(documents, stage){
+  return documents.filter(document => document.stage === stage).length;
+}
+function stageLabel(stage){
+  return ({
+    "working":"Drafts",
+    "final":"PDFs",
+    "extras":"Other files"
+  })[stage] || "Files";
+}
+async function loadCareerVaultStatus(){
+  careerVaultStatus.loading = true;
+  careerVaultStatus.error = "";
+  renderConnections();
+  try{
+    const response = await fetch("/api/surge/workspace", { credentials:"same-origin" });
+    const payload = await response.json().catch(() => null);
+    if(!response.ok){
+      throw new Error(payload?.error || `Career Vault request failed (${response.status}).`);
+    }
+    if(payload?.careerVault){
+      careerVaultStatus = {
+        ...payload.careerVault,
+        loading: false,
+        error: ""
+      };
+    }else{
+      careerVaultStatus = {
+        ...careerVaultStatus,
+        loading: false,
+        error: "Career Vault status did not return any data."
+      };
+    }
+  }catch(error){
+    careerVaultStatus = {
+      ...careerVaultStatus,
+      loading: false,
+      error: error?.message || "Unable to load the Career Vault."
+    };
+  }
+  renderConnections();
+}
+async function ensureCareerVaultWorkspace(bundle){
+  if(!bundle?.application || !bundle?.role || !bundle?.company){
+    throw new Error("That application is missing the company, role, or application record.");
+  }
+  const response = await fetch("/api/surge/workspace", {
+    method:"POST",
+    credentials:"same-origin",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      applicationId: bundle.application.workspaceKey || bundle.application.id,
+      remoteApplicationId: bundle.application.remoteId || "",
+      companyName: bundle.company.name,
+      roleTitle: bundle.role.title,
+      jobType: ROLE_TYPES[bundle.role.type] || bundle.role.type,
+      field: bundle.company.category,
+      sourceUrl: bundle.application.sourceUrl,
+      notes: bundle.application.notes,
+      appliedAt: bundle.application.appliedAt
+    })
+  });
+  const payload = await response.json().catch(() => null);
+  if(!response.ok){
+    throw new Error(payload?.error || `Career Vault request failed (${response.status}).`);
+  }
+  if(payload?.careerVault){
+    careerVaultStatus = {
+      ...payload.careerVault,
+      loading: false,
+      error: ""
+    };
+  }
+  if(payload?.workspace){
+    bundle.application.workspace = normalizeWorkspace(payload.workspace);
+    replaceDocumentsForApplication(bundle.application.id, payload.workspace.documents || []);
+    bundle.application.updatedAt = nowIso();
+    return payload.workspace;
+  }
+  throw new Error("Career Vault did not return a workspace.");
+}
+async function syncWorkspaceForApplication(applicationId){
+  const application = state.applications.find(item => item.id === applicationId);
+  if(!application) return;
+  const bundle = applicationSummary(application);
+  try{
+    const workspace = await ensureCareerVaultWorkspace(bundle);
+    const missing = workspace.missingTemplateTypes?.length ? ` Missing templates: ${workspace.missingTemplateTypes.join(", ")}.` : "";
+    persistState(`Career Vault synced for ${bundle.role?.title || "application"}.${missing}`);
+  }catch(error){
+    persistState(`Saved locally, but Career Vault sync failed: ${error?.message || "Unknown error"}`);
+  }
+  renderAll();
+}
+async function tailorApplicationForBundle(bundle, jobDescription){
+  if(!bundle?.application || !bundle?.role || !bundle?.company){
+    throw new Error("That application is missing the company, role, or company details Surge needs.");
+  }
+  const response = await fetch("/api/surge/tailor", {
+    method:"POST",
+    credentials:"same-origin",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      applicationId: bundle.application.workspaceKey || bundle.application.id,
+      remoteApplicationId: bundle.application.remoteId || "",
+      companyName: bundle.company.name,
+      roleTitle: bundle.role.title,
+      jobType: ROLE_TYPES[bundle.role.type] || bundle.role.type,
+      field: bundle.company.category,
+      sourceUrl: bundle.application.sourceUrl,
+      notes: bundle.application.notes,
+      appliedAt: bundle.application.appliedAt,
+      includeCoverLetter: true,
+      jobDescription
+    })
+  });
+  const payload = await response.json().catch(() => null);
+  if(!response.ok){
+    throw new Error(payload?.error || `Tailoring request failed (${response.status}).`);
+  }
+  if(payload?.workspace){
+    bundle.application.workspace = normalizeWorkspace(payload.workspace);
+    replaceDocumentsForApplication(bundle.application.id, payload.workspace.documents || []);
+  }
+  if(payload?.tailoring){
+    bundle.application.tailoring = normalizeTailoring(payload.tailoring);
+    bundle.application.updatedAt = nowIso();
+    return payload.tailoring;
+  }
+  throw new Error("Tailoring did not return any generated document details.");
+}
+function syntheticCaptureUrl(payload){
+  const raw = String(payload?.sourceUrl || payload?.url || "").trim();
+  return raw;
+}
+function buildRemoteCaptureMessage(base, remote){
+  let message = base;
+  if(remote?.workspace?.missingTemplateTypes?.length){
+    message = `${message} Career Vault synced, but some templates are missing: ${remote.workspace.missingTemplateTypes.join(", ")}.`;
+  }else if(remote?.workspace){
+    message = `${message} Career Vault workspace ready.`;
+  }
+  if(remote?.tailoring?.status === "ready"){
+    message = `${message} Tailored resume${remote?.tailoring?.coverLetterFileName ? " and cover letter" : ""} ready.`;
+  }else if(remote?.tailoring?.status === "failed"){
+    message = `${message} Tailoring failed.`;
+  }
+  const warnings = Array.isArray(remote?.warnings) ? remote.warnings.filter(Boolean) : [];
+  if(warnings.length){
+    message = `${message} ${warnings.join(" ")}`;
+  }
+  return message.trim();
+}
+function findApplicationByRemoteId(remoteId){
+  if(!remoteId) return null;
+  return state.applications.find(application => application.remoteId === remoteId) || null;
+}
+function recordLocalCaptureArtifacts(parsed, application){
+  if(!parsed || !application) return;
+  ensureContact({
+    companyId: application.companyId,
+    roleId: application.roleId,
+    name: parsed.contactName,
+    email: parsed.contactEmail,
+    title: parsed.contactTitle || "",
+    source: parsed.source || "other",
+    notes: parsed.contactNotes || ""
+  });
+  addSignal({
+    channel: parsed.channel || parsed.source || "other",
+    source: parsed.source || "other",
+    raw: parsed.rawSignal || parsed.jobDescription || "",
+    summary: parsed.signalSummary || `${parsed.roleTitle || "Role"} at ${parsed.companyName || "Unknown company"}`,
+    parsed: {
+      companyName: parsed.companyName,
+      roleTitle: parsed.roleTitle,
+      status: parsed.status,
+      source: parsed.source || "other"
+    }
+  });
+  addEvent({
+    companyId: application.companyId,
+    roleId: application.roleId,
+    applicationId: application.id,
+    kind: parsed.eventKind || "signal",
+    channel: parsed.channel || parsed.source || "other",
+    occurredAt: parsed.signalAt || parsed.appliedAt || nowIso(),
+    summary: parsed.eventSummary || `${statusLabel(parsed.status || application.status)} signal captured`,
+    details: parsed.eventDetails || parsed.notes || ""
+  });
+}
+async function ingestCaptureRemotely(payload, errorLabel){
+  const response = await fetch("/api/surge/ingest", {
+    method:"POST",
+    credentials:"same-origin",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(payload)
+  });
+  const result = await response.json().catch(() => null);
+  if(!response.ok){
+    throw new Error(result?.error || `${errorLabel} failed (${response.status}).`);
+  }
+  const loaded = await loadRemoteApplications({ silent:true });
+  return {
+    payload: result,
+    application: loaded ? findApplicationByRemoteId(result?.application?.id || "") : null
+  };
+}
+function syncApplicationRecord(application, record){
+  if(!application || !record) return application;
+  const normalized = normalizeApplication({
+    ...application,
+    ...record,
+    id: application.id,
+    workspaceKey: application.workspaceKey,
+    remoteId: String((record.remoteId ?? record.remote_id ?? record.id ?? application.remoteId) || "").trim() || application.remoteId,
+    workspace: record.workspace ?? application.workspace,
+    tailoring: record.tailoring ?? application.tailoring
+  });
+  Object.assign(application, normalized);
+  return application;
+}
+function applyLocalApplicationUpdate(application, update){
+  if(!application || !update) return application;
+  if(update.status !== undefined && APP_STATUS[update.status]) application.status = update.status;
+  if(update.appliedAt !== undefined) application.appliedAt = update.appliedAt || "";
+  if(update.nextStep !== undefined) application.nextStep = update.nextStep || "";
+  if(update.nextStepAt !== undefined) application.nextStepAt = update.nextStepAt || "";
+  if(update.notes !== undefined) application.notes = update.notes || "";
+  if(update.location !== undefined) application.location = update.location || "";
+  if(update.compensation !== undefined) application.compensation = update.compensation || "";
+  if(update.sourceUrl !== undefined) application.sourceUrl = update.sourceUrl || "";
+  application.lastSignalAt = nowIso();
+  application.updatedAt = nowIso();
+  return application;
+}
+async function patchApplicationRemotely(application, update){
+  const response = await fetch(`/api/surge/applications/${encodeURIComponent(application.remoteId)}`, {
+    method:"PATCH",
+    credentials:"same-origin",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(update)
+  });
+  const payload = await response.json().catch(() => null);
+  if(response.status === 401){
+    remoteSnapshotStatus = {
+      loading: false,
+      connected: false,
+      generatedAt: "",
+      error: ""
+    };
+    renderConnections();
+  }
+  if(!response.ok){
+    throw new Error(payload?.error || `Shared application save failed (${response.status}).`);
+  }
+  if(payload?.application){
+    remoteSnapshotStatus.connected = true;
+    remoteSnapshotStatus.error = "";
+    renderConnections();
+    return syncApplicationRecord(application, payload.application);
+  }
+  return application;
+}
+function hydrateApplicationEditor(application){
+  const bundle = applicationSummary(application);
+  const companyName = bundle.company?.name || "Unknown company";
+  const roleTitle = bundle.role?.title || "Application";
+  const sharingLabel = application.remoteId ? "Shared backend record" : "Local-only record";
+  const sourceLabel = sourceStyle(application.source).label;
+  document.getElementById("application-modal-title").textContent = roleTitle;
+  document.getElementById("application-modal-sub").textContent = `${companyName} | ${sourceLabel} | ${sharingLabel}`;
+  document.getElementById("application-modal-meta").textContent = [
+    application.remoteId ? "Changes sync to the shared Surge backend." : "This record only exists in local browser storage right now.",
+    application.workspace?.workspaceDir ? `Workspace: ${application.workspace.workspaceDir}` : "Workspace not created yet."
+  ].join(" ");
+  document.getElementById("application-status").value = APP_STATUS[application.status] ? application.status : "lead";
+  document.getElementById("application-location").value = application.location || "";
+  document.getElementById("application-applied-at").value = application.appliedAt || "";
+  document.getElementById("application-next-at").value = application.nextStepAt || "";
+  document.getElementById("application-pay").value = application.compensation || "";
+  document.getElementById("application-next-step").value = application.nextStep || "";
+  document.getElementById("application-url").value = application.sourceUrl || "";
+  document.getElementById("application-notes").value = application.notes || "";
+}
+function openApplicationEditor(appId){
+  const application = state.applications.find(item => item.id === appId);
+  if(!application) return;
+  activeApplicationId = application.id;
+  expandedCompanies.add(application.companyId);
+  hydrateApplicationEditor(application);
+  openModal("application-modal");
+}
+function closeApplicationEditor(){
+  activeApplicationId = 0;
+  closeModal("application-modal");
+}
+async function syncActiveApplicationWorkspace(){
+  if(!activeApplicationId){
+    footer("Choose an application first.");
+    return;
+  }
+  await syncWorkspaceForApplication(activeApplicationId);
+  const application = state.applications.find(item => item.id === activeApplicationId);
+  if(application){
+    hydrateApplicationEditor(application);
+  }
+}
+function recordApplicationUpdateEvent(application){
+  const bundle = applicationSummary(application);
+  const details = [
+    `Status: ${statusLabel(application.status)}`,
+    application.nextStep ? `Next step: ${application.nextStep}` : "",
+    application.nextStepAt ? `Due: ${application.nextStepAt}` : "",
+    application.compensation ? `Compensation: ${application.compensation}` : ""
+  ].filter(Boolean).join("\n");
+  addEvent({
+    companyId: application.companyId,
+    roleId: application.roleId,
+    applicationId: application.id,
+    kind: "application",
+    channel: application.remoteId ? "direct" : "other",
+    occurredAt: nowIso(),
+    summary: `${bundle.role?.title || "Application"} updated`,
+    details
+  });
+}
+async function saveApplicationEditor(){
+  const application = state.applications.find(item => item.id === activeApplicationId);
+  if(!application){
+    footer("Choose an application first.");
+    return;
+  }
+  const update = {};
+  const nextStatus = document.getElementById("application-status").value;
+  const nextLocation = document.getElementById("application-location").value.trim();
+  const nextAppliedAt = document.getElementById("application-applied-at").value.trim();
+  const nextNextStepAt = document.getElementById("application-next-at").value.trim();
+  const nextCompensation = document.getElementById("application-pay").value.trim();
+  const nextNextStep = document.getElementById("application-next-step").value.trim();
+  const nextSourceUrl = document.getElementById("application-url").value.trim();
+  const nextNotes = document.getElementById("application-notes").value.trim();
+  if(nextStatus !== application.status) update.status = nextStatus;
+  if(nextLocation !== (application.location || "")) update.location = nextLocation;
+  if(nextAppliedAt !== (application.appliedAt || "")) update.appliedAt = nextAppliedAt || null;
+  if(nextNextStepAt !== (application.nextStepAt || "")) update.nextStepAt = nextNextStepAt || null;
+  if(nextCompensation !== (application.compensation || "")) update.compensation = nextCompensation;
+  if(nextNextStep !== (application.nextStep || "")) update.nextStep = nextNextStep;
+  if(nextSourceUrl !== (application.sourceUrl || "")) update.sourceUrl = nextSourceUrl;
+  if(nextNotes !== (application.notes || "")) update.notes = nextNotes;
+  if(!Object.keys(update).length){
+    footer("No application changes to save.");
+    return;
+  }
+  const bundle = applicationSummary(application);
+  const label = `${bundle.role?.title || "Application"} at ${bundle.company?.name || "Unknown company"}`;
+  try{
+    if(application.remoteId){
+      await patchApplicationRemotely(application, update);
+      footer(`${label} saved to the shared backend.`);
+    }else{
+      applyLocalApplicationUpdate(application, update);
+      footer(`${label} saved locally.`);
+    }
+  }catch(error){
+    applyLocalApplicationUpdate(application, update);
+    footer(`${label} saved locally because shared sync failed: ${error?.message || "Unknown error"}`);
+  }
+  recordApplicationUpdateEvent(application);
+  cacheStateSilently();
+  hydrateApplicationEditor(application);
+  renderAll();
+}
+async function copyTextToClipboard(text, successMessage){
+  try{
+    await navigator.clipboard.writeText(text);
+    footer(successMessage);
+  }catch{
+    footer("Clipboard access is unavailable in this browser.");
+  }
+}
+function copyWorkspacePath(applicationId){
+  const application = state.applications.find(item => item.id === applicationId);
+  if(!application?.workspace?.workspaceDir){
+    footer("Create the workspace first so Surge has a path to copy.");
+    return;
+  }
+  copyTextToClipboard(application.workspace.workspaceDir, "Copied the role-folder path.");
+}
 function findApplicationMatch(roleId, source, sourceUrl, preferAnySource){
   const candidates = state.applications.filter(app => app.roleId === roleId);
   if(!candidates.length) return null;
@@ -1384,13 +1985,14 @@ function parseBrowserSignal(input){
   const companyFromText = input.body.match(/company[:\s]+([A-Z][A-Za-z0-9&'().,\- ]+)/i)?.[1]?.trim() || "";
   const locationFromText = input.body.match(/(?:location|based in)[:\s]+([A-Z][A-Za-z0-9,.\- ]+)/i)?.[1]?.trim() || "";
   return {
-    companyName: companyFromTitle || companyFromText || titleLine.split("|")[1]?.trim() || hostnameBrand(input.url) || "Unknown company",
-    roleTitle: roleFromTitle || input.body.match(/([A-Z][A-Za-z0-9/&'().,\- ]+(?:Intern|Engineer|Analyst|Co-op|Coordinator|Manager))/)?.[1]?.trim() || "Unknown role",
+    companyName: input.companyName || companyFromTitle || companyFromText || titleLine.split("|")[1]?.trim() || hostnameBrand(input.url) || "Unknown company",
+    roleTitle: input.roleTitle || roleFromTitle || input.body.match(/([A-Z][A-Za-z0-9/&'().,\- ]+(?:Intern|Engineer|Analyst|Co-op|Coordinator|Manager))/)?.[1]?.trim() || "Unknown role",
     source: input.source || guessSourceFromUrl(input.url),
     status: input.mode || "lead",
     category: "",
-    location: locationFromText,
+    location: input.location || locationFromText,
     sourceUrl: input.url || "",
+    jobDescription: input.body || "",
     signalSummary: `${sourceStyle(input.source || "browser").label} page parsed`,
     eventSummary: `${statusLabel(input.mode || "lead")} signal captured from browser context`,
     eventDetails: raw.slice(0,500),
@@ -1421,25 +2023,29 @@ function previewEmailCapture(){
   node.innerHTML = previewMarkup(lastEmailPreview);
 }
 function previewBrowserCapture(){
+  const browserTextInput = document.getElementById("browser-text");
   lastBrowserPreview = parseBrowserSignal({
     url: document.getElementById("browser-url").value.trim(),
     title: document.getElementById("browser-title").value.trim(),
-    body: document.getElementById("browser-text").value.trim(),
+    body: browserTextInput.value.trim(),
     source: document.getElementById("browser-source").value,
-    mode: document.getElementById("browser-mode").value
+    mode: document.getElementById("browser-mode").value,
+    companyName: browserTextInput.dataset.companyName || "",
+    roleTitle: browserTextInput.dataset.roleTitle || "",
+    location: browserTextInput.dataset.location || ""
   });
   const node = document.getElementById("browser-preview");
   node.style.display = "block";
   node.innerHTML = previewMarkup(lastBrowserPreview);
 }
-function submitManualCapture(){
+async function submitManualCapture(){
   const companyName = document.getElementById("manual-company").value.trim();
   const roleTitle = document.getElementById("manual-role").value.trim();
   if(!companyName || !roleTitle){
     alert("Company and role title are required.");
     return;
   }
-  const result = upsertApplicationSignal({
+  const manualPayload = {
     companyName,
     roleTitle,
     category: document.getElementById("manual-category").value,
@@ -1464,29 +2070,100 @@ function submitManualCapture(){
     eventDetails: document.getElementById("manual-notes").value.trim(),
     channel: "other",
     signalAt: nowIso()
-  });
-  if(!result) return;
-  persistState(`Captured ${roleTitle} at ${companyName}.`);
+  };
+  let message = `Captured ${roleTitle} at ${companyName}.`;
+  try{
+    const remote = await ingestCaptureRemotely({
+      url: syntheticCaptureUrl(manualPayload),
+      title: roleTitle,
+      body: [manualPayload.notes, manualPayload.nextStep, manualPayload.compensation].filter(Boolean).join("\n\n"),
+      source: manualPayload.source || "other",
+      status: manualPayload.status || "lead",
+      channel: "manual",
+      capturedAt: manualPayload.signalAt || nowIso(),
+      companyName: manualPayload.companyName,
+      roleTitle: manualPayload.roleTitle,
+      location: manualPayload.location,
+      category: manualPayload.category,
+      priority: manualPayload.priority,
+      appliedAt: manualPayload.appliedAt,
+      nextStep: manualPayload.nextStep,
+      nextStepAt: manualPayload.nextStepAt,
+      compensation: manualPayload.compensation,
+      notes: manualPayload.notes
+    }, "Shared manual ingest");
+    if(remote.application){
+      recordLocalCaptureArtifacts(manualPayload, remote.application);
+    }
+    message = buildRemoteCaptureMessage(message, remote.payload);
+  }catch(error){
+    const result = upsertApplicationSignal(manualPayload);
+    if(!result) return;
+    try{
+      const workspace = await ensureCareerVaultWorkspace(result);
+      if(workspace?.missingTemplateTypes?.length){
+        message = `${message} Career Vault synced, but some templates are missing: ${workspace.missingTemplateTypes.join(", ")}.`;
+      }else{
+        message = `${message} Career Vault workspace ready.`;
+      }
+    }catch(localError){
+      message = `${message} Saved locally, but Career Vault sync failed: ${localError?.message || error?.message || "Unknown error"}`;
+    }
+  }
+  persistState(message);
   closeModal("capture-modal");
   clearCaptureForms();
   renderAll();
 }
-function submitEmailCapture(){
+async function submitEmailCapture(){
   const source = document.getElementById("email-source").value.trim();
   if(!source){
     alert("Paste the email text first.");
     return;
   }
   const parsed = lastEmailPreview || parseEmailSignal(source);
-  if(!upsertApplicationSignal(parsed)) return;
-  persistState(`Ingested email signal for ${parsed.companyName}.`);
+  let message = `Ingested email signal for ${parsed.companyName}.`;
+  try{
+    const remote = await ingestCaptureRemotely({
+      url: syntheticCaptureUrl(parsed),
+      title: parsed.roleTitle || "Captured role",
+      body: source,
+      source: parsed.source || "email",
+      status: parsed.status || "lead",
+      channel: "email",
+      capturedAt: parsed.signalAt || nowIso(),
+      companyName: parsed.companyName,
+      roleTitle: parsed.roleTitle,
+      location: parsed.location,
+      notes: parsed.notes
+    }, "Shared email ingest");
+    if(remote.application){
+      recordLocalCaptureArtifacts(parsed, remote.application);
+    }
+    message = buildRemoteCaptureMessage(message, remote.payload);
+  }catch(error){
+    const result = upsertApplicationSignal(parsed);
+    if(!result) return;
+    try{
+      const workspace = await ensureCareerVaultWorkspace(result);
+      if(workspace?.missingTemplateTypes?.length){
+        message = `${message} Career Vault synced, but some templates are missing: ${workspace.missingTemplateTypes.join(", ")}.`;
+      }else{
+        message = `${message} Career Vault workspace ready.`;
+      }
+    }catch(localError){
+      message = `${message} Saved locally, but Career Vault sync failed: ${localError?.message || error?.message || "Unknown error"}`;
+    }
+  }
+  persistState(message);
   closeModal("capture-modal");
   clearCaptureForms();
   renderAll();
 }
-function submitBrowserCapture(){
+async function submitBrowserCapture(){
   const text = document.getElementById("browser-text").value.trim();
   const title = document.getElementById("browser-title").value.trim();
+  const browserTextInput = document.getElementById("browser-text");
   if(!text && !title){
     alert("Paste a page title or copied page text first.");
     return;
@@ -1496,36 +2173,99 @@ function submitBrowserCapture(){
     title,
     body: text,
     source: document.getElementById("browser-source").value,
-    mode: document.getElementById("browser-mode").value
+    mode: document.getElementById("browser-mode").value,
+    companyName: browserTextInput.dataset.companyName || "",
+    roleTitle: browserTextInput.dataset.roleTitle || "",
+    location: browserTextInput.dataset.location || ""
   });
-  if(!upsertApplicationSignal(parsed)) return;
-  persistState(`Ingested browser signal for ${parsed.companyName}.`);
+  let message = `Ingested browser signal for ${parsed.companyName}.`;
+  try{
+    const remote = await ingestCaptureRemotely({
+      url: syntheticCaptureUrl(parsed),
+      title: title || parsed.roleTitle || "Captured role",
+      body: (parsed.jobDescription || text || "").trim(),
+      source: parsed.source || "browser",
+      status: parsed.status || "lead",
+      channel: "browser",
+      capturedAt: parsed.signalAt || nowIso(),
+      companyName: parsed.companyName,
+      roleTitle: parsed.roleTitle,
+      location: parsed.location,
+      category: parsed.category,
+      notes: parsed.notes
+    }, "Shared browser ingest");
+    if(remote.application){
+      recordLocalCaptureArtifacts(parsed, remote.application);
+    }
+    message = buildRemoteCaptureMessage(message, remote.payload);
+  }catch(error){
+    const result = upsertApplicationSignal(parsed);
+    if(!result) return;
+    message = `Shared ingest failed, so Surge saved ${parsed.companyName} locally.`;
+    try{
+      const workspace = await ensureCareerVaultWorkspace(result);
+      if(workspace?.missingTemplateTypes?.length){
+        message = `${message} Career Vault synced, but some templates are missing: ${workspace.missingTemplateTypes.join(", ")}.`;
+      }else{
+        message = `${message} Career Vault workspace ready.`;
+      }
+      if((parsed.jobDescription || text).trim().length >= 120){
+        try{
+          await tailorApplicationForBundle(result, parsed.jobDescription || text);
+          message = `${message} Tailored resume${result.application?.tailoring?.coverLetterFileName ? " and cover letter" : ""} ready.`;
+        }catch(tailorError){
+          message = `${message} Tailoring failed: ${tailorError?.message || "Unknown error"}`;
+        }
+      }
+    }catch(localError){
+      message = `${message} Saved locally, but Career Vault sync failed: ${localError?.message || "Unknown error"}`;
+    }
+  }
+  persistState(message);
   closeModal("capture-modal");
   clearCaptureForms();
   renderAll();
 }
 function fillBrowserCaptureForm(payload){
+  const browserTextInput = document.getElementById("browser-text");
   document.getElementById("browser-url").value = String(payload.url || "").trim();
   document.getElementById("browser-title").value = String(payload.title || "").trim();
-  document.getElementById("browser-text").value = String(payload.text || payload.body || "").trim();
+  browserTextInput.value = String(payload.text || payload.body || "").trim();
+  browserTextInput.dataset.companyName = String(payload.companyName || "").trim();
+  browserTextInput.dataset.roleTitle = String(payload.roleTitle || "").trim();
+  browserTextInput.dataset.location = String(payload.location || "").trim();
   document.getElementById("browser-source").value = SOURCE_STYLES[payload.source] ? payload.source : guessSourceFromUrl(payload.url || "");
   document.getElementById("browser-mode").value = ["lead","applied","review"].includes(payload.mode) ? payload.mode : "lead";
+}
+function applyBrowserCapturePayload(payload){
+  fillBrowserCaptureForm(payload);
+  state.sync.lastBrowserCaptureAt = nowIso();
+  state.sync.browserCaptureCount += 1;
+  persistState("Browser capture received.");
+  openCapture("browser");
+  previewBrowserCapture();
 }
 function handleIncomingCapturePayload(){
   if(!location.hash.startsWith("#surge-capture=")) return;
   try{
     const encoded = location.hash.slice("#surge-capture=".length);
     const payload = JSON.parse(decodeURIComponent(encoded));
-    fillBrowserCaptureForm(payload);
-    state.sync.lastBrowserCaptureAt = nowIso();
-    state.sync.browserCaptureCount += 1;
-    persistState("Browser capture received.");
-    openCapture("browser");
-    previewBrowserCapture();
+    applyBrowserCapturePayload(payload);
   }catch{
     footer("Browser capture payload could not be read.");
   }finally{
     history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+}
+function handleWindowCaptureMessage(event){
+  if(event.source !== window) return;
+  if(event.origin !== window.location.origin) return;
+  if(event.data?.type !== "surge:extension-capture") return;
+  try{
+    applyBrowserCapturePayload(event.data.payload || {});
+    footer("Browser capture payload received.");
+  }catch{
+    footer("Browser capture payload could not be read.");
   }
 }
 function openCapture(tab){
@@ -1544,6 +2284,12 @@ function clearCaptureForms(){
     const field = document.getElementById(id);
     if(field) field.value = "";
   });
+  const browserTextInput = document.getElementById("browser-text");
+  if(browserTextInput){
+    delete browserTextInput.dataset.companyName;
+    delete browserTextInput.dataset.roleTitle;
+    delete browserTextInput.dataset.location;
+  }
   document.getElementById("manual-source").value = "direct";
   document.getElementById("manual-status").value = "lead";
   document.getElementById("manual-priority").value = "med";
@@ -1559,7 +2305,10 @@ function clearCaptureForms(){
   lastBrowserPreview = null;
 }
 function openModal(id){ document.getElementById(id).classList.add("open"); }
-function closeModal(id){ document.getElementById(id).classList.remove("open"); }
+function closeModal(id){
+  document.getElementById(id).classList.remove("open");
+  if(id === "application-modal") activeApplicationId = 0;
+}
 function nav(view, button){
   currentView = view;
   document.querySelectorAll(".view").forEach(node => node.classList.remove("on"));
@@ -1620,6 +2369,9 @@ function renderConnections(){
   const googleConfigured = Boolean(state.settings.googleClientId);
   const gmailReady = syncEnabled();
   const browserCount = state.sync.browserCaptureCount || 0;
+  const vaultReady = Boolean(careerVaultStatus.rootPath);
+  const templateCount = careerVaultStatus.counts?.totalTemplates || 0;
+  const sharedCount = state.applications.filter(application => application.remoteId).length;
   node.innerHTML = `
     <div class="item">
       <div class="item-title">Origin</div>
@@ -1630,6 +2382,16 @@ function renderConnections(){
       <div class="item-title">Google connection</div>
       <div class="item-meta">${googleConfigured ? "OAuth client ID saved locally." : "Add your Google OAuth Web application client ID in Connections."}</div>
       <div class="meta-line"><span class="tag ${googleConfigured ? "priority-high" : "priority-med"}">${googleConfigured ? "Configured" : "Missing client ID"}</span><button class="tiny" onclick="connectGoogle()">Connect Google</button></div>
+    </div>
+    <div class="item">
+      <div class="item-title">Career Vault</div>
+      <div class="item-meta">${careerVaultStatus.loading ? "Checking the filesystem bridge and template vault..." : careerVaultStatus.error ? escapeHtml(careerVaultStatus.error) : vaultReady ? `Root: ${escapeHtml(careerVaultStatus.rootPath)}. ${templateCount} template file${templateCount === 1 ? "" : "s"} available for workspace creation.` : "Career Vault is not connected yet."}</div>
+      <div class="meta-line"><span class="tag ${vaultReady ? "priority-high" : "priority-med"}">${vaultReady ? "Workspace bridge ready" : "Workspace bridge unavailable"}</span><button class="tiny" onclick="loadCareerVaultStatus()">Refresh</button></div>
+    </div>
+    <div class="item">
+      <div class="item-title">Shared backend</div>
+      <div class="item-meta">${remoteSnapshotStatus.loading ? "Refreshing shared application data..." : remoteSnapshotStatus.error ? escapeHtml(remoteSnapshotStatus.error) : remoteSnapshotStatus.connected ? `${sharedCount} shared application${sharedCount === 1 ? "" : "s"} loaded. Last snapshot: ${escapeHtml(remoteSnapshotStatus.generatedAt ? fullDate(remoteSnapshotStatus.generatedAt) : "Unknown")}.` : "Sign in to Surge to load the shared application database for web and mobile."}</div>
+      <div class="meta-line"><span class="tag ${remoteSnapshotStatus.connected ? "priority-high" : remoteSnapshotStatus.error ? "priority-med" : "tag"}">${remoteSnapshotStatus.connected ? "Connected" : remoteSnapshotStatus.error ? "Unavailable" : "Local only"}</span><button class="tiny" onclick="loadRemoteApplications()">Refresh</button></div>
     </div>
     <div class="item">
       <div class="item-title">Mailbox and calendar sync</div>
@@ -1659,11 +2421,42 @@ function applicationAttention(app){
   if(app.nextStep) return { tone:"ok", text:app.nextStep };
   return null;
 }
+function workspaceSummaryMarkup(application){
+  const documents = documentsForApplication(application.id);
+  const workspace = application.workspace;
+  if(!workspace){
+    return `<div class="capture-note" style="margin-top:10px"><div style="font-weight:800;margin-bottom:6px;color:var(--ink)">Career Vault</div><div>Workspace not created yet. Surge can generate the folder, copy templates, and start tracking documents for this application.</div><div class="meta-line" style="margin-top:10px"><button class="tiny" onclick="openApplicationEditor(${application.id})">Edit application</button><button class="tiny" onclick="syncWorkspaceForApplication(${application.id})">Create workspace</button></div></div>`;
+  }
+  const stageTags = ["working","final","extras"].map(stage => `<span class="tag">${escapeHtml(stageLabel(stage))} ${stageDocumentCount(documents, stage)}</span>`).join("");
+  const visibleDocuments = documents.slice(0,4).map(document => `<span class="tag">${escapeHtml(document.type)} â€¢ ${escapeHtml(document.fileName)}</span>`).join("");
+  const missingTemplates = workspace.missingTemplateTypes?.length ? `<div class="attention warn" style="margin-top:10px">Missing templates: ${escapeHtml(workspace.missingTemplateTypes.join(", "))}</div>` : "";
+  return `<div class="capture-note" style="margin-top:10px"><div style="font-weight:800;margin-bottom:6px;color:var(--ink)">Career Vault workspace</div><div>${escapeHtml(workspace.name)} â€¢ ${documents.length} tracked file${documents.length === 1 ? "" : "s"}</div><div class="tag-row" style="margin-top:8px">${stageTags}</div>${visibleDocuments ? `<div class="tag-row" style="margin-top:8px">${visibleDocuments}</div>` : ""}${missingTemplates}<div class="meta-line" style="margin-top:10px"><button class="tiny" onclick="syncWorkspaceForApplication(${application.id})">Sync workspace</button><button class="tiny" onclick="copyWorkspacePath(${application.id})">Copy path</button></div></div>`;
+}
 function roleCard(role){
   const bundle = roleBundle(role);
   const company = state.companies.find(item => item.id === role.companyId);
   const attention = bundle.bestApp ? applicationAttention(bundle.bestApp) : null;
   return `<div class="role-card"><div class="role-head"><div class="role-main"><div class="role-title">${escapeHtml(role.title)}</div><div class="role-meta">${escapeHtml(role.location || company?.location || "Location TBD")} • ${bundle.applications.length} application attempt${bundle.applications.length === 1 ? "" : "s"}</div><div class="tag-row" style="margin-top:8px"><span class="tag">${escapeHtml(ROLE_TYPES[role.type])}</span>${bundle.bestApp ? `<span class="status-pill ${APP_STATUS[bundle.bestApp.status].cls}">${escapeHtml(statusLabel(bundle.bestApp.status))}</span>` : ""}${bundle.bestApp ? `<span class="source-pill ${sourceStyle(bundle.bestApp.source).cls}">${escapeHtml(sourceStyle(bundle.bestApp.source).label)}</span>` : ""}</div>${attention ? `<div class="attention ${attention.tone}">${escapeHtml(attention.text)}</div>` : ""}</div></div><div class="meta-line">${bundle.applications.map(app => `<span class="tag">${escapeHtml(sourceStyle(app.source).label)}${app.appliedAt ? ` • ${escapeHtml(shortDate(app.appliedAt))}` : ""}</span>`).join("")}</div></div>`;
+}
+function workspaceSummaryMarkup(application){
+  const documents = documentsForApplication(application.id);
+  const workspace = application.workspace;
+  if(!workspace){
+    return `<div class="capture-note" style="margin-top:10px"><div style="font-weight:800;margin-bottom:6px;color:var(--ink)">Career Vault</div><div>Workspace not created yet. Surge can generate the folder, copy templates, and start tracking documents for this application.</div><div class="meta-line" style="margin-top:10px"><button class="tiny" onclick="openApplicationEditor(${application.id})">Edit application</button><button class="tiny" onclick="syncWorkspaceForApplication(${application.id})">Create workspace</button></div></div>`;
+  }
+  const stageTags = ["working","final","extras"].map(stage => `<span class="tag">${escapeHtml(stageLabel(stage))} ${stageDocumentCount(documents, stage)}</span>`).join("");
+  const visibleDocuments = documents.slice(0,4).map(document => `<span class="tag">${escapeHtml(document.type)} | ${escapeHtml(document.fileName)}</span>`).join("");
+  const missingTemplates = workspace.missingTemplateTypes?.length ? `<div class="attention warn" style="margin-top:10px">Missing templates: ${escapeHtml(workspace.missingTemplateTypes.join(", "))}</div>` : "";
+  const tailoring = application.tailoring ? `<div class="attention ok" style="margin-top:10px">Tailored documents ready | ${escapeHtml(shortDate(application.tailoring.generatedAt))}${application.tailoring.model ? ` | ${escapeHtml(application.tailoring.model)}` : ""}</div>` : "";
+  const tailoringFiles = application.tailoring ? [application.tailoring.resumeFileName, application.tailoring.coverLetterFileName].filter(Boolean).map(fileName => `<span class="tag">${escapeHtml(fileName)}</span>`).join("") : "";
+  const tailoringNotes = application.tailoring?.notes?.length ? `<div class="item-meta" style="margin-top:8px">${escapeHtml(application.tailoring.notes.join(" | "))}</div>` : "";
+  return `<div class="capture-note" style="margin-top:10px"><div style="font-weight:800;margin-bottom:6px;color:var(--ink)">Career Vault workspace</div><div>${escapeHtml(workspace.name)} | ${documents.length} tracked file${documents.length === 1 ? "" : "s"}</div><div class="tag-row" style="margin-top:8px">${stageTags}</div>${visibleDocuments ? `<div class="tag-row" style="margin-top:8px">${visibleDocuments}</div>` : ""}${tailoring}${tailoringFiles ? `<div class="tag-row" style="margin-top:8px">${tailoringFiles}</div>` : ""}${tailoringNotes}${missingTemplates}<div class="meta-line" style="margin-top:10px"><button class="tiny" onclick="openApplicationEditor(${application.id})">Edit application</button><button class="tiny" onclick="syncWorkspaceForApplication(${application.id})">Sync workspace</button><button class="tiny" onclick="copyWorkspacePath(${application.id})">Copy path</button></div></div>`;
+}
+function roleCard(role){
+  const bundle = roleBundle(role);
+  const company = state.companies.find(item => item.id === role.companyId);
+  const attention = bundle.bestApp ? applicationAttention(bundle.bestApp) : null;
+  return `<div class="role-card"><div class="role-head"><div class="role-main"><div class="role-title">${escapeHtml(role.title)}</div><div class="role-meta">${escapeHtml(role.location || company?.location || "Location TBD")} | ${bundle.applications.length} application attempt${bundle.applications.length === 1 ? "" : "s"}</div><div class="tag-row" style="margin-top:8px"><span class="tag">${escapeHtml(ROLE_TYPES[role.type])}</span>${bundle.bestApp ? `<span class="status-pill ${APP_STATUS[bundle.bestApp.status].cls}">${escapeHtml(statusLabel(bundle.bestApp.status))}</span>` : ""}${bundle.bestApp ? `<span class="source-pill ${sourceStyle(bundle.bestApp.source).cls}">${escapeHtml(sourceStyle(bundle.bestApp.source).label)}</span>` : ""}</div>${attention ? `<div class="attention ${attention.tone}">${escapeHtml(attention.text)}</div>` : ""}</div></div><div class="meta-line">${bundle.applications.map(app => `<span class="tag">${escapeHtml(sourceStyle(app.source).label)}${app.appliedAt ? ` | ${escapeHtml(shortDate(app.appliedAt))}` : ""}</span>`).join("")}</div>${bundle.bestApp ? workspaceSummaryMarkup(bundle.bestApp) : ""}</div>`;
 }
 function renderOverview(){
   renderConnections();
@@ -1680,7 +2473,7 @@ function focusApplication(appId){
   const app = state.applications.find(item => item.id === appId);
   if(!app) return;
   expandedCompanies.add(app.companyId);
-  navTo("companies");
+  openApplicationEditor(appId);
 }
 function renderPipeline(){
   document.getElementById("pipeline-grid").innerHTML = PIPELINE_COLUMNS.map(column => {
@@ -1755,7 +2548,7 @@ function attachStaticOptions(){
 function hookModalDismiss(){
   document.querySelectorAll(".modal-wrap").forEach(modal => {
     modal.addEventListener("click", event => {
-      if(event.target === modal) modal.classList.remove("open");
+      if(event.target === modal) closeModal(modal.id);
     });
   });
 }
@@ -1773,6 +2566,7 @@ document.addEventListener("keydown", event => {
   }
 });
 window.addEventListener("hashchange", handleIncomingCapturePayload);
+window.addEventListener("message", handleWindowCaptureMessage);
 attachStaticOptions();
 hookModalDismiss();
 clearCaptureForms();
@@ -1780,6 +2574,8 @@ loadState();
 if(/^https?:/i.test(window.location.origin || "")) state.settings.surgeUrl = inferCurrentSurgeUrl();
 expandedCompanies = new Set(state.companies.slice(0,3).map(company => company.id));
 renderAll();
+loadRemoteApplications({ silent:true });
+loadCareerVaultStatus();
 handleIncomingCapturePayload();
 </script>
 </body>

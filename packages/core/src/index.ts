@@ -1,6 +1,7 @@
 export * from "./apps";
 export * from "./database";
 export * from "./designers";
+export * from "./ecosystem";
 export * from "./env";
 export * from "./platform";
 export * from "./settings";

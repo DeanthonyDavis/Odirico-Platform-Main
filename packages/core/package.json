@@ -10,6 +10,7 @@
     "./apps": "./src/apps.ts",
     "./database": "./src/database.ts",
     "./designers": "./src/designers.ts",
+    "./ecosystem": "./src/ecosystem.ts",
     "./env": "./src/env.ts",
     "./platform": "./src/platform.ts",
     "./settings": "./src/settings.ts",

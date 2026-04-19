@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "apps/web/operations-web"
+    },
+    {
+      "path": "apps/mobile/odirico-mobile"
+    },
+    {
+      "path": "apps/desktop/odirico-desktop"
+    },
+    {
+      "path": "packages"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.next": true,
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/dist-android": true,
+      "**/dist-ios": true,
+      "**/src-tauri/target": true
+    }
+  }
+}

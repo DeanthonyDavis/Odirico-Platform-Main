@@ -1,19 +1,25 @@
 # Odirico Platform Main
 
-This is the clean publish-ready workspace for the current Odirico platform app.
+This is the canonical git-backed workspace for the current Odirico platform.
 
 ## What it contains
 
 - `apps/web/operations-web`
+- `apps/mobile/odirico-mobile`
+- `apps/desktop/odirico-desktop`
 - `packages/core`
 - `packages/auth`
 - `packages/api`
+- `packages/design-tokens`
+- `packages/ui-web`
+- `packages/ui-mobile`
+- `packages/ui-desktop`
 - root `package.json`
 - root `turbo.json`
 
-## Use this for deployment
+## Use this for development and deployment
 
-If you want to push the current platform shell to GitHub and connect it to Vercel, use this folder instead of the older `Odirico-OS-main` publish repo.
+If you want to edit, build, deploy, or push the platform, use this folder.
 
 ## Vercel root directory
 
@@ -21,8 +27,7 @@ Set the Vercel project root directory to:
 
 - `apps/web/operations-web`
 
-## Supabase schema file
+## Notes
 
-Run this file in Supabase SQL Editor:
-
-- `apps/web/operations-web/supabase/migrations/20260402_initial_schema.sql`
+- This repo is the source of truth that GitHub and Vercel should follow.
+- Older local copies under `D:\Odirico\apps\...` should not be treated as canonical deploy targets.

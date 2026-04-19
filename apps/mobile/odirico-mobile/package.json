@@ -1,0 +1,23 @@
+{
+  "name": "@odirico/odirico-mobile",
+  "private": true,
+  "version": "0.1.0",
+  "main": "src/main.tsx",
+  "scripts": {
+    "android": "node ./node_modules/expo/bin/cli run:android",
+    "dev": "node ./node_modules/expo/bin/cli start",
+    "ios": "node ./node_modules/expo/bin/cli run:ios",
+    "typecheck": "node ./node_modules/typescript/bin/tsc --noEmit",
+    "web": "node ./node_modules/expo/bin/cli start --web"
+  },
+  "dependencies": {
+    "expo": "~55.0.0",
+    "queue": "^7.0.0",
+    "react": "19.2.0",
+    "react-native": "0.83.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "typescript": "^5.9.0"
+  }
+}
