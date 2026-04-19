@@ -71,11 +71,9 @@ export default async function HomePage() {
               {ECOSYSTEM_APP_STORIES.map((app) => (
                 <article className="platform-module" key={app.key}>
                   <div className="platform-module-head">
+                    <p className="platform-module-kicker">{app.platformRole}</p>
                     <Image alt="" className="platform-module-logo" height={58} src={app.logoPath} width={58} />
-                    <div>
-                      <p className="platform-module-kicker">{app.platformRole}</p>
-                      <h2>{app.label}</h2>
-                    </div>
+                    <h2>{app.label}</h2>
                   </div>
                   <p>{app.tagline}</p>
                 </article>
