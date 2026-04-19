@@ -33,6 +33,12 @@ export default function ContactPage() {
             <h2>Have a partnership or platform conversation?</h2>
             <p>Use this for ecosystem partnerships, product conversations, or future distribution paths.</p>
           </a>
+
+          <a className="contact-path-card" href="/delete-account">
+            <p className="platform-module-kicker">Privacy</p>
+            <h2>Need your account and data deleted?</h2>
+            <p>Use the dedicated deletion request page so the request goes through the right support path.</p>
+          </a>
         </div>
       </section>
     </>

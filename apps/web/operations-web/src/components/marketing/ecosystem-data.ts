@@ -361,6 +361,12 @@ export const PUBLIC_SEARCH_DESTINATIONS: readonly RouteSearchDestination[] = [
     tag: "Trust",
   },
   {
+    href: "/delete-account",
+    label: "Delete account",
+    description: "Request deletion of your Odirico account and associated platform data.",
+    tag: "Trust",
+  },
+  {
     href: "/login",
     label: "Log in",
     description: "Sign in to the shared Odirico platform shell.",

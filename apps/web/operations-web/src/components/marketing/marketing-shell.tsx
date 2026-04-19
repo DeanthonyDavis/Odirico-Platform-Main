@@ -188,6 +188,9 @@ export function MarketingShell({ children, userContext }: MarketingShellProps) {
               <li>
                 <Link href="/disclaimer">Disclaimer</Link>
               </li>
+              <li>
+                <Link href="/delete-account">Delete account</Link>
+              </li>
             </ul>
           </div>
 

@@ -131,8 +131,9 @@ export default function TermsPage() {
           <article className="policy-card">
             <h3>Contact</h3>
             <p>
-              For questions about these terms, email <a href="mailto:contact@odirico.com">contact@odirico.com</a> or use the{" "}
-              <Link href="/contact">contact page</Link>.
+              For questions about these terms, email <a href="mailto:contact@odirico.com">contact@odirico.com</a>, use the{" "}
+              <Link href="/contact">contact page</Link>, or submit an account removal request on the{" "}
+              <Link href="/delete-account">delete-account page</Link>.
             </p>
           </article>
         </div>

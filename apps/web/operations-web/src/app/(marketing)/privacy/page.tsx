@@ -109,8 +109,8 @@ export default function PrivacyPage() {
                 providers and their security controls.
               </li>
               <li>
-                You can request account support, data access, or deletion help by contacting
-                Odirico.
+                You can request account support, data access, or deletion help through the{" "}
+                <Link href="/delete-account">delete-account page</Link>.
               </li>
               <li>
                 You should also protect your own account by using secure credentials and keeping
@@ -133,7 +133,8 @@ export default function PrivacyPage() {
             <h3>Contact</h3>
             <p>
               For privacy questions, support, or deletion requests, email{" "}
-              <a href="mailto:contact@odirico.com">contact@odirico.com</a> or use the{" "}
+              <a href="mailto:contact@odirico.com">contact@odirico.com</a>, use the{" "}
+              <Link href="/delete-account">delete-account page</Link>, or open the{" "}
               <Link href="/contact">contact page</Link>.
             </p>
           </article>
