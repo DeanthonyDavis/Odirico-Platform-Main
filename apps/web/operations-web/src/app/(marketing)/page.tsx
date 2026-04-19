@@ -25,7 +25,15 @@ export default async function HomePage() {
         <div className="marketing-shell platform-hero-grid">
           <div className="platform-hero-copy">
             <p className="platform-kicker">Odirico Platform</p>
-            <h1>Your life, organized into one system.</h1>
+            <h1>
+              Your life,
+              <br />
+              organized
+              <br />
+              into one
+              <br />
+              system.
+            </h1>
             <p className="platform-lead">{ECOSYSTEM_TAGLINE}</p>
 
             <div className="platform-hero-actions">

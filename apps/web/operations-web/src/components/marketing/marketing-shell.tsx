@@ -144,6 +144,9 @@ export function MarketingShell({ children }: MarketingShellProps) {
               <li>
                 <Link href="/install">Install</Link>
               </li>
+              <li>
+                <Link href="/privacy">Privacy policy</Link>
+              </li>
             </ul>
           </div>
 
@@ -174,7 +177,7 @@ export function MarketingShell({ children }: MarketingShellProps) {
                 <Link href="/install">Platform install</Link>
               </li>
             </ul>
-            <p className="marketing-footer-note">© {currentYear} Odirico</p>
+            <p className="marketing-footer-note">&copy; {currentYear} Odirico</p>
           </div>
         </div>
       </footer>
