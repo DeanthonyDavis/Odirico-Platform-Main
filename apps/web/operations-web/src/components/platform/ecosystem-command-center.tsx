@@ -57,14 +57,14 @@ export function EcosystemCommandCenter() {
           <div className="panel-header">
             <div>
               <p className="sidebar-label">Live modules</p>
-              <h3>Open the right system for the pressure zone in front of you</h3>
+              <h3>Open the right live system for the pressure zone in front of you</h3>
             </div>
           </div>
           <div className="module-story-grid">
             <article className="workspace-module workspace-module-ember">
               <p className="workspace-module-kicker">Ember</p>
               <h4>Academic execution and weekly load balancing</h4>
-              <p className="muted">Student-centered planning for classes, exams, study blocks, and burnout prevention.</p>
+              <p className="muted">Student-centered planning for classes, exams, study blocks, and burnout prevention now lives inside a working route.</p>
               <ul className="feature-list">
                 {topAssignments.map((assignment) => (
                   <li key={assignment.id}>
@@ -80,7 +80,7 @@ export function EcosystemCommandCenter() {
             <article className="workspace-module workspace-module-sol">
               <p className="workspace-module-kicker">Sol</p>
               <h4>Money direction, runway, and energy-aware planning</h4>
-              <p className="muted">Budget health, goal pressure, and energy windows feed the rest of the ecosystem.</p>
+              <p className="muted">Budget health, goal pressure, and energy windows now update in the live Sol workspace.</p>
               <ul className="feature-list">
                 {snapshot.sol.billReminders.map((bill) => (
                   <li key={bill.id}>
