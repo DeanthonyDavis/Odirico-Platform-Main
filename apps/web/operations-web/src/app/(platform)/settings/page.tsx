@@ -16,7 +16,7 @@ export default async function SettingsPage() {
     <AppShell
       currentPath="/settings"
       title="Settings"
-      subtitle="Theme, density, and platform account preferences, plus organization controls for teams and labels."
+      subtitle="Appearance, account controls, and platform preferences in one shared settings surface."
       userContext={userContext}
       eyebrow="Odirico / Platform / Settings"
       variant="ecosystem"

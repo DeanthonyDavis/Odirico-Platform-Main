@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { ReactNode } from "react";
 
@@ -42,6 +43,29 @@ const ecosystemUtilityLinks: Array<{ href: string; label: string }> = [
   { href: "/settings", label: "Settings" },
 ];
 
+const ecosystemSwitcherLinks: Array<{ href: string; label: string; description: string }> = [
+  {
+    href: "/overview",
+    label: "Platform overview",
+    description: "Shared command center across Ember, Sol, and Surge.",
+  },
+  ...ODIRICO_ECOSYSTEM_APPS.map((app) => ({
+    href: app.href,
+    label: app.label,
+    description: app.summary,
+  })),
+  {
+    href: "/billing",
+    label: "Billing",
+    description: "Manage plans, checkout, and subscription access.",
+  },
+  {
+    href: "/settings",
+    label: "Settings",
+    description: "Theme, layout preferences, and account controls.",
+  },
+];
+
 export function AppShell({
   currentPath,
   title,
@@ -55,6 +79,85 @@ export function AppShell({
   const canManageOrg = canManageOrganization(userContext.roles);
   const roleSummary = userContext.roles.map((role) => settings.roleLabel(role)).join(" | ");
   const defaultEyebrow = variant === "ecosystem" ? "Odirico / Platform" : "Odirico / Operations";
+  const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
+  const switcherRef = useRef<HTMLDivElement>(null);
+  const activeEcosystemApp = useMemo(
+    () =>
+      variant === "ecosystem"
+        ? ODIRICO_ECOSYSTEM_APPS.find(
+            (item) => currentPath === item.href || currentPath.startsWith(`${item.href}/`),
+          ) ?? null
+        : null,
+    [currentPath, variant],
+  );
+  const currentSpace = useMemo(() => {
+    if (activeEcosystemApp) {
+      return {
+        label: activeEcosystemApp.label,
+        kicker: "Current app space",
+        description: activeEcosystemApp.platformRole,
+        summary: activeEcosystemApp.summary,
+        logoPath: activeEcosystemApp.logoPath,
+        accentClass: `workspace-space-banner workspace-space-banner-${activeEcosystemApp.key}`,
+      };
+    }
+
+    if (currentPath === "/billing") {
+      return {
+        label: "Billing",
+        kicker: "Platform utility",
+        description: "Shared subscription access across the whole ecosystem.",
+        summary:
+          "Billing, checkout, and entitlement state live here so Ember, Sol, and Surge unlock together.",
+        logoPath: null,
+        accentClass: "workspace-space-banner workspace-space-banner-platform",
+      };
+    }
+
+    if (currentPath === "/settings") {
+      return {
+        label: "Settings",
+        kicker: "Platform utility",
+        description: "Appearance, account controls, and platform preferences.",
+        summary:
+          "Themes, density, quick account controls, and internal admin options live in one platform settings surface.",
+        logoPath: null,
+        accentClass: "workspace-space-banner workspace-space-banner-platform",
+      };
+    }
+
+    return {
+      label: "Overview",
+      kicker: "Platform utility",
+      description: "Cross-app command center",
+      summary:
+        "Use Overview to see momentum across time, money, and applications before you move into a specific app space.",
+      logoPath: null,
+      accentClass: "workspace-space-banner workspace-space-banner-platform",
+    };
+  }, [activeEcosystemApp, currentPath]);
+
+  useEffect(() => {
+    function onPointerDown(event: MouseEvent) {
+      if (!switcherRef.current?.contains(event.target as Node)) {
+        setIsSwitcherOpen(false);
+      }
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsSwitcherOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
 
   if (variant === "ecosystem") {
     return (
@@ -71,13 +174,25 @@ export function AppShell({
 
           <div className="sidebar-module-panel sidebar-module-panel-ecosystem">
             <p className="sidebar-label">Platform</p>
-            <Link
-              className={currentPath === "/overview" ? "sidebar-home-link active" : "sidebar-home-link"}
-              href="/overview"
-            >
-              <span className="sidebar-home-icon">O</span>
-              <span>Overview</span>
-            </Link>
+            <div className="sidebar-platform-nav">
+              {ecosystemUtilityLinks.map((item) => {
+                const active =
+                  item.href === "/overview"
+                    ? currentPath === item.href
+                    : currentPath === item.href || currentPath.startsWith(`${item.href}/`);
+
+                return (
+                  <Link
+                    key={item.href}
+                    className={active ? "sidebar-home-link active" : "sidebar-home-link"}
+                    href={item.href as never}
+                  >
+                    <span className="sidebar-home-icon">{item.label[0]}</span>
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           <div className="sidebar-module-panel sidebar-module-panel-ecosystem">
@@ -121,12 +236,64 @@ export function AppShell({
             </div>
 
             <div className="page-utility-bar">
-              <RouteSearchLauncher
-                className="page-search-trigger"
-                items={PLATFORM_SEARCH_DESTINATIONS}
-                label="Search routes"
-                title="Search the Odirico platform"
-              />
+              <div className="page-utility-group">
+                <div className="app-space-switcher" ref={switcherRef}>
+                  <button
+                    aria-expanded={isSwitcherOpen}
+                    aria-haspopup="menu"
+                    className="app-space-switcher-trigger"
+                    onClick={() => setIsSwitcherOpen((current) => !current)}
+                    type="button"
+                  >
+                    {currentSpace.logoPath ? (
+                      <Image alt="" className="app-space-switcher-logo" height={28} src={currentSpace.logoPath} width={28} />
+                    ) : (
+                      <span className="app-space-switcher-mark">{currentSpace.label[0]}</span>
+                    )}
+                    <span className="app-space-switcher-copy">
+                      <strong>{currentSpace.label}</strong>
+                      <small>{currentSpace.description}</small>
+                    </span>
+                    <span className="app-space-switcher-caret" aria-hidden="true">
+                      v
+                    </span>
+                  </button>
+
+                  {isSwitcherOpen ? (
+                    <div className="app-space-switcher-panel" role="menu">
+                      <p className="route-search-kicker">Switch space</p>
+                      <div className="app-space-switcher-list">
+                        {ecosystemSwitcherLinks.map((item) => {
+                          const active =
+                            currentPath === item.href || currentPath.startsWith(`${item.href}/`);
+
+                          return (
+                            <Link
+                              className={active ? "app-space-switcher-link active" : "app-space-switcher-link"}
+                              href={item.href as never}
+                              key={item.href}
+                              onClick={() => setIsSwitcherOpen(false)}
+                            >
+                              <div>
+                                <strong>{item.label}</strong>
+                                <p>{item.description}</p>
+                              </div>
+                              <span>{active ? "Current" : "Open"}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+
+                <RouteSearchLauncher
+                  className="page-search-trigger"
+                  items={PLATFORM_SEARCH_DESTINATIONS}
+                  label="Search routes"
+                  title="Search the Odirico platform"
+                />
+              </div>
 
               <nav aria-label="Utility" className="page-utility-links">
                 {ecosystemUtilityLinks.map((item) => {
@@ -149,6 +316,36 @@ export function AppShell({
 
               <AccountMenu displayName={userContext.displayName} email={userContext.user.email} />
             </div>
+
+            <section className={currentSpace.accentClass}>
+              <div className="workspace-space-copy">
+                <p className="eyebrow">{currentSpace.kicker}</p>
+                <div className="workspace-space-head">
+                  {currentSpace.logoPath ? (
+                    <Image alt="" className="workspace-space-logo" height={46} src={currentSpace.logoPath} width={46} />
+                  ) : (
+                    <span className="workspace-space-mark">{currentSpace.label[0]}</span>
+                  )}
+                  <div>
+                    <h2>{currentSpace.label}</h2>
+                    <p>{currentSpace.description}</p>
+                  </div>
+                </div>
+                <p className="muted workspace-space-summary">{currentSpace.summary}</p>
+              </div>
+
+              <div className="workspace-space-actions">
+                <Link className="workspace-space-link" href="/overview">
+                  Platform overview
+                </Link>
+                <Link className="workspace-space-link" href="/settings#appearance">
+                  Theme
+                </Link>
+                <Link className="workspace-space-link" href="/billing">
+                  Billing
+                </Link>
+              </div>
+            </section>
           </header>
 
           <section className="page-content">{children}</section>

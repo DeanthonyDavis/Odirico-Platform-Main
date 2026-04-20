@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { canManageOrganization, PLATFORM_ROLES, type UserContext } from "@/lib/auth/roles";
@@ -30,12 +31,46 @@ const THEME_OPTIONS = [
   },
 ] as const;
 
+const PLATFORM_LINKS = [
+  {
+    href: "/overview",
+    label: "Overview",
+    copy: "Open the shared command center before you move into a specific app.",
+  },
+  {
+    href: "/ember",
+    label: "Ember",
+    copy: "Jump into the academic planning and recovery workspace.",
+  },
+  {
+    href: "/sol",
+    label: "Sol",
+    copy: "Open the money, goals, and long-range strategy space.",
+  },
+  {
+    href: "/surge",
+    label: "Surge",
+    copy: "Go straight into the application and opportunity workspace.",
+  },
+  {
+    href: "/billing",
+    label: "Billing",
+    copy: "Manage your subscription and plan access across the ecosystem.",
+  },
+  {
+    href: "/delete-account",
+    label: "Delete account",
+    copy: "Open the account deletion request page and data removal instructions.",
+  },
+] as const;
+
 export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps) {
   const settings = useSettings(userContext.user.email);
   const [users, setUsers] = useState(managedUsers);
   const [savingUserId, setSavingUserId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const canManageOrg = canManageOrganization(userContext.roles);
+  const hasOperationsWorkspace = userContext.allowedModes.length > 0;
 
   function updateManagedUser(
     userId: string,
@@ -76,7 +111,7 @@ export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps)
         <div className="panel-header">
           <div>
             <p className="eyebrow">Appearance</p>
-            <h3>Personal preferences</h3>
+            <h3>Theme and shell feel</h3>
           </div>
         </div>
 
@@ -123,7 +158,43 @@ export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps)
               <option value="compact">Compact</option>
             </select>
           </label>
+        </div>
+      </section>
 
+      <section className="panel settings-section">
+        <div className="panel-header">
+          <div>
+            <p className="eyebrow">Platform access</p>
+            <h3>Move between spaces without hunting for them</h3>
+            <p className="muted">
+              Settings should feel like the control room for the full platform, not an old admin page.
+            </p>
+          </div>
+        </div>
+
+        <div className="settings-route-grid">
+          {PLATFORM_LINKS.map((item) => (
+            <Link className="settings-route-card" href={item.href} key={item.href}>
+              <strong>{item.label}</strong>
+              <p>{item.copy}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {hasOperationsWorkspace ? (
+        <section className="panel settings-section">
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Operations workspace</p>
+              <h3>Internal dashboard preferences</h3>
+              <p className="muted">
+                These only affect the internal operations surfaces, not Ember, Sol, or Surge.
+              </p>
+            </div>
+          </div>
+
+          <div className="form-grid">
           <label className="field">
             <span>Dashboard mode</span>
             <select
@@ -161,16 +232,20 @@ export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps)
               <option value="my-queue">My queue</option>
             </select>
           </label>
-        </div>
-      </section>
+          </div>
+        </section>
+      ) : null}
 
       {canManageOrg ? (
         <>
           <section className="panel settings-section">
             <div className="panel-header">
               <div>
-                <p className="eyebrow">Org Labels</p>
-                <h3>Rename role titles</h3>
+                <p className="eyebrow">Organization admin</p>
+                <h3>Rename internal role titles</h3>
+                <p className="muted">
+                  These labels belong to the internal operations side of the company stack, not the consumer app names.
+                </p>
               </div>
             </div>
 
@@ -198,8 +273,8 @@ export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps)
           <section className="panel settings-section">
             <div className="panel-header">
               <div>
-                <p className="eyebrow">Team Access</p>
-                <h3>Assign people to teams and roles</h3>
+                <p className="eyebrow">Organization admin</p>
+                <h3>Assign internal access, teams, and roles</h3>
               </div>
             </div>
 
