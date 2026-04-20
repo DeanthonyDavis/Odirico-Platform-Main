@@ -1,4 +1,8 @@
 import { ODIRICO_ECOSYSTEM_APPS } from "@odirico/core/apps";
+import {
+  BILLING_PLANS,
+  type BillingPlanDefinition,
+} from "@/lib/billing/plans";
 
 export const ECOSYSTEM_NAME = "Odirico Platform";
 
@@ -10,17 +14,7 @@ export type RouteSearchDestination = {
   requiresAuth?: boolean;
 };
 
-export type PricingPlan = {
-  name: string;
-  price: string;
-  cadence: string;
-  audience: string;
-  ctaLabel: string;
-  ctaHref: string;
-  features: readonly string[];
-  highlight?: boolean;
-  badge?: string;
-};
+export type PricingPlan = BillingPlanDefinition;
 
 export type InstallDestination = {
   id: string;
@@ -38,8 +32,11 @@ export const ECOSYSTEM_TAGLINE =
   "Plan your time, manage your money, and track your future across one connected system.";
 
 export const MARKETING_PRIMARY_LINKS = [
-  { href: "/system", label: "System" },
-  { href: "/apps", label: "Apps" },
+  { href: "/apps", label: "Products" },
+  { href: "/customers", label: "Customers" },
+  { href: "/partners", label: "Partners" },
+  { href: "/resources", label: "Resources" },
+  { href: "/company", label: "Company" },
 ] as const;
 
 export const PLATFORM_SUPPORT_POINTS = [
@@ -102,49 +99,7 @@ export const PLATFORM_PRIORITIES = [
   },
 ] as const;
 
-export const PRICING_PLANS: readonly PricingPlan[] = [
-  {
-    name: "Free",
-    price: "$0",
-    cadence: "to start",
-    audience: "Explore the system and open the web platform.",
-    ctaLabel: "Start free",
-    ctaHref: "/signup",
-    features: [
-      "Web access to Ember, Sol, and Surge routes",
-      "Shared account and core ecosystem navigation",
-      "Install the platform to phone or desktop browser",
-    ],
-  },
-  {
-    name: "Pro",
-    price: "$14.99",
-    cadence: "per month",
-    audience: "For consistent weekly use across the full ecosystem.",
-    ctaLabel: "Choose Pro",
-    ctaHref: "/signup",
-    highlight: true,
-    badge: "Recommended",
-    features: [
-      "Applies across Ember, Sol, and Surge",
-      "Shared upgrades, sync surfaces, and automation layers",
-      "Priority access to cross-app features as they ship",
-    ],
-  },
-  {
-    name: "Semester",
-    price: "$59",
-    cadence: "per term",
-    audience: "For school cycles, internships, and focused growth windows.",
-    ctaLabel: "Choose Semester",
-    ctaHref: "/signup",
-    features: [
-      "Discounted ecosystem access for longer planning cycles",
-      "Ideal for school plus work plus application seasons",
-      "One plan that covers all current consumer modules",
-    ],
-  },
-] as const;
+export const PRICING_PLANS: readonly PricingPlan[] = BILLING_PLANS;
 
 export const PRICING_PROOF_POINTS = [
   {
@@ -152,12 +107,12 @@ export const PRICING_PROOF_POINTS = [
     copy: "You are unlocking Ember, Sol, and Surge together instead of stacking separate subscriptions for separate life problems.",
   },
   {
-    title: "Start free without getting stranded",
-    copy: "The free tier is meant to let you understand the shell, routes, and install flow before you commit to a paid rhythm.",
+    title: "Free is a preview, not a dead-end",
+    copy: "The free tier lets people create an account, inspect the shell, and see the billing flow before they decide to unlock the working routes.",
   },
   {
-    title: "Built for overlapping seasons",
-    copy: "School pressure, money pressure, and application pressure usually happen at the same time. The pricing model is shaped around that reality.",
+    title: "The paywall is platform-level",
+    copy: "Payment unlocks the connected consumer system instead of making people buy Ember, Sol, and Surge as disconnected subscriptions.",
   },
 ] as const;
 
@@ -170,7 +125,12 @@ export const PRICING_FAQS = [
   {
     question: "Can I start on the free plan?",
     answer:
-      "Yes. The free tier is the entry point for exploring the web platform, shared account shell, and current install flow before upgrading.",
+      "Yes. The free tier lets you create an account, open the shell, review billing, and inspect the install flow before you unlock the paid app workspaces.",
+  },
+  {
+    question: "Where does the paywall apply?",
+    answer:
+      "The paywall sits at the connected platform layer. Billing and account routes stay visible, but paid access unlocks the working Overview, Ember, Sol, and Surge routes.",
   },
   {
     question: "Will pricing change by app later?",
@@ -299,33 +259,51 @@ export const TRUST_PROMISES = [
 
 export const PUBLIC_SEARCH_DESTINATIONS: readonly RouteSearchDestination[] = [
   {
-    href: "/system",
-    label: "System",
-    description: "See how Ember, Sol, and Surge fit together inside one connected product.",
-    tag: "Public",
-  },
-  {
     href: "/apps",
-    label: "Apps",
-    description: "Browse the three consumer apps and what each one owns inside the ecosystem.",
+    label: "Products",
+    description: "Browse Ember, Sol, and Surge as the core product family.",
     tag: "Public",
   },
   {
-    href: "/pricing",
-    label: "Pricing",
-    description: "Compare the Free, Pro, and Semester plans for the connected platform.",
-    tag: "Plans",
+    href: "/get-started",
+    label: "Get started",
+    description: "Choose between product tours, a product demo, or pricing and plans.",
+    tag: "Access",
   },
   {
-    href: "/install",
-    label: "Install",
-    description: "See desktop and mobile install steps, or keep using the browser.",
-    tag: "Setup",
+    href: "/product-tour",
+    label: "Product tour",
+    description: "Take a guided look at how the Odirico platform works without showing pricing first.",
+    tag: "Tour",
   },
   {
-    href: "/about",
-    label: "About",
-    description: "Read the platform story and why Odirico exists as one connected system.",
+    href: "/product-demo",
+    label: "Product demo",
+    description: "See the live system framing and the best route for getting a walkthrough.",
+    tag: "Demo",
+  },
+  {
+    href: "/customers",
+    label: "Customers",
+    description: "See who the platform is actually being shaped for.",
+    tag: "Public",
+  },
+  {
+    href: "/partners",
+    label: "Partners",
+    description: "Review how institutions, advisors, and support partners can fit around the product.",
+    tag: "Public",
+  },
+  {
+    href: "/resources",
+    label: "Resources",
+    description: "Open installation, trust, privacy, and practical product guidance.",
+    tag: "Public",
+  },
+  {
+    href: "/company",
+    label: "Company",
+    description: "Read the company story and how Odirico relates to the platform.",
     tag: "Public",
   },
   {
@@ -366,8 +344,8 @@ export const PUBLIC_SEARCH_DESTINATIONS: readonly RouteSearchDestination[] = [
   },
   {
     href: "/signup",
-    label: "Get started",
-    description: "Create an account and open the platform.",
+    label: "Create account",
+    description: "Create your Odirico account and move into billing when you are ready.",
     tag: "Access",
   },
   ...ODIRICO_ECOSYSTEM_APPS.map((app) => ({
@@ -398,6 +376,13 @@ export const PLATFORM_SEARCH_DESTINATIONS: readonly RouteSearchDestination[] = [
     href: "/settings",
     label: "Settings",
     description: "Adjust account-level settings and platform preferences.",
+    tag: "Platform",
+    requiresAuth: true,
+  },
+  {
+    href: "/settings#appearance",
+    label: "Appearance",
+    description: "Change the current platform theme, density, and layout preferences.",
     tag: "Platform",
     requiresAuth: true,
   },

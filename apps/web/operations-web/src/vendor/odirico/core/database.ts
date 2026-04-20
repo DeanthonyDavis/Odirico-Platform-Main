@@ -140,6 +140,94 @@ export type Database = {
           payload?: Json;
         };
       };
+      billing_customers: {
+        Row: {
+          user_id: string;
+          email: string | null;
+          stripe_customer_id: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          email?: string | null;
+          stripe_customer_id: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          email?: string | null;
+          stripe_customer_id?: string;
+          updated_at?: string;
+        };
+      };
+      billing_subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          stripe_customer_id: string;
+          stripe_subscription_id: string;
+          stripe_price_id: string | null;
+          plan_key: "free" | "pro" | "semester";
+          status:
+            | "trialing"
+            | "active"
+            | "past_due"
+            | "canceled"
+            | "incomplete"
+            | "incomplete_expired"
+            | "unpaid"
+            | "paused";
+          cancel_at_period_end: boolean;
+          current_period_start: string | null;
+          current_period_end: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          stripe_customer_id: string;
+          stripe_subscription_id: string;
+          stripe_price_id?: string | null;
+          plan_key?: "free" | "pro" | "semester";
+          status:
+            | "trialing"
+            | "active"
+            | "past_due"
+            | "canceled"
+            | "incomplete"
+            | "incomplete_expired"
+            | "unpaid"
+            | "paused";
+          cancel_at_period_end?: boolean;
+          current_period_start?: string | null;
+          current_period_end?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          stripe_customer_id?: string;
+          stripe_price_id?: string | null;
+          plan_key?: "free" | "pro" | "semester";
+          status?:
+            | "trialing"
+            | "active"
+            | "past_due"
+            | "canceled"
+            | "incomplete"
+            | "incomplete_expired"
+            | "unpaid"
+            | "paused";
+          cancel_at_period_end?: boolean;
+          current_period_start?: string | null;
+          current_period_end?: string | null;
+          metadata?: Json;
+          updated_at?: string;
+        };
+      };
       surge_companies: {
         Row: {
           id: string;

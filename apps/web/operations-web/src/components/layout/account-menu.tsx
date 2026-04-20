@@ -102,6 +102,9 @@ export function AccountMenu({ displayName, email, className }: AccountMenuProps)
             <Link href="/billing" onClick={() => setIsOpen(false)}>
               Billing
             </Link>
+            <Link href="/settings#appearance" onClick={() => setIsOpen(false)}>
+              Appearance
+            </Link>
             <Link href="/settings" onClick={() => setIsOpen(false)}>
               Settings
             </Link>

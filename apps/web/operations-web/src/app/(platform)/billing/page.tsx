@@ -1,10 +1,24 @@
 import { AppShell } from "@/components/layout/app-shell";
+import { BillingCheckoutButton } from "@/components/billing/checkout-button";
+import { BillingPortalButton } from "@/components/billing/portal-button";
+import { BILLING_PLANS } from "@/lib/billing/plans";
+import { getBillingSnapshotForUser } from "@/lib/billing/service";
 import { requireUserContext } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
-export default async function BillingPage() {
+type BillingPageProps = {
+  searchParams?: Promise<{
+    checkout?: string;
+    session_id?: string;
+  }>;
+};
+
+export default async function BillingPage({ searchParams }: BillingPageProps) {
   const userContext = await requireUserContext();
+  const billing = await getBillingSnapshotForUser(userContext.user.id);
+  const params = searchParams ? await searchParams : undefined;
+  const checkoutState = params?.checkout;
 
   return (
     <AppShell
@@ -15,47 +29,113 @@ export default async function BillingPage() {
       eyebrow="Odirico / Platform / Billing"
       variant="ecosystem"
     >
+      {checkoutState === "success" ? (
+        <section className="panel">
+          <div className="panel-header">
+            <div>
+              <p className="sidebar-label">Checkout</p>
+              <h3>Billing is processing your subscription.</h3>
+            </div>
+          </div>
+          <p className="muted">
+            Stripe returned successfully. If your paid access card still shows locked, refresh in a
+            moment so the webhook sync can finish writing the subscription state back into the
+            platform.
+          </p>
+        </section>
+      ) : null}
+
       <div className="stats-grid">
         <article className="stat-card">
-          <span className="sidebar-label">Plan model</span>
-          <strong>Unified</strong>
-          <p className="muted">The platform is being shaped around one login, one subscription, and shared entitlements.</p>
+          <span className="sidebar-label">Current plan</span>
+          <strong>{billing.activePlan === "free" ? "Free preview" : BILLING_PLANS.find((plan) => plan.key === billing.activePlan)?.name ?? "Paid"}</strong>
+          <p className="muted">One subscription surface for Ember, Sol, and Surge under the shared Odirico platform.</p>
         </article>
         <article className="stat-card">
-          <span className="sidebar-label">Current state</span>
-          <strong>Scaffolded</strong>
-          <p className="muted">Billing UI is now part of the route shell, ready for Stripe and entitlement integration.</p>
+          <span className="sidebar-label">Subscription status</span>
+          <strong>{billing.subscription?.status ?? "not_started"}</strong>
+          <p className="muted">Stripe-backed subscription state now drives whether the paid platform routes are unlocked.</p>
         </article>
         <article className="stat-card">
-          <span className="sidebar-label">Apps covered</span>
-          <strong>3</strong>
-          <p className="muted">Ember, Sol, and Surge share the same consumer platform contract.</p>
+          <span className="sidebar-label">Paid access</span>
+          <strong>{billing.hasActiveSubscription ? "Unlocked" : "Locked"}</strong>
+          <p className="muted">Overview, Ember, Sol, and Surge unlock from one subscription instead of separate product billing.</p>
         </article>
         <article className="stat-card">
-          <span className="sidebar-label">Identity</span>
-          <strong>Shared</strong>
-          <p className="muted">Supabase auth remains the platform session anchor across the route shell.</p>
+          <span className="sidebar-label">Checkout setup</span>
+          <strong>{billing.checkoutConfigured ? "Ready" : "Needs Stripe env"}</strong>
+          <p className="muted">Add the Stripe secret, webhook secret, and live price IDs to finish production billing.</p>
         </article>
       </div>
 
       <div className="panel-grid">
         <section className="panel">
-          <p className="sidebar-label">What this page becomes</p>
-          <h3>Central subscription and entitlement control</h3>
-          <ul className="feature-list">
-            <li>Manage plan, renewal, and app access from one place.</li>
-            <li>Expose shared entitlements so individual apps unlock cleanly without duplicate billing logic.</li>
-            <li>Support cross-app upgrades without making the user think about separate products or projects.</li>
-          </ul>
+          <p className="sidebar-label">Plans</p>
+          <h3>Pick one plan model for the full connected system</h3>
+
+          <div className="pricing-grid pricing-grid-embedded">
+            {BILLING_PLANS.map((plan) => (
+              <article
+                className={plan.highlight ? "pricing-card pricing-card-highlight" : "pricing-card"}
+                key={plan.key}
+              >
+                <p className="platform-module-kicker">{plan.audience}</p>
+                {plan.badge ? <span className="pricing-badge">{plan.badge}</span> : null}
+                <h4>{plan.name}</h4>
+                <p className="pricing-price">
+                  {plan.price}
+                  <span>{plan.cadence}</span>
+                </p>
+                <ul>
+                  {plan.features.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+                {plan.key === "free" ? (
+                  <button className="marketing-button marketing-button-secondary pricing-card-cta" disabled type="button">
+                    Current baseline
+                  </button>
+                ) : (
+                  <BillingCheckoutButton
+                    checkoutConfigured={billing.checkoutConfigured}
+                    className="marketing-button marketing-button-secondary pricing-card-cta"
+                    currentPlanKey={billing.activePlan}
+                    hasActiveSubscription={billing.hasActiveSubscription}
+                    label={plan.ctaLabel}
+                    planKey={plan.key}
+                    signedIn
+                  />
+                )}
+              </article>
+            ))}
+          </div>
         </section>
 
         <aside className="sidebar-panels">
           <section className="panel">
-            <p className="sidebar-label">Next implementation moves</p>
+            <p className="sidebar-label">Manage billing</p>
+            <h3>Stripe is now the billing path</h3>
             <ul className="feature-list">
-              <li>Define the platform plan model and app-level entitlements in shared contracts.</li>
-              <li>Connect Stripe checkout and customer portal routes once the subscription model is finalized.</li>
-              <li>Wire billing state into route guards and app switcher status across the ecosystem.</li>
+              <li>Checkout creates the subscription in Stripe.</li>
+              <li>Webhook sync writes billing state back into Supabase.</li>
+              <li>Platform routes can now enforce paid access from one shared subscription state.</li>
+            </ul>
+            {billing.portalConfigured ? (
+              <BillingPortalButton className="marketing-button marketing-button-primary" />
+            ) : (
+              <p className="muted">
+                The customer portal appears automatically after Stripe has a customer record for this account.
+              </p>
+            )}
+          </section>
+
+          <section className="panel">
+            <p className="sidebar-label">What still needs live credentials</p>
+            <ul className="feature-list">
+              <li>`STRIPE_SECRET_KEY`</li>
+              <li>`STRIPE_WEBHOOK_SECRET`</li>
+              <li>`STRIPE_PRICE_PRO_MONTHLY`</li>
+              <li>`STRIPE_PRICE_SEMESTER`</li>
             </ul>
           </section>
         </aside>

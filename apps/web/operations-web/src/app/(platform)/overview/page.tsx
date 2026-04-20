@@ -1,13 +1,16 @@
 import Link from "next/link";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { PreviewBanner } from "@/components/billing/preview-banner";
 import { EcosystemCommandCenter } from "@/components/platform/ecosystem-command-center";
+import { getBillingSnapshotForUser } from "@/lib/billing/service";
 import { requireUserContext } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function OverviewPage() {
   const userContext = await requireUserContext();
+  const billing = await getBillingSnapshotForUser(userContext.user.id);
 
   return (
     <AppShell
@@ -17,6 +20,14 @@ export default async function OverviewPage() {
       userContext={userContext}
       variant="ecosystem"
     >
+      {!billing.hasActiveSubscription ? (
+        <PreviewBanner
+          checkoutConfigured={billing.checkoutConfigured}
+          copy="The overview is visible so the platform feels complete, but billing still controls the full connected access model and future sync features."
+          title="You are viewing the platform in preview mode"
+        />
+      ) : null}
+
       <EcosystemCommandCenter />
 
       <section className="panel">

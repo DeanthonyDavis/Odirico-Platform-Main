@@ -4,6 +4,11 @@ const publicSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url(),
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
+  NEXT_PUBLIC_WINDOWS_INSTALLER_URL: z.string().url().optional(),
+  NEXT_PUBLIC_MAC_INSTALLER_URL: z.string().url().optional(),
+  NEXT_PUBLIC_LINUX_INSTALLER_URL: z.string().url().optional(),
+  NEXT_PUBLIC_IOS_STORE_URL: z.string().url().optional(),
+  NEXT_PUBLIC_ANDROID_STORE_URL: z.string().url().optional(),
 });
 
 const serverSchema = publicSchema.extend({
@@ -11,6 +16,10 @@ const serverSchema = publicSchema.extend({
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
   SENTRY_DSN: z.string().url().optional(),
+  STRIPE_SECRET_KEY: z.string().min(1).optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
+  STRIPE_PRICE_PRO_MONTHLY: z.string().min(1).optional(),
+  STRIPE_PRICE_SEMESTER: z.string().min(1).optional(),
 });
 const allowedOriginsSchema = z.string().min(1);
 
@@ -28,6 +37,11 @@ export function getPublicEnv() {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_WINDOWS_INSTALLER_URL: process.env.NEXT_PUBLIC_WINDOWS_INSTALLER_URL,
+    NEXT_PUBLIC_MAC_INSTALLER_URL: process.env.NEXT_PUBLIC_MAC_INSTALLER_URL,
+    NEXT_PUBLIC_LINUX_INSTALLER_URL: process.env.NEXT_PUBLIC_LINUX_INSTALLER_URL,
+    NEXT_PUBLIC_IOS_STORE_URL: process.env.NEXT_PUBLIC_IOS_STORE_URL,
+    NEXT_PUBLIC_ANDROID_STORE_URL: process.env.NEXT_PUBLIC_ANDROID_STORE_URL,
   });
 
   return cachedPublicEnv;
@@ -40,10 +54,19 @@ export function getServerEnv() {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_WINDOWS_INSTALLER_URL: process.env.NEXT_PUBLIC_WINDOWS_INSTALLER_URL,
+    NEXT_PUBLIC_MAC_INSTALLER_URL: process.env.NEXT_PUBLIC_MAC_INSTALLER_URL,
+    NEXT_PUBLIC_LINUX_INSTALLER_URL: process.env.NEXT_PUBLIC_LINUX_INSTALLER_URL,
+    NEXT_PUBLIC_IOS_STORE_URL: process.env.NEXT_PUBLIC_IOS_STORE_URL,
+    NEXT_PUBLIC_ANDROID_STORE_URL: process.env.NEXT_PUBLIC_ANDROID_STORE_URL,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     SENTRY_DSN: process.env.SENTRY_DSN,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_PRICE_PRO_MONTHLY: process.env.STRIPE_PRICE_PRO_MONTHLY,
+    STRIPE_PRICE_SEMESTER: process.env.STRIPE_PRICE_SEMESTER,
   });
 
   return cachedServerEnv;

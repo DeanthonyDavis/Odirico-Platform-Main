@@ -1,12 +1,32 @@
 import Link from "next/link";
 
+import { BillingCheckoutButton } from "@/components/billing/checkout-button";
+import { BillingPortalButton } from "@/components/billing/portal-button";
 import {
   PRICING_FAQS,
   PRICING_PLANS,
   PRICING_PROOF_POINTS,
 } from "@/components/marketing/ecosystem-data";
+import { getSession } from "@/lib/auth/session";
+import { getBillingSnapshotForUser } from "@/lib/billing/service";
 
-export default function PricingPage() {
+export const dynamic = "force-dynamic";
+
+type PricingPageProps = {
+  searchParams?: Promise<{
+    checkout?: string;
+    plan?: string;
+  }>;
+};
+
+export default async function PricingPage({ searchParams }: PricingPageProps) {
+  const user = await getSession();
+  const billing = user ? await getBillingSnapshotForUser(user.id) : null;
+  const signedIn = Boolean(user);
+  const params = searchParams ? await searchParams : undefined;
+  const checkoutState = params?.checkout;
+  const requestedPlan = params?.plan;
+
   return (
     <>
       <section className="platform-page-hero">
@@ -16,19 +36,35 @@ export default function PricingPage() {
             <h1>One connected plan model for Ember, Sol, and Surge.</h1>
           </div>
           <p>
-            Pricing should reinforce the ecosystem story. Start with Free, upgrade into one shared
-            plan model, and keep the billing surface simple enough that it never competes with the
-            product.
+            Pricing only shows up here when someone intentionally wants plans. The free tier opens
+            the shell and the billing route, and paid access unlocks the working Overview, Ember,
+            Sol, and Surge routes.
           </p>
         </div>
       </section>
+
+      {checkoutState === "cancelled" ? (
+        <section className="platform-section platform-section-support">
+          <div className="marketing-shell">
+            <article className="platform-support-card">
+              <p className="platform-module-kicker">Checkout</p>
+              <h2>Checkout was cancelled.</h2>
+              <p>
+                No charge was started. You can stay on the free preview, reopen billing later, or
+                choose {requestedPlan === "semester" ? "the Semester plan" : "Pro"} again when you
+                are ready.
+              </p>
+            </article>
+          </div>
+        </section>
+      ) : null}
 
       <section className="platform-section">
         <div className="marketing-shell pricing-grid">
           {PRICING_PLANS.map((plan) => (
             <article
               className={plan.highlight ? "pricing-card pricing-card-highlight" : "pricing-card"}
-              key={plan.name}
+              key={plan.key}
             >
               <p className="platform-module-kicker">{plan.audience}</p>
               {plan.badge ? <span className="pricing-badge">{plan.badge}</span> : null}
@@ -42,9 +78,21 @@ export default function PricingPage() {
                   <li key={feature}>{feature}</li>
                 ))}
               </ul>
-              <Link className="marketing-button marketing-button-secondary pricing-card-cta" href={plan.ctaHref}>
-                {plan.ctaLabel}
-              </Link>
+              {plan.key === "free" ? (
+                <Link className="marketing-button marketing-button-secondary pricing-card-cta" href={signedIn ? "/billing" : "/get-started"}>
+                  {signedIn ? "Open billing" : plan.ctaLabel}
+                </Link>
+              ) : (
+                <BillingCheckoutButton
+                  checkoutConfigured={billing?.checkoutConfigured ?? false}
+                  className="marketing-button marketing-button-secondary pricing-card-cta"
+                  currentPlanKey={billing?.activePlan}
+                  hasActiveSubscription={billing?.hasActiveSubscription}
+                  label={plan.ctaLabel}
+                  planKey={plan.key}
+                  signedIn={signedIn}
+                />
+              )}
             </article>
           ))}
         </div>
@@ -103,7 +151,7 @@ export default function PricingPage() {
         <div className="marketing-shell platform-final-grid">
           <div>
             <p className="platform-kicker">Next step</p>
-            <h2>The plan applies across the full consumer ecosystem.</h2>
+            <h2>The plan applies across the full consumer ecosystem once you are ready to unlock it.</h2>
           </div>
           <div className="platform-why-list">
             <p>No separate module billing.</p>
@@ -111,11 +159,15 @@ export default function PricingPage() {
             <p>One system means one access model.</p>
 
             <div className="platform-hero-actions">
-              <Link className="marketing-button marketing-button-primary" href="/signup">
-                Create account
-              </Link>
-              <Link className="marketing-button marketing-button-secondary" href="/apps">
-                Explore Apps
+              {billing?.portalConfigured ? (
+                <BillingPortalButton className="marketing-button marketing-button-primary" />
+              ) : (
+                <Link className="marketing-button marketing-button-primary" href={signedIn ? "/billing" : "/get-started"}>
+                  {signedIn ? "Open billing" : "Get started"}
+                </Link>
+              )}
+              <Link className="marketing-button marketing-button-secondary" href="/product-tour">
+                Product tour
               </Link>
             </div>
           </div>

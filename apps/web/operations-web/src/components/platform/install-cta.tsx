@@ -13,6 +13,7 @@ type BeforeInstallPromptEvent = Event & {
 type DetectedPlatform = {
   label: string;
   family: "desktop" | "mobile" | "browser";
+  id: "windows" | "macos" | "linux" | "iphone" | "android" | "browser";
   href: string;
 };
 
@@ -20,34 +21,61 @@ type InstallCtaProps = {
   className?: string;
 };
 
+const GITHUB_RELEASES_URL = "https://github.com/DeanthonyDavis/Odirico-Platform-Main/releases";
+
 function detectPlatform(): DetectedPlatform {
   if (typeof navigator === "undefined") {
-    return { label: "desktop", family: "desktop", href: "#desktop-guide" };
+    return { label: "Windows", family: "desktop", id: "windows", href: GITHUB_RELEASES_URL };
   }
 
   const userAgent = navigator.userAgent.toLowerCase();
 
   if (/iphone|ipad|ipod/.test(userAgent)) {
-    return { label: "iPhone", family: "mobile", href: "#ios-guide" };
+    return {
+      label: "iPhone",
+      family: "mobile",
+      id: "iphone",
+      href: process.env.NEXT_PUBLIC_IOS_STORE_URL ?? "#ios-guide",
+    };
   }
 
   if (/android/.test(userAgent)) {
-    return { label: "Android", family: "mobile", href: "#android-guide" };
+    return {
+      label: "Android",
+      family: "mobile",
+      id: "android",
+      href: process.env.NEXT_PUBLIC_ANDROID_STORE_URL ?? "#android-guide",
+    };
   }
 
   if (/mac os x|macintosh/.test(userAgent)) {
-    return { label: "macOS", family: "desktop", href: "#desktop-guide" };
+    return {
+      label: "macOS",
+      family: "desktop",
+      id: "macos",
+      href: process.env.NEXT_PUBLIC_MAC_INSTALLER_URL ?? GITHUB_RELEASES_URL,
+    };
   }
 
   if (/windows/.test(userAgent)) {
-    return { label: "Windows", family: "desktop", href: "#desktop-guide" };
+    return {
+      label: "Windows",
+      family: "desktop",
+      id: "windows",
+      href: process.env.NEXT_PUBLIC_WINDOWS_INSTALLER_URL ?? GITHUB_RELEASES_URL,
+    };
   }
 
   if (/linux|x11/.test(userAgent)) {
-    return { label: "Linux", family: "desktop", href: "#desktop-guide" };
+    return {
+      label: "Linux",
+      family: "desktop",
+      id: "linux",
+      href: process.env.NEXT_PUBLIC_LINUX_INSTALLER_URL ?? GITHUB_RELEASES_URL,
+    };
   }
 
-  return { label: "browser", family: "browser", href: "/login?next=/overview" };
+  return { label: "browser", family: "browser", id: "browser", href: "/login?next=/overview" };
 }
 
 function buildLabel(platform: DetectedPlatform, installReady: boolean, installed: boolean) {
@@ -63,6 +91,18 @@ function buildLabel(platform: DetectedPlatform, installReady: boolean, installed
     if (platform.label === "Android") {
       return "Install for Android";
     }
+  }
+
+  if (platform.id === "windows" && platform.href === GITHUB_RELEASES_URL) {
+    return "Open Windows release center";
+  }
+
+  if (platform.id === "macos" && platform.href === GITHUB_RELEASES_URL) {
+    return "Open macOS release center";
+  }
+
+  if (platform.id === "linux" && platform.href === GITHUB_RELEASES_URL) {
+    return "Open Linux release center";
   }
 
   if (platform.label === "iPhone") {

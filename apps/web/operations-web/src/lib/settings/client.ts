@@ -10,18 +10,27 @@ import {
   type UserPreferences,
 } from "@odirico/core/settings";
 
-const ORG_SETTINGS_KEY = "poleqa-org-settings";
-const USER_SETTINGS_PREFIX = "poleqa-user-settings";
-const SETTINGS_EVENT = "poleqa-settings-changed";
+const ORG_SETTINGS_KEY = "odirico-platform-org-settings";
+const LEGACY_ORG_SETTINGS_KEY = "poleqa-org-settings";
+const USER_SETTINGS_PREFIX = "odirico-platform-user-settings";
+const LEGACY_USER_SETTINGS_PREFIX = "poleqa-user-settings";
+const SETTINGS_EVENT = "odirico-platform-settings-changed";
 
 function getUserSettingsKey(email: string | null | undefined) {
   return `${USER_SETTINGS_PREFIX}:${email?.toLowerCase() ?? "anonymous"}`;
 }
 
-function readJson<T>(key: string, fallback: T) {
+function getLegacyUserSettingsKey(email: string | null | undefined) {
+  return `${LEGACY_USER_SETTINGS_PREFIX}:${email?.toLowerCase() ?? "anonymous"}`;
+}
+
+function readJson<T>(keys: string | string[], fallback: T) {
   if (typeof window === "undefined") return fallback;
 
-  const raw = window.localStorage.getItem(key);
+  const keyList = Array.isArray(keys) ? keys : [keys];
+  const raw = keyList
+    .map((key) => window.localStorage.getItem(key))
+    .find((value) => Boolean(value));
 
   if (!raw) return fallback;
 
@@ -79,8 +88,11 @@ export function useSettings(email: string | null | undefined) {
 
   useEffect(() => {
     function loadSettings() {
-      setOrgSettings(readJson(ORG_SETTINGS_KEY, defaultOrgSettings));
-      const preferences = readJson(getUserSettingsKey(email), defaultUserPreferences);
+      setOrgSettings(readJson([ORG_SETTINGS_KEY, LEGACY_ORG_SETTINGS_KEY], defaultOrgSettings));
+      const preferences = readJson(
+        [getUserSettingsKey(email), getLegacyUserSettingsKey(email)],
+        defaultUserPreferences,
+      );
       setUserSettings(preferences);
       applyPreferencesToDocument(preferences);
     }

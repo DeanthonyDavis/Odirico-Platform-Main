@@ -5,9 +5,7 @@ import {
   CONNECTION_FLOWS,
   ECOSYSTEM_APP_STORIES,
   ECOSYSTEM_TAGLINE,
-  PRICING_PLANS,
   PLATFORM_SUPPORT_POINTS,
-  PRICING_PROOF_POINTS,
   TRUST_PROMISES,
 } from "@/components/marketing/ecosystem-data";
 import { getSession } from "@/lib/auth/session";
@@ -16,7 +14,7 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const user = await getSession();
-  const primaryHref = user ? "/overview" : "/signup";
+  const primaryHref = user ? "/overview" : "/get-started";
   const primaryLabel = user ? "Open platform" : "Get started";
 
   return (
@@ -40,8 +38,8 @@ export default async function HomePage() {
               <Link className="marketing-button marketing-button-primary" href={primaryHref}>
                 {primaryLabel}
               </Link>
-              <Link className="marketing-button marketing-button-secondary" href="/apps">
-                Explore Apps
+              <Link className="marketing-button marketing-button-secondary" href="/product-tour">
+                Product tour
               </Link>
               <Link className="marketing-button marketing-button-ghost" href="/install">
                 Install platform
@@ -101,8 +99,8 @@ export default async function HomePage() {
         <div className="marketing-shell">
           <div className="platform-section-head">
             <div>
-              <p className="platform-kicker">Apps</p>
-              <h2>Each app keeps one pressure zone clear.</h2>
+              <p className="platform-kicker">Products</p>
+              <h2>Each product keeps one pressure zone clear.</h2>
             </div>
             <p>
               Ember handles weekly load. Sol keeps money and direction legible. Surge holds
@@ -162,65 +160,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="platform-section">
-        <div className="marketing-shell">
-          <div className="platform-section-head">
-            <div>
-              <p className="platform-kicker">Pricing</p>
-              <h2>One plan model across the connected system.</h2>
-            </div>
-            <p>
-              Pricing stays visible, but it should communicate one ecosystem instead of separate app
-              billing. Free comes first, one paid plan is clearly recommended, and the rest stays
-              easy to understand.
-            </p>
-          </div>
-
-          <div className="pricing-grid">
-            {PRICING_PLANS.map((plan) => (
-              <article
-                className={plan.highlight ? "pricing-card pricing-card-highlight" : "pricing-card"}
-                key={plan.name}
-              >
-                <p className="platform-module-kicker">{plan.audience}</p>
-                {plan.badge ? <span className="pricing-badge">{plan.badge}</span> : null}
-                <h3>{plan.name}</h3>
-                <p className="pricing-price">
-                  {plan.price}
-                  <span>{plan.cadence}</span>
-                </p>
-                <ul>
-                  {plan.features.map((feature) => (
-                    <li key={feature}>{feature}</li>
-                  ))}
-                </ul>
-                <Link className="marketing-button marketing-button-secondary pricing-card-cta" href={plan.ctaHref}>
-                  {plan.ctaLabel}
-                </Link>
-              </article>
-            ))}
-          </div>
-
-          <div className="pricing-proof-strip">
-            {PRICING_PROOF_POINTS.map((point) => (
-              <article className="pricing-proof-card" key={point.title}>
-                <h3>{point.title}</h3>
-                <p>{point.copy}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="platform-section-cta-row">
-            <Link className="marketing-button marketing-button-primary" href="/pricing">
-              See full pricing
-            </Link>
-            <Link className="marketing-button marketing-button-secondary" href={primaryHref}>
-              {primaryLabel}
-            </Link>
-          </div>
-        </div>
-      </section>
-
       <section className="platform-section platform-section-final">
         <div className="marketing-shell platform-final-grid">
           <div>
@@ -243,8 +182,8 @@ export default async function HomePage() {
             <Link className="marketing-button marketing-button-primary" href={primaryHref}>
               {primaryLabel}
             </Link>
-            <Link className="marketing-button marketing-button-secondary" href="/privacy">
-              Review privacy
+            <Link className="marketing-button marketing-button-secondary" href="/product-tour">
+              Explore product tour
             </Link>
           </div>
         </div>

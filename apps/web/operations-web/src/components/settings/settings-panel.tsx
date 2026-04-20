@@ -12,6 +12,23 @@ type SettingsPanelProps = {
 };
 
 const TEAM_OPTIONS = ["Alpha", "Bravo", "Charlie"] as const;
+const THEME_OPTIONS = [
+  {
+    value: "classic",
+    label: "Classic",
+    copy: "Warm neutral surfaces with the core Odirico green.",
+  },
+  {
+    value: "ocean",
+    label: "Ocean",
+    copy: "Cooler blue-green tones for a calmer planning surface.",
+  },
+  {
+    value: "sunrise",
+    label: "Sunrise",
+    copy: "Warmer amber tones if you want the shell to feel brighter.",
+  },
+] as const;
 
 export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps) {
   const settings = useSettings(userContext.user.email);
@@ -55,7 +72,7 @@ export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps)
 
   return (
     <div className="settings-grid">
-      <section className="panel settings-section">
+      <section className="panel settings-section" id="appearance">
         <div className="panel-header">
           <div>
             <p className="eyebrow">Appearance</p>
@@ -64,22 +81,32 @@ export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps)
         </div>
 
         <div className="form-grid">
-          <label className="field">
+          <div className="field field-span-full">
             <span>Theme</span>
-            <select
-              onChange={(event) =>
-                settings.updateUserSettings((current) => ({
-                  ...current,
-                  theme: event.target.value as typeof current.theme,
-                }))
-              }
-              value={settings.userSettings.theme}
-            >
-              <option value="classic">Classic</option>
-              <option value="ocean">Ocean</option>
-              <option value="sunrise">Sunrise</option>
-            </select>
-          </label>
+            <div className="theme-option-grid">
+              {THEME_OPTIONS.map((theme) => {
+                const active = settings.userSettings.theme === theme.value;
+
+                return (
+                  <button
+                    className={active ? "theme-option-card active" : "theme-option-card"}
+                    key={theme.value}
+                    onClick={() =>
+                      settings.updateUserSettings((current) => ({
+                        ...current,
+                        theme: theme.value,
+                      }))
+                    }
+                    type="button"
+                  >
+                    <span className={`theme-option-preview theme-option-preview-${theme.value}`} />
+                    <strong>{theme.label}</strong>
+                    <p>{theme.copy}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <label className="field">
             <span>Density</span>

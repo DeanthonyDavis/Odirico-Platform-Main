@@ -1,13 +1,16 @@
 import { AppShell } from "@/components/layout/app-shell";
 import { AppAccessLinks } from "@/components/platform/app-access-links";
 import { SurgeRuntimeFrame } from "@/components/platform/surge-runtime-frame";
+import { PreviewBanner } from "@/components/billing/preview-banner";
 import { requireUserContext } from "@/lib/auth/session";
+import { getBillingSnapshotForUser } from "@/lib/billing/service";
 import { getOdiricoEcosystemApp } from "@odirico/core/apps";
 
 export const dynamic = "force-dynamic";
 
 export default async function SurgePage() {
   const userContext = await requireUserContext();
+  const billing = await getBillingSnapshotForUser(userContext.user.id);
   const surge = getOdiricoEcosystemApp("surge");
 
   return (
@@ -19,6 +22,14 @@ export default async function SurgePage() {
       eyebrow="Odirico / Platform / Surge"
       variant="ecosystem"
     >
+      {!billing.hasActiveSubscription ? (
+        <PreviewBanner
+          checkoutConfigured={billing.checkoutConfigured}
+          copy="Surge stays mounted as its own route so the platform feels like a real application stack, while billing still controls the full connected access model."
+          title="You are previewing Surge"
+        />
+      ) : null}
+
       <div className="stats-grid">
         <article className="stat-card">
           <span className="sidebar-label">Status</span>

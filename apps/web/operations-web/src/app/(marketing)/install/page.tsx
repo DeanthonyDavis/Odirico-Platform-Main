@@ -5,6 +5,7 @@ import {
   INSTALL_SURFACES,
 } from "@/components/marketing/ecosystem-data";
 import { InstallCta } from "@/components/platform/install-cta";
+import { getPublicEnv } from "@odirico/core/env";
 import { ODIRICO_ECOSYSTEM_APPS } from "@odirico/core/apps";
 
 const installGuideAnchors: Record<string, string> = {
@@ -21,7 +22,40 @@ const installGuideTitles: Record<string, string> = {
   web: "Browser guide",
 };
 
+const GITHUB_RELEASES_URL = "https://github.com/DeanthonyDavis/Odirico-Platform-Main/releases";
+
 export default function InstallPage() {
+  const env = getPublicEnv();
+  const directDownloads = [
+    {
+      title: "Windows desktop",
+      status: env.NEXT_PUBLIC_WINDOWS_INSTALLER_URL ? "Direct download ready" : "Release center",
+      copy: env.NEXT_PUBLIC_WINDOWS_INSTALLER_URL
+        ? "Download the signed Windows installer directly."
+        : "Open the release center. Publish the signed Windows installer URL here when the trusted download is ready.",
+      href: env.NEXT_PUBLIC_WINDOWS_INSTALLER_URL ?? GITHUB_RELEASES_URL,
+      cta: env.NEXT_PUBLIC_WINDOWS_INSTALLER_URL ? "Download for Windows" : "Open release center",
+    },
+    {
+      title: "macOS desktop",
+      status: env.NEXT_PUBLIC_MAC_INSTALLER_URL ? "Direct download ready" : "Browser install live",
+      copy: env.NEXT_PUBLIC_MAC_INSTALLER_URL
+        ? "Download the current macOS build directly."
+        : "Use the browser install flow today. Add the signed macOS download URL here when the desktop package is published.",
+      href: env.NEXT_PUBLIC_MAC_INSTALLER_URL ?? "#desktop-guide",
+      cta: env.NEXT_PUBLIC_MAC_INSTALLER_URL ? "Download for macOS" : "View desktop steps",
+    },
+    {
+      title: "Linux desktop",
+      status: env.NEXT_PUBLIC_LINUX_INSTALLER_URL ? "Direct download ready" : "Browser install live",
+      copy: env.NEXT_PUBLIC_LINUX_INSTALLER_URL
+        ? "Download the current Linux desktop package directly."
+        : "Use the browser install path today. Add the Linux package URL here when a signed release is available.",
+      href: env.NEXT_PUBLIC_LINUX_INSTALLER_URL ?? "#desktop-guide",
+      cta: env.NEXT_PUBLIC_LINUX_INSTALLER_URL ? "Download for Linux" : "View desktop steps",
+    },
+  ] as const;
+
   return (
     <>
       <section className="platform-page-hero platform-page-hero-install">
@@ -32,16 +66,19 @@ export default function InstallPage() {
             <p className="platform-lead">
               The shared platform shell works today through browser install flows on desktop and
               mobile, with the same web routes underneath all of them. Signed native Windows
-              distribution is being prepared before it is offered publicly again.
+              distribution can be surfaced here the moment the signed release URL is published.
             </p>
 
             <div className="platform-hero-actions">
               <InstallCta />
+              <Link className="marketing-button marketing-button-secondary" href={GITHUB_RELEASES_URL}>
+                Desktop release center
+              </Link>
               <Link className="marketing-button marketing-button-secondary" href="/login?next=/overview">
                 Open in browser
               </Link>
-              <Link className="marketing-button marketing-button-ghost" href="/contact">
-                Ask about desktop access
+              <Link className="marketing-button marketing-button-ghost" href="/get-started">
+                Product paths
               </Link>
             </div>
 
@@ -57,15 +94,52 @@ export default function InstallPage() {
 
           <aside className="platform-install-highlight">
             <p className="platform-module-kicker">Availability now</p>
-            <h2>Public Windows binaries are paused until signed distribution is ready.</h2>
+            <h2>Desktop downloads are now driven by signed release links, not random binaries.</h2>
             <ul className="platform-detail-list">
               <li>Desktop install remains live through the browser install flow in Edge or Chrome.</li>
-              <li>Public Windows executable downloads have been removed to avoid blocked or dangerous download warnings.</li>
-              <li>Code signing and trusted Windows packaging are the remaining desktop release tasks.</li>
+              <li>The release center gives you one stable place to publish signed desktop installers.</li>
+              <li>Unsafe unsigned downloads are not linked publicly anymore.</li>
               <li>iPhone and Android currently use the web install flow while store packages are finalized.</li>
               <li>Browser access stays live on every platform if you do not want to install yet.</li>
             </ul>
           </aside>
+        </div>
+      </section>
+
+      <section className="platform-section">
+        <div className="marketing-shell">
+          <div className="platform-section-head">
+            <div>
+              <p className="platform-kicker">Desktop downloads</p>
+              <h2>Use direct installers when they exist, and the release center when they do not.</h2>
+            </div>
+            <p>
+              This keeps the install page honest. The buttons below can point to signed release
+              assets, while the browser install path stays available on every platform in the
+              meantime.
+            </p>
+          </div>
+
+          <div className="platform-download-grid">
+            {directDownloads.map((download) => (
+              <article className="platform-download-card" key={download.title}>
+                <div className="platform-download-meta">
+                  <p className="platform-module-kicker">Desktop access</p>
+                  <span className="install-status install-status-guide">{download.status}</span>
+                </div>
+                <h3>{download.title}</h3>
+                <p>{download.copy}</p>
+                <div className="install-card-actions">
+                  <Link className="marketing-button marketing-button-secondary" href={download.href}>
+                    {download.cta}
+                  </Link>
+                  <Link className="marketing-button marketing-button-ghost" href="#desktop-guide">
+                    Install steps
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

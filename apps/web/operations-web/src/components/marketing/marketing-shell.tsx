@@ -115,7 +115,7 @@ export function MarketingShell({ children, userContext }: MarketingShellProps) {
                   </Link>
                   <Link
                     className="marketing-button marketing-button-primary"
-                    href="/signup"
+                    href="/get-started"
                     onClick={() => setIsOpen(false)}
                   >
                     Get started
@@ -156,19 +156,19 @@ export function MarketingShell({ children, userContext }: MarketingShellProps) {
             <h3>Product</h3>
             <ul className="marketing-footer-list">
               <li>
-                <Link href="/system">System</Link>
+                <Link href="/apps">Products</Link>
               </li>
               <li>
-                <Link href="/apps">Apps</Link>
+                <Link href="/product-tour">Product tour</Link>
               </li>
               <li>
-                <Link href="/pricing">Pricing</Link>
+                <Link href="/product-demo">Product demo</Link>
+              </li>
+              <li>
+                <Link href="/get-started">Get started</Link>
               </li>
               <li>
                 <Link href="/install">Install</Link>
-              </li>
-              <li>
-                <Link href="/about">About</Link>
               </li>
             </ul>
           </div>
@@ -195,13 +195,20 @@ export function MarketingShell({ children, userContext }: MarketingShellProps) {
           </div>
 
           <div>
-            <h3>Apps</h3>
+            <h3>Company</h3>
             <ul className="marketing-footer-list">
-              {ODIRICO_ECOSYSTEM_APPS.map((app) => (
-                <li key={app.key}>
-                  <Link href={`/apps#${app.key}`}>{app.label}</Link>
-                </li>
-              ))}
+              <li>
+                <Link href="/customers">Customers</Link>
+              </li>
+              <li>
+                <Link href="/partners">Partners</Link>
+              </li>
+              <li>
+                <Link href="/resources">Resources</Link>
+              </li>
+              <li>
+                <Link href="/company">Company</Link>
+              </li>
             </ul>
           </div>
 
@@ -209,7 +216,7 @@ export function MarketingShell({ children, userContext }: MarketingShellProps) {
             <h3>Access</h3>
             <ul className="marketing-footer-list">
               <li>
-                <Link href="/signup">Get started</Link>
+                <Link href="/get-started">Get started</Link>
               </li>
               <li>
                 <Link href="/login">Log in</Link>

@@ -14,7 +14,9 @@
   --marketing-shadow-deep: 0 42px 110px rgba(21, 55, 44, 0.16);
   --marketing-max: 1440px;
   min-height: 100vh;
+  overflow-x: clip;
   color: var(--marketing-ink);
+  background-color: var(--marketing-bg);
   background:
     radial-gradient(circle at top left, rgba(36, 164, 127, 0.12), transparent 28rem),
     radial-gradient(circle at top right, rgba(21, 55, 44, 0.06), transparent 24rem),
@@ -232,7 +234,7 @@
 }
 
 .platform-hero {
-  padding: 2.4rem 0 3rem;
+  padding: 1.8rem 0 2.5rem;
 }
 
 .platform-hero-grid,
@@ -248,8 +250,8 @@
   grid-template-columns: minmax(0, 620px) minmax(0, 560px);
   align-items: center;
   gap: clamp(6rem, 10vw, 9rem);
-  min-height: calc(100svh - 148px);
-  padding: 3.5rem 0 5.5rem;
+  min-height: min(48rem, calc(100svh - 148px));
+  padding: 2.9rem 0 4.35rem;
 }
 
 .platform-hero-copy,
@@ -488,7 +490,7 @@
 
 .platform-section,
 .platform-page-hero {
-  padding: clamp(6rem, 9vw, 8rem) 0;
+  padding: clamp(4.75rem, 8vw, 6.75rem) 0;
 }
 
 .platform-page-hero {
@@ -503,7 +505,7 @@
 }
 
 .platform-section-head {
-  margin-bottom: 3.75rem;
+  margin-bottom: 3rem;
 }
 
 .platform-page-hero h1,
@@ -798,6 +800,85 @@
   color: var(--marketing-muted);
 }
 
+.get-started-grid,
+.platform-download-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.get-started-card,
+.product-tour-card,
+.platform-download-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.85rem;
+  border: 1px solid var(--marketing-line);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--marketing-shadow);
+}
+
+.get-started-card h2,
+.product-tour-card h2,
+.platform-download-card h3 {
+  margin: 0;
+  font-family: "Aptos Display", "Space Grotesk", "Segoe UI", sans-serif;
+  font-size: clamp(1.6rem, 2.3vw, 2rem);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.get-started-card p,
+.product-tour-card p,
+.platform-download-card p {
+  margin: 0;
+  color: var(--marketing-muted);
+  line-height: 1.72;
+}
+
+.get-started-card-cta {
+  width: fit-content;
+  margin-top: 0.4rem;
+}
+
+.product-tour-stack {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.product-tour-card {
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  align-items: stretch;
+}
+
+.product-tour-copy,
+.product-tour-side,
+.platform-download-meta,
+.install-card-actions {
+  display: grid;
+  gap: 1rem;
+}
+
+.product-tour-side {
+  align-content: start;
+  padding: 1.35rem;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(36, 164, 127, 0.12), transparent 32%),
+    rgba(241, 244, 242, 0.92);
+}
+
+.platform-download-meta {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.install-card-actions {
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  align-items: center;
+}
+
 .install-destination-cta {
   width: fit-content;
   margin-top: 0.25rem;
@@ -990,6 +1071,8 @@
   .platform-pillars,
   .platform-priority-list,
   .pricing-grid,
+  .get-started-grid,
+  .platform-download-grid,
   .pricing-proof-strip,
   .platform-app-showcase,
   .platform-support-strip,
@@ -1004,6 +1087,10 @@
   }
 
   .platform-hero-modules {
+    grid-template-columns: 1fr;
+  }
+
+  .product-tour-card {
     grid-template-columns: 1fr;
   }
 
@@ -1058,6 +1145,10 @@
     width: 100%;
     justify-content: center;
   }
+
+  .install-card-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -1083,5 +1174,10 @@
 
   .platform-mark-image {
     width: min(68vw, 220px);
+  }
+
+  .platform-download-meta {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 }
