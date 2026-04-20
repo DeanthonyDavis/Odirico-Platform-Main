@@ -1,4 +1,4 @@
-export type PlatformPlanKey = "free" | "pro" | "semester";
+export type PlatformPlanKey = "free" | "basic" | "pro" | "semester";
 
 export type BillingPlanDefinition = {
   key: PlatformPlanKey;
@@ -19,12 +19,28 @@ export const BILLING_PLANS: readonly BillingPlanDefinition[] = [
     name: "Free",
     price: "$0",
     cadence: "to explore",
-    audience: "See the product shell, installation flow, and billing surface before you commit.",
+    audience: "Enough access to understand the system across Ember, Sol, and Surge before you commit.",
     ctaLabel: "Start free",
     features: [
-      "Create an Odirico account and open the shared shell",
-      "View the billing route, install route, and account settings",
-      "Preview the platform before unlocking app workspaces",
+      "Basic access across Ember, Sol, and Surge",
+      "Simple dashboards with limited AI actions",
+      "Limited tracking, history, and saved activity",
+      "Enough visibility to understand how the ecosystem works",
+    ],
+  },
+  {
+    key: "basic",
+    name: "Basic",
+    price: "$7.99",
+    cadence: "per month",
+    audience: "For people who want more than free without paying for the full system yet.",
+    ctaLabel: "Choose Basic",
+    paywalled: true,
+    features: [
+      "Lighter access across Ember, Sol, and Surge",
+      "More saved history, sync, and daily planner or tracker usage",
+      "Basic AI assistance with fewer day-to-day restrictions",
+      "No advanced analytics or automation layers",
     ],
   },
   {
@@ -32,29 +48,30 @@ export const BILLING_PLANS: readonly BillingPlanDefinition[] = [
     name: "Pro",
     price: "$14.99",
     cadence: "per month",
-    audience: "For consistent weekly use across Ember, Sol, and Surge.",
+    audience: "The full Odirico ecosystem for people actively using Ember, Sol, and Surge together.",
     ctaLabel: "Choose Pro",
     highlight: true,
     badge: "Recommended",
     paywalled: true,
     features: [
-      "Unlock Overview, Ember, Sol, and Surge from one account",
-      "Shared access across the full connected consumer platform",
-      "Upgrade path built for active weekly use instead of separate app billing",
+      "Full access across Ember, Sol, and Surge",
+      "Full cross-device sync and richer dashboards",
+      "Full AI features, planning tools, and tracking depth",
+      "Better customization, history, and full application and finance management",
     ],
   },
   {
     key: "semester",
-    name: "Semester",
-    price: "$59",
-    cadence: "per term",
-    audience: "For school cycles, internship pushes, and focused growth seasons.",
-    ctaLabel: "Choose Semester",
+    name: "Semester Pass",
+    price: "$39",
+    cadence: "per semester",
+    audience: "Student-friendly full access for one semester without monthly billing.",
+    ctaLabel: "Choose Semester Pass",
     paywalled: true,
     features: [
-      "Paid platform access at a lower effective monthly rate",
-      "Made for school, work, and application seasons that move together",
-      "One plan model that still unlocks the same ecosystem routes",
+      "Everything in Pro billed once for the semester",
+      "Built for school cycles, internship pushes, and focused growth seasons",
+      "Lower-friction student pricing without monthly billing overhead",
     ],
   },
 ] as const;

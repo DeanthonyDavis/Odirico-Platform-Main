@@ -24,7 +24,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
     <AppShell
       currentPath="/billing"
       title="Billing"
-      subtitle="One subscription surface for Ember, Sol, and Surge under the shared Odirico platform."
+      subtitle="Free, Basic, Pro, and Semester Pass live here under one connected billing surface."
       userContext={userContext}
       eyebrow="Odirico / Platform / Billing"
       variant="ecosystem"
@@ -49,7 +49,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
         <article className="stat-card">
           <span className="sidebar-label">Current plan</span>
           <strong>{billing.activePlan === "free" ? "Free preview" : BILLING_PLANS.find((plan) => plan.key === billing.activePlan)?.name ?? "Paid"}</strong>
-          <p className="muted">One subscription surface for Ember, Sol, and Surge under the shared Odirico platform.</p>
+          <p className="muted">The shared billing surface now supports a free preview, a starter plan, and full ecosystem access tiers.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Subscription status</span>
@@ -59,19 +59,19 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
         <article className="stat-card">
           <span className="sidebar-label">Paid access</span>
           <strong>{billing.hasActiveSubscription ? "Unlocked" : "Locked"}</strong>
-          <p className="muted">Overview, Ember, Sol, and Surge unlock from one subscription instead of separate product billing.</p>
+          <p className="muted">Basic, Pro, and Semester Pass all stay inside one platform billing model instead of separate product billing.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Checkout setup</span>
           <strong>{billing.checkoutConfigured ? "Ready" : "Needs Stripe env"}</strong>
-          <p className="muted">Add the Stripe secret, webhook secret, and live price IDs to finish production billing.</p>
+          <p className="muted">Add the Stripe secret, webhook secret, and all live price IDs to finish production billing.</p>
         </article>
       </div>
 
       <div className="panel-grid">
         <section className="panel">
           <p className="sidebar-label">Plans</p>
-          <h3>Pick one plan model for the full connected system</h3>
+          <h3>Pick the access level that fits how much of Odirico you want to use</h3>
 
           <div className="pricing-grid pricing-grid-embedded">
             {BILLING_PLANS.map((plan) => (
@@ -114,11 +114,11 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
         <aside className="sidebar-panels">
           <section className="panel">
             <p className="sidebar-label">Manage billing</p>
-            <h3>Stripe is now the billing path</h3>
+            <h3>Stripe runs the launch billing path</h3>
             <ul className="feature-list">
-              <li>Checkout creates the subscription in Stripe.</li>
+              <li>Checkout creates the selected Basic, Pro, or Semester Pass subscription in Stripe.</li>
               <li>Webhook sync writes billing state back into Supabase.</li>
-              <li>Platform routes can now enforce paid access from one shared subscription state.</li>
+              <li>The shared platform can now read one paid state instead of app-by-app billing logic.</li>
             </ul>
             {billing.portalConfigured ? (
               <BillingPortalButton className="marketing-button marketing-button-primary" />
@@ -134,6 +134,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
             <ul className="feature-list">
               <li>`STRIPE_SECRET_KEY`</li>
               <li>`STRIPE_WEBHOOK_SECRET`</li>
+              <li>`STRIPE_PRICE_BASIC_MONTHLY`</li>
               <li>`STRIPE_PRICE_PRO_MONTHLY`</li>
               <li>`STRIPE_PRICE_SEMESTER`</li>
             </ul>

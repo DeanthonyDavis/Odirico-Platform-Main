@@ -28,6 +28,10 @@ export type BillingSnapshot = {
 function getConfiguredPriceId(planKey: PlatformPlanKey) {
   const env = getServerEnv();
 
+  if (planKey === "basic") {
+    return env.STRIPE_PRICE_BASIC_MONTHLY ?? null;
+  }
+
   if (planKey === "pro") {
     return env.STRIPE_PRICE_PRO_MONTHLY ?? null;
   }
@@ -44,6 +48,7 @@ export function isBillingConfigured() {
 
   return Boolean(
     env.STRIPE_SECRET_KEY &&
+      env.STRIPE_PRICE_BASIC_MONTHLY &&
       env.STRIPE_PRICE_PRO_MONTHLY &&
       env.STRIPE_PRICE_SEMESTER,
   );
@@ -149,6 +154,10 @@ function resolvePlanKeyFromPriceId(priceId: string | null | undefined): Platform
 
   if (priceId && env.STRIPE_PRICE_SEMESTER && priceId === env.STRIPE_PRICE_SEMESTER) {
     return "semester";
+  }
+
+  if (priceId && env.STRIPE_PRICE_BASIC_MONTHLY && priceId === env.STRIPE_PRICE_BASIC_MONTHLY) {
+    return "basic";
   }
 
   if (priceId && env.STRIPE_PRICE_PRO_MONTHLY && priceId === env.STRIPE_PRICE_PRO_MONTHLY) {

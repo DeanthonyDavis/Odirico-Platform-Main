@@ -168,7 +168,7 @@ export type Database = {
           stripe_customer_id: string;
           stripe_subscription_id: string;
           stripe_price_id: string | null;
-          plan_key: "free" | "pro" | "semester";
+          plan_key: "free" | "basic" | "pro" | "semester";
           status:
             | "trialing"
             | "active"
@@ -191,7 +191,7 @@ export type Database = {
           stripe_customer_id: string;
           stripe_subscription_id: string;
           stripe_price_id?: string | null;
-          plan_key?: "free" | "pro" | "semester";
+          plan_key?: "free" | "basic" | "pro" | "semester";
           status:
             | "trialing"
             | "active"
@@ -211,7 +211,7 @@ export type Database = {
         Update: {
           stripe_customer_id?: string;
           stripe_price_id?: string | null;
-          plan_key?: "free" | "pro" | "semester";
+          plan_key?: "free" | "basic" | "pro" | "semester";
           status?:
             | "trialing"
             | "active"

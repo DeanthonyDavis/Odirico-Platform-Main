@@ -18,6 +18,7 @@ const serverSchema = publicSchema.extend({
   SENTRY_DSN: z.string().url().optional(),
   STRIPE_SECRET_KEY: z.string().min(1).optional(),
   STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
+  STRIPE_PRICE_BASIC_MONTHLY: z.string().min(1).optional(),
   STRIPE_PRICE_PRO_MONTHLY: z.string().min(1).optional(),
   STRIPE_PRICE_SEMESTER: z.string().min(1).optional(),
 });
@@ -65,6 +66,7 @@ export function getServerEnv() {
     SENTRY_DSN: process.env.SENTRY_DSN,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_PRICE_BASIC_MONTHLY: process.env.STRIPE_PRICE_BASIC_MONTHLY,
     STRIPE_PRICE_PRO_MONTHLY: process.env.STRIPE_PRICE_PRO_MONTHLY,
     STRIPE_PRICE_SEMESTER: process.env.STRIPE_PRICE_SEMESTER,
   });

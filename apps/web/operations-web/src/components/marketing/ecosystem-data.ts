@@ -103,39 +103,49 @@ export const PRICING_PLANS: readonly PricingPlan[] = BILLING_PLANS;
 
 export const PRICING_PROOF_POINTS = [
   {
-    title: "One plan across the ecosystem",
-    copy: "You are unlocking Ember, Sol, and Surge together instead of stacking separate subscriptions for separate life problems.",
+    title: "Launch pricing is simple on purpose",
+    copy: "Free, Basic, Pro, and Semester Pass are enough to explain the system without making early users decode a complicated pricing matrix.",
   },
   {
-    title: "Free is a preview, not a dead-end",
-    copy: "The free tier lets people create an account, inspect the shell, and see the billing flow before they decide to unlock the working routes.",
+    title: "Free is enough to understand the system",
+    copy: "People can open Ember, Sol, and Surge in preview mode, use simple dashboards, and see the ecosystem before paying.",
   },
   {
-    title: "The paywall is platform-level",
-    copy: "Payment unlocks the connected consumer system instead of making people buy Ember, Sol, and Surge as disconnected subscriptions.",
+    title: "Paid access scales with commitment",
+    copy: "Basic gives more room without forcing the full system, while Pro and Semester Pass unlock the full connected ecosystem.",
   },
 ] as const;
 
 export const PRICING_FAQS = [
   {
+    question: "What does Free include?",
+    answer:
+      "Free includes basic access across Ember, Sol, and Surge, simple dashboards, limited AI actions, and limited tracking or history so people can understand the system before upgrading.",
+  },
+  {
+    question: "What does Basic include?",
+    answer:
+      "Basic is the starter paid plan at $7.99 per month. It opens lighter access across all three apps, gives you more history, better sync, more day-to-day planner or tracker use, and basic AI assistance without the full advanced layer.",
+  },
+  {
     question: "Does one subscription unlock every app?",
     answer:
-      "Yes. Paid ecosystem access applies across Ember, Sol, and Surge instead of making you manage separate consumer subscriptions.",
+      "Pro and Semester Pass unlock the full ecosystem across Ember, Sol, and Surge. Basic still spans the ecosystem, but with lighter limits than the full plans.",
   },
   {
     question: "Can I start on the free plan?",
     answer:
-      "Yes. The free tier lets you create an account, open the shell, review billing, and inspect the install flow before you unlock the paid app workspaces.",
+      "Yes. Free is designed to be genuinely usable enough to understand the product, not just a fake placeholder before billing.",
   },
   {
     question: "Where does the paywall apply?",
     answer:
-      "The paywall sits at the connected platform layer. Billing and account routes stay visible, but paid access unlocks the working Overview, Ember, Sol, and Surge routes.",
+      "The paywall still sits at the connected platform layer. Billing and account routes stay visible, while plan level determines how much access, history, AI, and depth you get across the product spaces.",
   },
   {
-    question: "Will pricing change by app later?",
+    question: "Why is there a Semester Pass?",
     answer:
-      "The current direction is one connected consumer plan model. If pricing changes in the future, it will still be framed around the platform, not disconnected app billing.",
+      "Semester Pass gives students full Pro-level access with one semester payment instead of monthly billing. It is meant for academic cycles, internship pushes, and seasonal use.",
   },
   {
     question: "Do I need to install the app to use it?",

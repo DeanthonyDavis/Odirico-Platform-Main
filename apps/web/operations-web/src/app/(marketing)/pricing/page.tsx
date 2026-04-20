@@ -33,12 +33,12 @@ export default async function PricingPage({ searchParams }: PricingPageProps) {
         <div className="marketing-shell platform-page-hero-grid">
           <div>
             <p className="platform-kicker">Pricing</p>
-            <h1>One connected plan model for Ember, Sol, and Surge.</h1>
+            <h1>Free, Basic, Pro, and Semester Pass for one connected system.</h1>
           </div>
           <p>
-            Pricing only shows up here when someone intentionally wants plans. The free tier opens
-            the shell and the billing route, and paid access unlocks the working Overview, Ember,
-            Sol, and Surge routes.
+            Pricing only shows up here when someone intentionally wants plans. Free gives people
+            enough to understand the system, Basic opens a stronger starter tier, and Pro plus
+            Semester Pass unlock the full connected ecosystem.
           </p>
         </div>
       </section>
@@ -51,8 +51,13 @@ export default async function PricingPage({ searchParams }: PricingPageProps) {
               <h2>Checkout was cancelled.</h2>
               <p>
                 No charge was started. You can stay on the free preview, reopen billing later, or
-                choose {requestedPlan === "semester" ? "the Semester plan" : "Pro"} again when you
-                are ready.
+                choose{" "}
+                {requestedPlan === "semester"
+                  ? "Semester Pass"
+                  : requestedPlan === "basic"
+                    ? "Basic"
+                    : "Pro"}{" "}
+                again when you are ready.
               </p>
             </article>
           </div>
@@ -103,12 +108,12 @@ export default async function PricingPage({ searchParams }: PricingPageProps) {
           <div className="platform-section-head">
             <div>
               <p className="platform-kicker">Why it works</p>
-              <h2>Honest proof for the pricing story.</h2>
+              <h2>Honest proof for the launch pricing story.</h2>
             </div>
             <p>
               No fake customer logos and no invented enterprise claims. The strongest proof right
-              now is the product model itself: one shell, one account, one plan model, and three
-              connected consumer apps.
+              now is the product model itself: one shell, one account, and a launch plan structure
+              that matches how people actually adopt the ecosystem.
             </p>
           </div>
 
@@ -151,12 +156,12 @@ export default async function PricingPage({ searchParams }: PricingPageProps) {
         <div className="marketing-shell platform-final-grid">
           <div>
             <p className="platform-kicker">Next step</p>
-            <h2>The plan applies across the full consumer ecosystem once you are ready to unlock it.</h2>
+            <h2>Pick the access level that matches how much of the ecosystem you actually want right now.</h2>
           </div>
           <div className="platform-why-list">
-            <p>No separate module billing.</p>
-            <p>No confusing upgrade path because you used more than one app.</p>
-            <p>One system means one access model.</p>
+            <p>Free is enough to understand the system.</p>
+            <p>Basic is the real starter plan.</p>
+            <p>Pro and Semester Pass unlock the full ecosystem.</p>
 
             <div className="platform-hero-actions">
               {billing?.portalConfigured ? (

@@ -7,7 +7,7 @@ import { createBillingCheckoutSession, getBillingSnapshotForUser } from "@/lib/b
 export const runtime = "nodejs";
 
 const requestSchema = z.object({
-  planKey: z.enum(["pro", "semester"]),
+  planKey: z.enum(["basic", "pro", "semester"]),
 });
 
 export async function POST(request: Request) {
