@@ -8,126 +8,96 @@ import {
 
 export function EcosystemCommandCenter() {
   const snapshot = getOdiricoEcosystemSnapshot();
-  const topAssignments = snapshot.ember.assignments.slice(0, 3);
-  const topApplications = snapshot.surge.applications.slice(0, 3);
 
   return (
     <div className="workspace-stack">
+      <section className="panel ecosystem-command-board" id="command">
+        <div className="ecosystem-command-copy">
+          <p className="sidebar-label">Command center</p>
+          <h3>What needs attention across school, money, and applications today</h3>
+          <p className="muted">
+            The ecosystem should help you decide where to go next, then get out of the way once you enter the right app.
+          </p>
+        </div>
+
+        <div className="ecosystem-priority-grid">
+          <article className="signal-card-mini ecosystem-priority-card ecosystem-priority-card-ember">
+            <span className="workspace-module-kicker">Ember</span>
+            <strong>{snapshot.ember.assignments[0]?.title}</strong>
+            <p className="muted">Next academic pressure point due {snapshot.ember.assignments[0]?.dueDate}</p>
+            <Link className="ecosystem-card-primary-link" href="/ember">
+              Open Ember
+            </Link>
+          </article>
+
+          <article className="signal-card-mini ecosystem-priority-card ecosystem-priority-card-sol">
+            <span className="workspace-module-kicker">Sol</span>
+            <strong>{snapshot.sol.billReminders[0]?.title}</strong>
+            <p className="muted">
+              {currency(snapshot.sol.billReminders[0]?.amount ?? 0)} due {snapshot.sol.billReminders[0]?.dueDate}
+            </p>
+            <Link className="ecosystem-card-primary-link" href="/sol">
+              Open Sol
+            </Link>
+          </article>
+
+          <article className="signal-card-mini ecosystem-priority-card ecosystem-priority-card-surge">
+            <span className="workspace-module-kicker">Surge</span>
+            <strong>{snapshot.surge.applications[0]?.company}</strong>
+            <p className="muted">{snapshot.surge.applications[0]?.nextAction}</p>
+            <Link className="ecosystem-card-primary-link" href="/surge">
+              Open Surge
+            </Link>
+          </article>
+        </div>
+      </section>
+
       <div className="stats-grid">
         <article className="stat-card">
           <span className="sidebar-label">Momentum score</span>
           <strong>{snapshot.overview.momentumScore}</strong>
-          <p className="muted">Shared pulse across school load, money stability, and outward career motion.</p>
+          <p className="muted">Shared pulse across your academic load, financial stability, and application pipeline.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Savings rate</span>
           <strong>{percent(snapshot.sol.summary.savingsRate)}</strong>
-          <p className="muted">Sol is still protecting runway even while bills and semester pressure stack up.</p>
+          <p className="muted">Sol is still protecting runway even while semester and interview pressure stack up.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Due this week</span>
           <strong>{snapshot.ember.summary.dueThisWeek}</strong>
-          <p className="muted">Ember is keeping academic deadlines visible before the week turns into backlog.</p>
+          <p className="muted">Ember keeps the academic queue visible before it turns into backlog.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Active applications</span>
           <strong>{snapshot.surge.summary.activeApplications}</strong>
-          <p className="muted">Surge is holding the pipeline steady while Ember protects time to actually respond.</p>
+          <p className="muted">Surge keeps the search active while Ember and Sol protect the rest of the week.</p>
         </article>
       </div>
 
-      <section className="panel workspace-banner workspace-banner-overview">
-        <div>
-          <p className="sidebar-label">System focus</p>
-          <h3>{snapshot.overview.dailyFocus}</h3>
-          <p className="muted">
-            The platform is doing its job when Ember handles the week, Sol guards financial
-            direction, and Surge keeps outward opportunity from getting dropped.
-          </p>
-        </div>
-        <div className="context-row">
-          <span className="status-pill">Semester {snapshot.profile.semester}</span>
-          <span className="status-pill">Net worth {currency(snapshot.sol.summary.netWorth)}</span>
-          <span className="status-pill">{snapshot.surge.summary.interviews} interview loops active</span>
-        </div>
-      </section>
-
       <div className="panel-grid">
-        <section className="panel">
+        <section className="panel" id="signals">
           <div className="panel-header">
             <div>
-              <p className="sidebar-label">Live modules</p>
-              <h3>Open the right live system for the pressure zone in front of you</h3>
+              <p className="sidebar-label">Cross-app signals</p>
+              <h3>Shared pressure that should change what you do next</h3>
             </div>
           </div>
-          <div className="module-story-grid">
-            <article className="workspace-module workspace-module-ember">
-              <p className="workspace-module-kicker">Ember</p>
-              <h4>Academic execution and weekly load balancing</h4>
-              <p className="muted">Student-centered planning for classes, exams, study blocks, and burnout prevention now lives inside a working route.</p>
-              <ul className="feature-list">
-                {topAssignments.map((assignment) => (
-                  <li key={assignment.id}>
-                    {assignment.title} due {assignment.dueDate}
-                  </li>
-                ))}
-              </ul>
-              <Link className="ecosystem-card-primary-link" href="/ember">
-                Open Ember
-              </Link>
-            </article>
-
-            <article className="workspace-module workspace-module-sol">
-              <p className="workspace-module-kicker">Sol</p>
-              <h4>Money direction, runway, and energy-aware planning</h4>
-              <p className="muted">Budget health, goal pressure, and energy windows now update in the live Sol workspace.</p>
-              <ul className="feature-list">
-                {snapshot.sol.billReminders.map((bill) => (
-                  <li key={bill.id}>
-                    {bill.title} {currency(bill.amount)} due {bill.dueDate}
-                  </li>
-                ))}
-              </ul>
-              <Link className="ecosystem-card-primary-link" href="/sol">
-                Open Sol
-              </Link>
-            </article>
-
-            <article className="workspace-module workspace-module-surge">
-              <p className="workspace-module-kicker">Surge</p>
-              <h4>Career momentum, applications, and recruiter memory</h4>
-              <p className="muted">The opportunity layer is already live and tied back into the academic and financial systems.</p>
-              <ul className="feature-list">
-                {topApplications.map((application) => (
-                  <li key={application.id}>
-                    {application.company} · {application.role}
-                  </li>
-                ))}
-              </ul>
-              <Link className="ecosystem-card-primary-link" href="/surge">
-                Open Surge
-              </Link>
-            </article>
+          <div className="signal-list">
+            {snapshot.overview.crossAppSignals.map((signal) => (
+              <article key={signal.id} className="signal-card-mini">
+                <div className="signal-card-head">
+                  <span className={`source-dot source-dot-${signal.source}`} />
+                  <strong>{signal.title}</strong>
+                </div>
+                <p className="muted">{signal.detail}</p>
+                {signal.dueLabel ? <span className="mini-meta">{signal.dueLabel}</span> : null}
+              </article>
+            ))}
           </div>
         </section>
 
         <aside className="sidebar-panels">
-          <section className="panel">
-            <p className="sidebar-label">Cross-app queue</p>
-            <div className="signal-list">
-              {snapshot.overview.crossAppSignals.map((signal) => (
-                <article key={signal.id} className="signal-card-mini">
-                  <div className="signal-card-head">
-                    <span className={`source-dot source-dot-${signal.source}`} />
-                    <strong>{signal.title}</strong>
-                  </div>
-                  <p className="muted">{signal.detail}</p>
-                  {signal.dueLabel ? <span className="mini-meta">{signal.dueLabel}</span> : null}
-                </article>
-              ))}
-            </div>
-          </section>
-
           <section className="panel">
             <p className="sidebar-label">Connector health</p>
             <div className="connector-list">
@@ -137,31 +107,27 @@ export function EcosystemCommandCenter() {
                     <strong>{connector.label}</strong>
                     <p className="muted">{connector.detail}</p>
                   </div>
-                  <span className={`module-pill connector-pill connector-pill-${connector.status}`}>{connector.status}</span>
+                  <span className={`module-pill connector-pill connector-pill-${connector.status}`}>
+                    {connector.status}
+                  </span>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="panel">
+            <p className="sidebar-label">Recommended next move</p>
+            <div className="signal-list">
+              {snapshot.overview.insights.slice(0, 2).map((insight) => (
+                <article key={insight.id} className={`workspace-insight workspace-insight-${insight.tone}`}>
+                  <h4>{insight.title}</h4>
+                  <p>{insight.body}</p>
                 </article>
               ))}
             </div>
           </section>
         </aside>
       </div>
-
-      <section className="panel">
-        <div className="panel-header">
-          <div>
-            <p className="sidebar-label">AI brief</p>
-            <h3>What the system is flagging right now</h3>
-          </div>
-        </div>
-        <div className="workspace-insight-grid">
-          {snapshot.overview.insights.map((insight) => (
-            <article key={insight.id} className={`workspace-insight workspace-insight-${insight.tone}`}>
-              <p className="workspace-module-kicker">{insight.source}</p>
-              <h4>{insight.title}</h4>
-              <p>{insight.body}</p>
-            </article>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

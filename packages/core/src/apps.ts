@@ -114,8 +114,8 @@ export const ODIRICO_APPS: readonly OdiricoAppDefinition[] = [
     label: "Ember",
     href: "/ember",
     accessHref: "/login?next=/ember",
-    status: "prototype",
-    statusLabel: "Focused build",
+    status: "live",
+    statusLabel: "Live",
     tagline: "Student rhythm, recovery, planning, and short-term stability.",
     summary:
       "A daily system for school, energy, routines, assignments, and recovery inside the connected Odirico platform.",
@@ -132,8 +132,8 @@ export const ODIRICO_APPS: readonly OdiricoAppDefinition[] = [
     label: "Sol",
     href: "/sol",
     accessHref: "/login?next=/sol",
-    status: "active-build",
-    statusLabel: "Active build",
+    status: "live",
+    statusLabel: "Live",
     tagline: "Money direction, credit strategy, and long-range planning.",
     summary:
       "A financial and future-planning system for credit, goals, decisions, and steady long-term movement.",

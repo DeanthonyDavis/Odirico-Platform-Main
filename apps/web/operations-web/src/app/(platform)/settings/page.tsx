@@ -6,6 +6,12 @@ import { listManagedUsers } from "@/lib/settings/admin";
 
 export const dynamic = "force-dynamic";
 
+const settingsNav = [
+  { href: "/settings#appearance", label: "Appearance" },
+  { href: "/settings#access", label: "Access" },
+  { href: "/settings#account", label: "Account" },
+];
+
 export default async function SettingsPage() {
   const userContext = await requireUserContext();
   const managedUsers = canManageOrganization(userContext.roles)
@@ -16,10 +22,11 @@ export default async function SettingsPage() {
     <AppShell
       currentPath="/settings"
       title="Settings"
-      subtitle="Appearance, account controls, and platform preferences in one shared settings surface."
+      subtitle="Account, appearance, and shared ecosystem controls live here instead of taking over the apps."
       userContext={userContext}
       eyebrow="Odirico / Platform / Settings"
       variant="ecosystem"
+      localNav={settingsNav}
     >
       <SettingsPanel managedUsers={managedUsers} userContext={userContext} />
     </AppShell>

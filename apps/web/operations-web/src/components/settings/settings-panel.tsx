@@ -54,8 +54,8 @@ const PLATFORM_LINKS = [
   },
   {
     href: "/billing",
-    label: "Billing",
-    copy: "Manage your subscription and plan access across the ecosystem.",
+    label: "Subscription",
+    copy: "Manage your plan access across Ember, Sol, and Surge without interrupting the app spaces.",
   },
   {
     href: "/delete-account",
@@ -161,7 +161,7 @@ export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps)
         </div>
       </section>
 
-      <section className="panel settings-section">
+      <section className="panel settings-section" id="access">
         <div className="panel-header">
           <div>
             <p className="eyebrow">Platform access</p>
@@ -238,7 +238,7 @@ export function SettingsPanel({ managedUsers, userContext }: SettingsPanelProps)
 
       {canManageOrg ? (
         <>
-          <section className="panel settings-section">
+          <section className="panel settings-section" id="account">
             <div className="panel-header">
               <div>
                 <p className="eyebrow">Organization admin</p>

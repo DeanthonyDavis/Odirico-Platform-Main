@@ -1,5 +1,4 @@
 import { AppShell } from "@/components/layout/app-shell";
-import { PreviewBanner } from "@/components/billing/preview-banner";
 import { EmberWorkspace } from "@/components/platform/ember-workspace";
 import { getBillingSnapshotForUser } from "@/lib/billing/service";
 import { requireUserContext } from "@/lib/auth/session";
@@ -8,9 +7,17 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+const emberNav = [
+  { href: "/ember#today", label: "Today" },
+  { href: "/ember#assignments", label: "Assignments" },
+  { href: "/ember#exams", label: "Exams" },
+  { href: "/ember#study-plan", label: "Study plan" },
+  { href: "/ember#routine", label: "Routine" },
+];
+
 export default async function EmberPage() {
   const userContext = await requireUserContext();
-  const billing = await getBillingSnapshotForUser(userContext.user.id);
+  await getBillingSnapshotForUser(userContext.user.id);
   const supabase = await createServerSupabaseClient();
   const workspace = await loadWorkspaceState(supabase, userContext.user.id, "ember");
 
@@ -18,19 +25,12 @@ export default async function EmberPage() {
     <AppShell
       currentPath="/ember"
       title="Ember"
-      subtitle="The student-first execution engine for classes, assignments, exams, and study planning."
+      subtitle="A student execution system for assignments, exams, study flow, and recovery-aware planning."
       userContext={userContext}
       eyebrow="Odirico / Platform / Ember"
       variant="ecosystem"
+      localNav={emberNav}
     >
-      {!billing.hasActiveSubscription ? (
-        <PreviewBanner
-          checkoutConfigured={billing.checkoutConfigured}
-          copy="Ember stays visible as its own workspace so the platform feels coherent, while billing still controls the full connected access model."
-          title="You are previewing Ember"
-        />
-      ) : null}
-
       <EmberWorkspace
         hasPersistedState={workspace.hasPersistedState}
         initialState={workspace.state}

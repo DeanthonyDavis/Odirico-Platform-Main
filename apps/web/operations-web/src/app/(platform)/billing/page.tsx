@@ -7,6 +7,12 @@ import { requireUserContext } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
+const billingNav = [
+  { href: "/billing#plans", label: "Plans" },
+  { href: "/billing#manage", label: "Manage" },
+  { href: "/billing#requirements", label: "Requirements" },
+];
+
 type BillingPageProps = {
   searchParams?: Promise<{
     checkout?: string;
@@ -24,10 +30,11 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
     <AppShell
       currentPath="/billing"
       title="Billing"
-      subtitle="Free, Basic, Pro, and Semester Pass live here under one connected billing surface."
+      subtitle="Subscription and checkout live at the account layer so Ember, Sol, and Surge can stay product-focused."
       userContext={userContext}
       eyebrow="Odirico / Platform / Billing"
       variant="ecosystem"
+      localNav={billingNav}
     >
       {checkoutState === "success" ? (
         <section className="panel">
@@ -69,7 +76,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
       </div>
 
       <div className="panel-grid">
-        <section className="panel">
+        <section className="panel" id="plans">
           <p className="sidebar-label">Plans</p>
           <h3>Pick the access level that fits how much of Odirico you want to use</h3>
 
@@ -112,7 +119,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
         </section>
 
         <aside className="sidebar-panels">
-          <section className="panel">
+          <section className="panel" id="manage">
             <p className="sidebar-label">Manage billing</p>
             <h3>Stripe runs the launch billing path</h3>
             <ul className="feature-list">
@@ -129,7 +136,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
             )}
           </section>
 
-          <section className="panel">
+          <section className="panel" id="requirements">
             <p className="sidebar-label">What still needs live credentials</p>
             <ul className="feature-list">
               <li>`STRIPE_SECRET_KEY`</li>

@@ -418,6 +418,361 @@ textarea:focus-visible {
   grid-template-columns: 280px 1fr;
 }
 
+.app-shell-ecosystem-refined {
+  grid-template-columns: 92px 1fr;
+}
+
+.ecosystem-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.4rem 0.9rem;
+  border-right: 1px solid rgba(21, 55, 44, 0.08);
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(18px);
+}
+
+.ecosystem-rail-brand {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: center;
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.ecosystem-rail-nav {
+  display: grid;
+  gap: 0.7rem;
+  width: 100%;
+}
+
+.ecosystem-rail-link {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.35rem;
+  border-radius: 18px;
+  color: var(--muted);
+  transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.ecosystem-rail-link:hover {
+  transform: translateY(-1px);
+  background: rgba(36, 164, 127, 0.09);
+  color: var(--brand);
+}
+
+.ecosystem-rail-link.active {
+  background: linear-gradient(180deg, rgba(36, 164, 127, 0.18), rgba(36, 164, 127, 0.08));
+  color: var(--brand);
+}
+
+.ecosystem-rail-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(21, 55, 44, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.ecosystem-rail-copy {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ecosystem-rail-footer {
+  margin-top: auto;
+  display: grid;
+  gap: 0.2rem;
+  justify-items: center;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.ecosystem-rail-footer p,
+.ecosystem-rail-footer span {
+  margin: 0;
+}
+
+.page-frame-ecosystem-refined {
+  padding: 1.35rem 1.4rem 2rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.ecosystem-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.35rem 0 0.4rem;
+}
+
+.ecosystem-header-main {
+  display: grid;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.ecosystem-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.85rem);
+  line-height: 0.98;
+}
+
+.ecosystem-header p {
+  margin: 0;
+}
+
+.ecosystem-header > .muted,
+.ecosystem-header-main > div > p:last-child {
+  max-width: 54rem;
+}
+
+.ecosystem-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.workspace-local-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.workspace-local-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.45rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.workspace-local-link:hover,
+.workspace-local-link.active {
+  border-color: rgba(36, 164, 127, 0.22);
+  background: rgba(36, 164, 127, 0.11);
+  color: var(--brand);
+}
+
+.page-content-ecosystem {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.app-home-hero {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.6rem;
+  border: 1px solid rgba(21, 55, 44, 0.08);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.app-home-hero-ember {
+  background:
+    linear-gradient(135deg, rgba(255, 248, 244, 0.98), rgba(255, 255, 255, 0.88)),
+    #fff;
+}
+
+.app-home-hero-sol {
+  background:
+    linear-gradient(135deg, rgba(239, 247, 243, 0.96), rgba(255, 255, 255, 0.9)),
+    #fff;
+}
+
+.app-home-copy {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 56rem;
+}
+
+.app-home-copy h3 {
+  margin: 0;
+  font-family: "Aptos Display", "Segoe UI", sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.app-home-copy p {
+  margin: 0;
+}
+
+.app-home-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.app-home-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.app-home-priority-card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.05rem;
+  border-radius: 22px;
+  border: 1px solid rgba(21, 55, 44, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.app-home-priority-card h4,
+.ecosystem-command-copy h3 {
+  margin: 0;
+  font-family: "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 1.22rem;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.app-home-priority-card p {
+  margin: 0;
+}
+
+.ecosystem-command-board {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.ecosystem-command-copy {
+  display: grid;
+  gap: 0.45rem;
+  max-width: 56rem;
+}
+
+.ecosystem-command-copy p,
+.ecosystem-priority-card p {
+  margin: 0;
+}
+
+.ecosystem-priority-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ecosystem-priority-card {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.ecosystem-priority-card-ember {
+  border-color: rgba(180, 85, 58, 0.16);
+}
+
+.ecosystem-priority-card-sol {
+  border-color: rgba(36, 164, 127, 0.16);
+}
+
+.ecosystem-priority-card-surge {
+  border-color: rgba(21, 55, 44, 0.16);
+}
+
+.surge-runtime-header {
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 1080px) {
+  .app-shell-ecosystem-refined {
+    grid-template-columns: 1fr;
+  }
+
+  .ecosystem-rail {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(21, 55, 44, 0.08);
+  }
+
+  .ecosystem-rail-nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.55rem;
+    width: auto;
+    flex: 1;
+    justify-content: center;
+    padding: 0 0.75rem;
+  }
+
+  .ecosystem-rail-link {
+    min-width: 4.2rem;
+  }
+
+  .ecosystem-rail-footer {
+    display: none;
+  }
+
+  .ecosystem-header {
+    flex-direction: column;
+  }
+
+  .ecosystem-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .app-home-grid,
+  .ecosystem-priority-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .page-frame-ecosystem-refined {
+    padding: 1rem 0.9rem 1.4rem;
+  }
+
+  .ecosystem-rail {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .ecosystem-rail-nav {
+    justify-content: flex-start;
+    padding: 0;
+  }
+
+  .ecosystem-rail-copy {
+    display: none;
+  }
+
+  .workspace-local-nav {
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    flex-wrap: nowrap;
+  }
+
+  .workspace-local-link {
+    white-space: nowrap;
+  }
+}
+
 .sidebar {
   padding: 2rem 1.25rem;
   display: flex;

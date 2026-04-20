@@ -10,12 +10,12 @@ import {
   percent,
 } from "@odirico/core/ecosystem";
 
-import type { EmberWorkspaceState } from "@/lib/platform/workspaces";
-import { normalizeWorkspaceState } from "@/lib/platform/workspaces";
 import {
   useSyncedWorkspace,
   type WorkspaceSyncStatus,
 } from "@/components/platform/use-synced-workspace";
+import type { EmberWorkspaceState } from "@/lib/platform/workspaces";
+import { normalizeWorkspaceState } from "@/lib/platform/workspaces";
 
 const STORAGE_KEY = "odirico-ember-live-v1";
 
@@ -53,9 +53,9 @@ function blockHours(block: EmberWorkspaceState["studyPlan"][number]) {
 }
 
 function syncStatusLabel(status: WorkspaceSyncStatus) {
-  if (status === "syncing") return "Syncing to account";
-  if (status === "error") return "Sync issue";
-  return "Saved across devices";
+  if (status === "syncing") return "Syncing";
+  if (status === "error") return "Needs attention";
+  return "Saved";
 }
 
 export function EmberWorkspace({ initialState, hasPersistedState }: EmberWorkspaceProps) {
@@ -105,6 +105,8 @@ export function EmberWorkspace({ initialState, hasPersistedState }: EmberWorkspa
   const dueSoon = useMemo(() => assignmentsDueSoon(derivedSnapshot), [derivedSnapshot]);
   const risks = useMemo(() => highestRiskCourses(derivedSnapshot), [derivedSnapshot]);
   const nextBlock = studyPlan.find((block) => !block.completed) ?? studyPlan[0] ?? null;
+  const submittedCount = assignments.filter((assignment) => assignment.status === "submitted").length;
+  const inProgressCount = assignments.filter((assignment) => assignment.status === "in-progress").length;
 
   function cycleAssignmentStatus(assignmentId: string) {
     setState((current) => ({
@@ -164,165 +166,82 @@ export function EmberWorkspace({ initialState, hasPersistedState }: EmberWorkspa
 
   return (
     <div className="workspace-stack">
+      <section className="panel app-home-hero app-home-hero-ember" id="today">
+        <div className="app-home-copy">
+          <p className="sidebar-label">Today</p>
+          <h3>Stay ahead of the academic load before the week turns into recovery mode.</h3>
+          <p className="muted">
+            Ember should make the next move obvious: what is due, what is slipping, and what to study next.
+          </p>
+          {syncError ? <p className="muted">{syncError}</p> : null}
+        </div>
+
+        <div className="app-home-meta">
+          <span className="status-pill">{ember.semester.name}</span>
+          <span className="status-pill">{syncStatusLabel(syncStatus)}</span>
+          <span className="status-pill">{percent(derivedSnapshot.summary.completionRate)} complete</span>
+        </div>
+
+        <div className="app-home-grid">
+          <article className="app-home-priority-card">
+            <p className="workspace-module-kicker">Next up</p>
+            <h4>{dueSoon[0]?.title ?? "No active assignment"}</h4>
+            <p className="muted">
+              {dueSoon[0]
+                ? `${courses.get(dueSoon[0].courseId)?.title ?? "Course"} due ${dueSoon[0].dueDate}`
+                : "The queue is clear right now."}
+            </p>
+          </article>
+
+          <article className="app-home-priority-card">
+            <p className="workspace-module-kicker">Focus block</p>
+            <h4>{nextBlock?.title ?? "No study block queued"}</h4>
+            <p className="muted">
+              {nextBlock
+                ? `${nextBlock.day} ${nextBlock.start}-${nextBlock.end}`
+                : "Create or restore the next study block."}
+            </p>
+          </article>
+
+          <article className="app-home-priority-card">
+            <p className="workspace-module-kicker">Academic risk</p>
+            <h4>{risks[0]?.title ?? "No urgent course"}</h4>
+            <p className="muted">
+              {risks[0] ? `${risks[0].currentGrade} / ${risks[0].risk}` : "No urgent course risk right now."}
+            </p>
+          </article>
+        </div>
+      </section>
+
       <div className="stats-grid">
         <article className="stat-card">
           <span className="sidebar-label">Due this week</span>
           <strong>{derivedSnapshot.summary.dueThisWeek}</strong>
-          <p className="muted">Assignments now stay tied to your account instead of one browser session.</p>
+          <p className="muted">Assignments visible and sortable before they become backlog.</p>
         </article>
         <article className="stat-card">
-          <span className="sidebar-label">Upcoming exams</span>
-          <strong>{derivedSnapshot.summary.upcomingExams}</strong>
-          <p className="muted">Exam pressure still shapes the plan, but the live execution state now follows you across devices.</p>
+          <span className="sidebar-label">In progress</span>
+          <strong>{inProgressCount}</strong>
+          <p className="muted">Current academic work already moving through the week.</p>
         </article>
         <article className="stat-card">
-          <span className="sidebar-label">Planned study hours</span>
+          <span className="sidebar-label">Submitted</span>
+          <strong>{submittedCount}</strong>
+          <p className="muted">Completed work this week across the active course load.</p>
+        </article>
+        <article className="stat-card">
+          <span className="sidebar-label">Study hours</span>
           <strong>{derivedSnapshot.summary.plannedStudyHours}</strong>
-          <p className="muted">Focus blocks recalculate in the route as you complete or reshuffle the week.</p>
-        </article>
-        <article className="stat-card">
-          <span className="sidebar-label">Completion rate</span>
-          <strong>{percent(derivedSnapshot.summary.completionRate)}</strong>
-          <p className="muted">Status changes save back to the backend so Ember stays live beyond the current device.</p>
+          <p className="muted">Planned deep-work capacity currently on the calendar.</p>
         </article>
       </div>
 
-      <section className="panel workspace-banner workspace-banner-ember">
-        <div>
-          <p className="sidebar-label">Student operating system</p>
-          <h3>Ember now syncs its live planning state to your account.</h3>
-          <p className="muted">
-            Add assignments, move work from not-started to submitted, and check off focus blocks
-            without leaving the route. Sol still shapes the constraints, and Surge still feeds
-            internship pressure into the week.
-          </p>
-          {syncError ? <p className="muted">{syncError}</p> : null}
-        </div>
-        <div className="context-row">
-          <span className="status-pill">{ember.semester.name}</span>
-          <span className="status-pill">
-            {ember.semester.creditsCompleted}/{ember.semester.creditsTarget} credits
-          </span>
-          <span className="status-pill">{syncStatusLabel(syncStatus)}</span>
-        </div>
-      </section>
-
-      <div className="panel-grid">
+      <div className="panel-grid" id="assignments">
         <section className="panel">
           <div className="panel-header">
             <div>
-              <p className="sidebar-label">Quick capture</p>
-              <h3>Add the next assignment before it disappears</h3>
-            </div>
-          </div>
-          <div className="form-grid">
-            <label className="field field-span-full">
-              <span>Assignment title</span>
-              <input
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, title: event.target.value }))
-                }
-                placeholder="Lab write-up, problem set, proposal revision..."
-                value={draft.title}
-              />
-            </label>
-            <label className="field">
-              <span>Course</span>
-              <select
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, courseId: event.target.value }))
-                }
-                value={draft.courseId}
-              >
-                {ember.courses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="field">
-              <span>Due date</span>
-              <input
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, dueDate: event.target.value }))
-                }
-                type="date"
-                value={draft.dueDate}
-              />
-            </label>
-            <label className="field">
-              <span>Estimated hours</span>
-              <input
-                min="1"
-                onChange={(event) =>
-                  setDraft((current) => ({
-                    ...current,
-                    estimatedHours: event.target.value,
-                  }))
-                }
-                type="number"
-                value={draft.estimatedHours}
-              />
-            </label>
-            <div className="live-action-row">
-              <button className="primary-button" onClick={addAssignment} type="button">
-                Add assignment
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <aside className="sidebar-panels">
-          <section className="panel">
-            <p className="sidebar-label">Next focus block</p>
-            {nextBlock ? (
-              <article className="signal-card-mini">
-                <strong>{nextBlock.title}</strong>
-                <p className="muted">
-                  {nextBlock.day} {nextBlock.start}-{nextBlock.end}
-                  {nextBlock.courseId
-                    ? ` / ${courses.get(nextBlock.courseId)?.title ?? "Course"}`
-                    : ""}
-                </p>
-                <button
-                  className="ghost-button live-inline-button"
-                  onClick={() => toggleStudyBlock(nextBlock.id)}
-                  type="button"
-                >
-                  {nextBlock.completed ? "Mark active" : "Mark completed"}
-                </button>
-              </article>
-            ) : (
-              <p className="muted">No focus block is queued yet.</p>
-            )}
-          </section>
-
-          <section className="panel">
-            <p className="sidebar-label">Risk alerts</p>
-            <div className="signal-list">
-              {risks.map((course) => (
-                <article key={course.id} className="signal-card-mini">
-                  <div className="signal-card-head">
-                    <strong>{course.title}</strong>
-                    <span className={`risk-pill risk-pill-${course.risk}`}>{course.risk}</span>
-                  </div>
-                  <p className="muted">
-                    {course.professor} / {course.currentGrade}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </section>
-        </aside>
-      </div>
-
-      <div className="panel-grid">
-        <section className="panel">
-          <div className="panel-header">
-            <div>
-              <p className="sidebar-label">Live assignment lane</p>
-              <h3>Move work forward without leaving Ember</h3>
+              <p className="sidebar-label">Assignment queue</p>
+              <h3>Move the week forward without losing sequence</h3>
             </div>
           </div>
           <div className="task-list-grid">
@@ -367,7 +286,58 @@ export function EmberWorkspace({ initialState, hasPersistedState }: EmberWorkspa
 
         <aside className="sidebar-panels">
           <section className="panel">
-            <p className="sidebar-label">Upcoming exams</p>
+            <p className="sidebar-label">Quick capture</p>
+            <div className="form-grid">
+              <label className="field field-span-full">
+                <span>Assignment title</span>
+                <input
+                  onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))}
+                  placeholder="Lab write-up, worksheet, exam prep..."
+                  value={draft.title}
+                />
+              </label>
+              <label className="field">
+                <span>Course</span>
+                <select
+                  onChange={(event) => setDraft((current) => ({ ...current, courseId: event.target.value }))}
+                  value={draft.courseId}
+                >
+                  {ember.courses.map((course) => (
+                    <option key={course.id} value={course.id}>
+                      {course.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="field">
+                <span>Due date</span>
+                <input
+                  onChange={(event) => setDraft((current) => ({ ...current, dueDate: event.target.value }))}
+                  type="date"
+                  value={draft.dueDate}
+                />
+              </label>
+              <label className="field">
+                <span>Hours</span>
+                <input
+                  min="1"
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, estimatedHours: event.target.value }))
+                  }
+                  type="number"
+                  value={draft.estimatedHours}
+                />
+              </label>
+              <div className="live-action-row">
+                <button className="primary-button" onClick={addAssignment} type="button">
+                  Add assignment
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="panel" id="exams">
+            <p className="sidebar-label">Exam readiness</p>
             <div className="signal-list">
               {ember.exams.map((exam) => (
                 <article key={exam.id} className="signal-card-mini">
@@ -382,83 +352,79 @@ export function EmberWorkspace({ initialState, hasPersistedState }: EmberWorkspa
               ))}
             </div>
           </section>
+        </aside>
+      </div>
 
+      <div className="panel-grid" id="study-plan">
+        <section className="panel">
+          <div className="panel-header">
+            <div>
+              <p className="sidebar-label">Study plan</p>
+              <h3>Protect the next good work block instead of reacting late</h3>
+            </div>
+          </div>
+          <div className="study-grid">
+            {studyPlan.map((block) => (
+              <article key={block.id} className={`study-card study-card-${block.source}`}>
+                <p className="workspace-module-kicker">{block.day}</p>
+                <h4>{block.title}</h4>
+                <p className="muted">
+                  {block.start}-{block.end}
+                  {block.courseId ? ` / ${courses.get(block.courseId)?.title || "Course"}` : ""}
+                </p>
+                <span className="mini-meta">{block.focus}</span>
+                <button
+                  className="ghost-button live-inline-button"
+                  onClick={() => toggleStudyBlock(block.id)}
+                  type="button"
+                >
+                  {block.completed ? "Completed" : "Mark complete"}
+                </button>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <aside className="sidebar-panels">
           <section className="panel">
-            <p className="sidebar-label">Cross-app pressure</p>
+            <p className="sidebar-label">Course health</p>
             <div className="signal-list">
-              {snapshot.overview.crossAppSignals.map((signal) => (
-                <article key={signal.id} className="signal-card-mini">
-                  <strong>{signal.title}</strong>
-                  <p className="muted">{signal.detail}</p>
+              {risks.map((course) => (
+                <article key={course.id} className="signal-card-mini">
+                  <div className="signal-card-head">
+                    <strong>{course.title}</strong>
+                    <span className={`risk-pill risk-pill-${course.risk}`}>{course.risk}</span>
+                  </div>
+                  <p className="muted">
+                    {course.professor} / {course.currentGrade}
+                  </p>
                 </article>
               ))}
             </div>
           </section>
+
+          <section className="panel" id="routine">
+            <p className="sidebar-label">Routine and recovery</p>
+            <article className="signal-card-mini">
+              <strong>{ember.semester.name}</strong>
+              <p className="muted">
+                {ember.semester.creditsCompleted} of {ember.semester.creditsTarget} credits completed.
+              </p>
+              <span className="mini-meta">{ember.semester.progress}% through the term</span>
+            </article>
+            <div className="signal-list">
+              {snapshot.overview.crossAppSignals
+                .filter((signal) => signal.source !== "surge")
+                .map((signal) => (
+                  <article key={signal.id} className="signal-card-mini">
+                    <strong>{signal.title}</strong>
+                    <p className="muted">{signal.detail}</p>
+                  </article>
+                ))}
+            </div>
+          </section>
         </aside>
       </div>
-
-      <section className="panel">
-        <div className="panel-header">
-          <div>
-            <p className="sidebar-label">Study plan</p>
-            <h3>Check off the live focus blocks shaping the week</h3>
-          </div>
-        </div>
-        <div className="study-grid">
-          {studyPlan.map((block) => (
-            <article key={block.id} className={`study-card study-card-${block.source}`}>
-              <p className="workspace-module-kicker">{block.day}</p>
-              <h4>{block.title}</h4>
-              <p className="muted">
-                {block.start}-{block.end}
-                {block.courseId ? ` / ${courses.get(block.courseId)?.title || "Course"}` : ""}
-              </p>
-              <span className="mini-meta">{block.focus}</span>
-              <button
-                className="ghost-button live-inline-button"
-                onClick={() => toggleStudyBlock(block.id)}
-                type="button"
-              >
-                {block.completed ? "Completed" : "Mark complete"}
-              </button>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel">
-        <div className="panel-header">
-          <div>
-            <p className="sidebar-label">Semester progress</p>
-            <h3>Academic progress and graduation movement</h3>
-          </div>
-        </div>
-        <div className="semester-grid">
-          <article className="semester-progress-card">
-            <div className="goal-ring">
-              <span>{ember.semester.progress}%</span>
-            </div>
-            <div>
-              <h4>{ember.semester.name}</h4>
-              <p className="muted">
-                {ember.semester.creditsCompleted} of {ember.semester.creditsTarget} credits completed toward the current milestone.
-              </p>
-            </div>
-          </article>
-          <div className="course-grid">
-            {ember.courses.map((course) => (
-              <article key={course.id} className="course-card">
-                <p className="workspace-module-kicker">{course.professor}</p>
-                <h4>{course.title}</h4>
-                <p className="muted">
-                  {course.currentGrade} / {course.difficulty} difficulty
-                </p>
-                <span className={`risk-pill risk-pill-${course.risk}`}>{course.risk}</span>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

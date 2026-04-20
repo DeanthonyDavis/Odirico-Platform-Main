@@ -32,11 +32,11 @@ export function SurgeRuntimeFrame() {
 
   return (
     <div className="surge-runtime-stack">
-      <section className="panel">
+      <section className="panel surge-runtime-header">
         <div className="panel-header">
           <div>
-            <p className="sidebar-label">Live runtime</p>
-            <h3>Surge is now running inside the platform route</h3>
+            <p className="sidebar-label">Live workspace</p>
+            <h3>Operate the full application system without leaving Surge</h3>
           </div>
           <div className="access-link-row access-link-row-compact">
             <a className="access-link access-link-live" href={standaloneSrc} rel="noreferrer" target="_blank">
@@ -46,9 +46,7 @@ export function SurgeRuntimeFrame() {
           </div>
         </div>
         <p className="muted">
-          Browser-capture links sent to <code>/surge</code> are forwarded into the live runtime. If
-          you used the old standalone localhost version, export a backup there once and import it
-          here because browser storage does not carry across different origins.
+          The embedded workspace is where you can review pipeline state, imported signals, and updates in one continuous view.
         </p>
       </section>
 

@@ -99,14 +99,14 @@ export function AccountMenu({ displayName, email, className }: AccountMenuProps)
             <Link href="/overview" onClick={() => setIsOpen(false)}>
               Overview
             </Link>
-            <Link href="/billing" onClick={() => setIsOpen(false)}>
-              Billing
+            <Link href="/settings" onClick={() => setIsOpen(false)}>
+              Settings
             </Link>
             <Link href="/settings#appearance" onClick={() => setIsOpen(false)}>
               Appearance
             </Link>
-            <Link href="/settings" onClick={() => setIsOpen(false)}>
-              Settings
+            <Link href="/billing" onClick={() => setIsOpen(false)}>
+              Subscription
             </Link>
           </div>
 
