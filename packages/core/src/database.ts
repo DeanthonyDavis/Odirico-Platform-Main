@@ -228,6 +228,26 @@ export type Database = {
           updated_at?: string;
         };
       };
+      ecosystem_workspaces: {
+        Row: {
+          user_id: string;
+          app_key: "ember" | "sol";
+          state: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          app_key: "ember" | "sol";
+          state?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          state?: Json;
+          updated_at?: string;
+        };
+      };
       surge_companies: {
         Row: {
           id: string;

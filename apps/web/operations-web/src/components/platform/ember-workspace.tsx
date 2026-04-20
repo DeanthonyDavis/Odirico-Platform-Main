@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-import type {
-  OdiricoAssignment,
-  OdiricoStudyBlock,
-} from "@odirico/core/ecosystem";
 import {
   assignmentsDueSoon,
   courseLookup,
@@ -14,17 +10,25 @@ import {
   percent,
 } from "@odirico/core/ecosystem";
 
-const STORAGE_KEY = "odirico-ember-live-v1";
+import type { EmberWorkspaceState } from "@/lib/platform/workspaces";
+import { normalizeWorkspaceState } from "@/lib/platform/workspaces";
+import {
+  useSyncedWorkspace,
+  type WorkspaceSyncStatus,
+} from "@/components/platform/use-synced-workspace";
 
-type LiveStudyBlock = OdiricoStudyBlock & {
-  completed?: boolean;
-};
+const STORAGE_KEY = "odirico-ember-live-v1";
 
 type DraftAssignment = {
   title: string;
   courseId: string;
   dueDate: string;
   estimatedHours: string;
+};
+
+type EmberWorkspaceProps = {
+  initialState: EmberWorkspaceState;
+  hasPersistedState: boolean;
 };
 
 const snapshot = getOdiricoEcosystemSnapshot();
@@ -37,70 +41,40 @@ const initialDraft: DraftAssignment = {
   estimatedHours: "2",
 };
 
+const normalizeEmberClientState = (value: unknown) => normalizeWorkspaceState("ember", value);
+
 function toMinutes(value: string) {
   const [hours, minutes] = value.split(":").map((part) => Number(part));
   return hours * 60 + minutes;
 }
 
-function blockHours(block: OdiricoStudyBlock) {
+function blockHours(block: EmberWorkspaceState["studyPlan"][number]) {
   return Math.max(0, toMinutes(block.end) - toMinutes(block.start)) / 60;
 }
 
-function loadState() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-
-  if (!raw) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(raw) as {
-      assignments: OdiricoAssignment[];
-      studyPlan: LiveStudyBlock[];
-    };
-  } catch {
-    return null;
-  }
+function syncStatusLabel(status: WorkspaceSyncStatus) {
+  if (status === "syncing") return "Syncing to account";
+  if (status === "error") return "Sync issue";
+  return "Saved across devices";
 }
 
-export function EmberWorkspace() {
-  const [assignments, setAssignments] = useState<OdiricoAssignment[]>(() => ember.assignments.slice());
-  const [studyPlan, setStudyPlan] = useState<LiveStudyBlock[]>(
-    () => ember.studyPlan.map((block) => ({ ...block, completed: false })),
-  );
+export function EmberWorkspace({ initialState, hasPersistedState }: EmberWorkspaceProps) {
   const [draft, setDraft] = useState<DraftAssignment>(initialDraft);
+  const {
+    state,
+    setState,
+    syncStatus,
+    syncError,
+  } = useSyncedWorkspace({
+    appKey: "ember",
+    storageKey: STORAGE_KEY,
+    initialState,
+    hasPersistedState,
+    normalizeState: normalizeEmberClientState,
+  });
 
-  useEffect(() => {
-    const persisted = loadState();
-
-    if (!persisted) {
-      return;
-    }
-
-    setAssignments(persisted.assignments ?? ember.assignments.slice());
-    setStudyPlan(
-      persisted.studyPlan ??
-        ember.studyPlan.map((block) => ({ ...block, completed: false })),
-    );
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        assignments,
-        studyPlan,
-      }),
-    );
-  }, [assignments, studyPlan]);
+  const assignments = state.assignments;
+  const studyPlan = state.studyPlan;
 
   const derivedSnapshot = useMemo(
     () => ({
@@ -117,8 +91,7 @@ export function EmberWorkspace() {
         completionRate:
           assignments.length > 0
             ? Math.round(
-                (assignments.filter((assignment) => assignment.status === "submitted")
-                  .length /
+                (assignments.filter((assignment) => assignment.status === "submitted").length /
                   assignments.length) *
                   100,
               )
@@ -134,8 +107,9 @@ export function EmberWorkspace() {
   const nextBlock = studyPlan.find((block) => !block.completed) ?? studyPlan[0] ?? null;
 
   function cycleAssignmentStatus(assignmentId: string) {
-    setAssignments((current) =>
-      current.map((assignment) => {
+    setState((current) => ({
+      ...current,
+      assignments: current.assignments.map((assignment) => {
         if (assignment.id !== assignmentId) {
           return assignment;
         }
@@ -150,15 +124,16 @@ export function EmberWorkspace() {
 
         return { ...assignment, status: "not-started" };
       }),
-    );
+    }));
   }
 
   function toggleStudyBlock(blockId: string) {
-    setStudyPlan((current) =>
-      current.map((block) =>
+    setState((current) => ({
+      ...current,
+      studyPlan: current.studyPlan.map((block) =>
         block.id === blockId ? { ...block, completed: !block.completed } : block,
       ),
-    );
+    }));
   }
 
   function addAssignment() {
@@ -168,18 +143,21 @@ export function EmberWorkspace() {
 
     const estimatedHours = Math.max(1, Number(draft.estimatedHours) || 1);
 
-    setAssignments((current) => [
+    setState((current) => ({
       ...current,
-      {
-        id: `ember-user-${Date.now()}`,
-        courseId: draft.courseId,
-        title: draft.title.trim(),
-        dueDate: draft.dueDate,
-        weight: 5,
-        estimatedHours,
-        status: "not-started",
-      },
-    ]);
+      assignments: [
+        ...current.assignments,
+        {
+          id: `ember-user-${Date.now()}`,
+          courseId: draft.courseId,
+          title: draft.title.trim(),
+          dueDate: draft.dueDate,
+          weight: 5,
+          estimatedHours,
+          status: "not-started",
+        },
+      ],
+    }));
 
     setDraft(initialDraft);
   }
@@ -190,12 +168,12 @@ export function EmberWorkspace() {
         <article className="stat-card">
           <span className="sidebar-label">Due this week</span>
           <strong>{derivedSnapshot.summary.dueThisWeek}</strong>
-          <p className="muted">Assignments now update live inside Ember instead of staying locked to a snapshot.</p>
+          <p className="muted">Assignments now stay tied to your account instead of one browser session.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Upcoming exams</span>
           <strong>{derivedSnapshot.summary.upcomingExams}</strong>
-          <p className="muted">Exam pressure still shapes the planning layer, but the execution state is now editable in place.</p>
+          <p className="muted">Exam pressure still shapes the plan, but the live execution state now follows you across devices.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Planned study hours</span>
@@ -205,24 +183,27 @@ export function EmberWorkspace() {
         <article className="stat-card">
           <span className="sidebar-label">Completion rate</span>
           <strong>{percent(derivedSnapshot.summary.completionRate)}</strong>
-          <p className="muted">Assignment status changes now persist in browser storage so Ember feels live between visits.</p>
+          <p className="muted">Status changes save back to the backend so Ember stays live beyond the current device.</p>
         </article>
       </div>
 
       <section className="panel workspace-banner workspace-banner-ember">
         <div>
           <p className="sidebar-label">Student operating system</p>
-          <h3>Ember is now a live planning surface inside the platform.</h3>
+          <h3>Ember now syncs its live planning state to your account.</h3>
           <p className="muted">
             Add assignments, move work from not-started to submitted, and check off focus blocks
             without leaving the route. Sol still shapes the constraints, and Surge still feeds
             internship pressure into the week.
           </p>
+          {syncError ? <p className="muted">{syncError}</p> : null}
         </div>
         <div className="context-row">
           <span className="status-pill">{ember.semester.name}</span>
-          <span className="status-pill">{ember.semester.creditsCompleted}/{ember.semester.creditsTarget} credits</span>
-          <span className="status-pill">Saved in browser</span>
+          <span className="status-pill">
+            {ember.semester.creditsCompleted}/{ember.semester.creditsTarget} credits
+          </span>
+          <span className="status-pill">{syncStatusLabel(syncStatus)}</span>
         </div>
       </section>
 
@@ -301,7 +282,7 @@ export function EmberWorkspace() {
                 <p className="muted">
                   {nextBlock.day} {nextBlock.start}-{nextBlock.end}
                   {nextBlock.courseId
-                    ? ` · ${courses.get(nextBlock.courseId)?.title ?? "Course"}`
+                    ? ` / ${courses.get(nextBlock.courseId)?.title ?? "Course"}`
                     : ""}
                 </p>
                 <button
@@ -326,7 +307,9 @@ export function EmberWorkspace() {
                     <strong>{course.title}</strong>
                     <span className={`risk-pill risk-pill-${course.risk}`}>{course.risk}</span>
                   </div>
-                  <p className="muted">{course.professor} · {course.currentGrade}</p>
+                  <p className="muted">
+                    {course.professor} / {course.currentGrade}
+                  </p>
                 </article>
               ))}
             </div>
@@ -352,7 +335,7 @@ export function EmberWorkspace() {
                     <div>
                       <strong>{assignment.title}</strong>
                       <p className="muted">
-                        {course?.title || "Course"} · due {assignment.dueDate}
+                        {course?.title || "Course"} / due {assignment.dueDate}
                       </p>
                     </div>
                     <span className={`module-pill task-status-pill task-status-${assignment.status}`}>
@@ -390,7 +373,7 @@ export function EmberWorkspace() {
                 <article key={exam.id} className="signal-card-mini">
                   <strong>{exam.title}</strong>
                   <p className="muted">
-                    {courses.get(exam.courseId)?.title || "Course"} · {exam.date}
+                    {courses.get(exam.courseId)?.title || "Course"} / {exam.date}
                   </p>
                   <span className={`risk-pill risk-pill-${exam.readiness}`}>
                     {exam.readiness} readiness
@@ -428,7 +411,7 @@ export function EmberWorkspace() {
               <h4>{block.title}</h4>
               <p className="muted">
                 {block.start}-{block.end}
-                {block.courseId ? ` · ${courses.get(block.courseId)?.title || "Course"}` : ""}
+                {block.courseId ? ` / ${courses.get(block.courseId)?.title || "Course"}` : ""}
               </p>
               <span className="mini-meta">{block.focus}</span>
               <button
@@ -467,7 +450,9 @@ export function EmberWorkspace() {
               <article key={course.id} className="course-card">
                 <p className="workspace-module-kicker">{course.professor}</p>
                 <h4>{course.title}</h4>
-                <p className="muted">{course.currentGrade} · {course.difficulty} difficulty</p>
+                <p className="muted">
+                  {course.currentGrade} / {course.difficulty} difficulty
+                </p>
                 <span className={`risk-pill risk-pill-${course.risk}`}>{course.risk}</span>
               </article>
             ))}

@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-import type { OdiricoBudgetCategory, OdiricoGoal } from "@odirico/core/ecosystem";
 import {
   budgetUtilization,
   currency,
@@ -11,22 +10,26 @@ import {
   percent,
 } from "@odirico/core/ecosystem";
 
+import {
+  useSyncedWorkspace,
+  type WorkspaceSyncStatus,
+} from "@/components/platform/use-synced-workspace";
+import type { SolWorkspaceState } from "@/lib/platform/workspaces";
+import { normalizeWorkspaceState } from "@/lib/platform/workspaces";
+
 const STORAGE_KEY = "odirico-sol-live-v1";
 
 type MoneyActionType = "income" | "expense" | "savings";
-
-type OdiricoBillReminder = {
-  id: string;
-  title: string;
-  dueDate: string;
-  amount: number;
-  paid?: boolean;
-};
 
 type DraftMoneyAction = {
   type: MoneyActionType;
   amount: string;
   categoryId: string;
+};
+
+type SolWorkspaceProps = {
+  initialState: SolWorkspaceState;
+  hasPersistedState: boolean;
 };
 
 const snapshot = getOdiricoEcosystemSnapshot();
@@ -38,79 +41,35 @@ const defaultDraft: DraftMoneyAction = {
   categoryId: sol.budgets[0]?.id ?? "",
 };
 
-function loadState() {
-  if (typeof window === "undefined") {
-    return null;
-  }
+const normalizeSolClientState = (value: unknown) => normalizeWorkspaceState("sol", value);
 
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-
-  if (!raw) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(raw) as {
-      budgets: OdiricoBudgetCategory[];
-      goals: OdiricoGoal[];
-      bills: OdiricoBillReminder[];
-      netWorth: number;
-      monthlyIncome: number;
-      creditUtilization: number;
-    };
-  } catch {
-    return null;
-  }
+function syncStatusLabel(status: WorkspaceSyncStatus) {
+  if (status === "syncing") return "Syncing to account";
+  if (status === "error") return "Sync issue";
+  return "Saved across devices";
 }
 
-export function SolWorkspace() {
-  const [budgets, setBudgets] = useState<OdiricoBudgetCategory[]>(() => sol.budgets.slice());
-  const [goals, setGoals] = useState<OdiricoGoal[]>(() => sol.goals.slice());
-  const [bills, setBills] = useState<OdiricoBillReminder[]>(
-    () => sol.billReminders.map((bill) => ({ ...bill, paid: false })),
-  );
-  const [netWorth, setNetWorth] = useState(sol.summary.netWorth);
-  const [monthlyIncome, setMonthlyIncome] = useState(sol.summary.monthlyIncome);
-  const [creditUtilization, setCreditUtilization] = useState(sol.summary.creditUtilization);
+export function SolWorkspace({ initialState, hasPersistedState }: SolWorkspaceProps) {
   const [draft, setDraft] = useState<DraftMoneyAction>(defaultDraft);
+  const {
+    state,
+    setState,
+    syncStatus,
+    syncError,
+  } = useSyncedWorkspace({
+    appKey: "sol",
+    storageKey: STORAGE_KEY,
+    initialState,
+    hasPersistedState,
+    normalizeState: normalizeSolClientState,
+  });
 
-  useEffect(() => {
-    const persisted = loadState();
-
-    if (!persisted) {
-      return;
-    }
-
-    setBudgets(persisted.budgets ?? sol.budgets.slice());
-    setGoals(persisted.goals ?? sol.goals.slice());
-    setBills(
-      persisted.bills ??
-        sol.billReminders.map((bill) => ({ ...bill, paid: false })),
-    );
-    setNetWorth(persisted.netWorth ?? sol.summary.netWorth);
-    setMonthlyIncome(persisted.monthlyIncome ?? sol.summary.monthlyIncome);
-    setCreditUtilization(
-      persisted.creditUtilization ?? sol.summary.creditUtilization,
-    );
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        budgets,
-        goals,
-        bills,
-        netWorth,
-        monthlyIncome,
-        creditUtilization,
-      }),
-    );
-  }, [budgets, goals, bills, netWorth, monthlyIncome, creditUtilization]);
+  const budgets = state.budgets;
+  const goals = state.goals;
+  const bills = state.bills;
+  const netWorth = state.netWorth;
+  const monthlyIncome = state.monthlyIncome;
+  const creditUtilization = state.creditUtilization;
 
   const monthlyExpenses = useMemo(
     () => budgets.reduce((total, category) => total + category.spent, 0),
@@ -128,9 +87,7 @@ export function SolWorkspace() {
   }, [monthlyExpenses, monthlyIncome]);
   const unpaidBills = bills.filter((bill) => !bill.paid);
   const strongestGoal =
-    goals
-      .slice()
-      .sort((left, right) => goalCompletion(right) - goalCompletion(left))[0] ?? null;
+    goals.slice().sort((left, right) => goalCompletion(right) - goalCompletion(left))[0] ?? null;
 
   function applyMoneyAction() {
     const amount = Math.max(0, Number(draft.amount) || 0);
@@ -139,66 +96,75 @@ export function SolWorkspace() {
       return;
     }
 
-    if (draft.type === "income") {
-      setMonthlyIncome((current) => current + amount);
-      setNetWorth((current) => current + amount);
-      return;
-    }
+    setState((current) => {
+      if (draft.type === "income") {
+        return {
+          ...current,
+          monthlyIncome: current.monthlyIncome + amount,
+          netWorth: current.netWorth + amount,
+        };
+      }
 
-    if (draft.type === "expense") {
-      setBudgets((current) =>
-        current.map((category) =>
-          category.id === draft.categoryId
-            ? { ...category, spent: category.spent + amount }
-            : category,
+      if (draft.type === "expense") {
+        return {
+          ...current,
+          budgets: current.budgets.map((category) =>
+            category.id === draft.categoryId
+              ? { ...category, spent: category.spent + amount }
+              : category,
+          ),
+          netWorth: current.netWorth - amount,
+        };
+      }
+
+      return {
+        ...current,
+        netWorth: current.netWorth + amount,
+        goals: current.goals.map((goal) =>
+          goal.id === "goal-emergency"
+            ? { ...goal, current: goal.current + amount }
+            : goal,
         ),
-      );
-      setNetWorth((current) => current - amount);
-      return;
-    }
-
-    setNetWorth((current) => current + amount);
-    setGoals((current) =>
-      current.map((goal) =>
-        goal.id === "goal-emergency"
-          ? { ...goal, current: goal.current + amount }
-          : goal,
-      ),
-    );
+      };
+    });
   }
 
   function nudgeBudget(categoryId: string, delta: number) {
-    setBudgets((current) =>
-      current.map((category) =>
+    setState((current) => ({
+      ...current,
+      budgets: current.budgets.map((category) =>
         category.id === categoryId
           ? { ...category, spent: Math.max(0, category.spent + delta) }
           : category,
       ),
-    );
-    setNetWorth((current) => Math.max(0, current - delta));
+      netWorth: Math.max(0, current.netWorth - delta),
+    }));
   }
 
   function toggleBill(billId: string) {
-    const bill = bills.find((entry) => entry.id === billId);
+    setState((current) => {
+      const bill = current.bills.find((entry) => entry.id === billId);
 
-    if (!bill) {
-      return;
-    }
+      if (!bill) {
+        return current;
+      }
 
-    setBills((current) =>
-      current.map((entry) =>
-        entry.id === billId ? { ...entry, paid: !entry.paid } : entry,
-      ),
-    );
-
-    setNetWorth((current) =>
-      bill.paid ? current + bill.amount : Math.max(0, current - bill.amount),
-    );
+      return {
+        ...current,
+        bills: current.bills.map((entry) =>
+          entry.id === billId ? { ...entry, paid: !entry.paid } : entry,
+        ),
+        netWorth: bill.paid
+          ? current.netWorth + bill.amount
+          : Math.max(0, current.netWorth - bill.amount),
+      };
+    });
   }
 
   function contributeToGoal(goalId: string, amount: number) {
-    setGoals((current) =>
-      current.map((goal) =>
+    setState((current) => ({
+      ...current,
+      goals: current.goals.map((goal) =>
         goal.id === goalId
           ? {
               ...goal,
@@ -209,11 +175,8 @@ export function SolWorkspace() {
             }
           : goal,
       ),
-    );
-
-    if (amount > 0) {
-      setNetWorth((current) => Math.max(0, current - amount));
-    }
+      netWorth: amount > 0 ? Math.max(0, current.netWorth - amount) : current.netWorth,
+    }));
   }
 
   return (
@@ -222,12 +185,12 @@ export function SolWorkspace() {
         <article className="stat-card">
           <span className="sidebar-label">Net worth</span>
           <strong>{currency(netWorth)}</strong>
-          <p className="muted">Sol now updates net worth in place as you log money movement inside the route.</p>
+          <p className="muted">Sol now updates net worth in place and keeps that state tied to your account.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Income</span>
           <strong>{currency(monthlyIncome)}</strong>
-          <p className="muted">Monthly inflow is now adjustable directly inside Sol instead of staying frozen in a demo card.</p>
+          <p className="muted">Monthly inflow is now adjustable directly inside Sol and follows you across devices.</p>
         </article>
         <article className="stat-card">
           <span className="sidebar-label">Savings rate</span>
@@ -237,24 +200,25 @@ export function SolWorkspace() {
         <article className="stat-card">
           <span className="sidebar-label">Credit utilization</span>
           <strong>{percent(creditUtilization)}</strong>
-          <p className="muted">The route is live now, and credit pressure can be tuned as part of the same working surface.</p>
+          <p className="muted">The route is live now, and the working state no longer depends on one browser cache.</p>
         </article>
       </div>
 
       <section className="panel workspace-banner workspace-banner-sol">
         <div>
           <p className="sidebar-label">Financial operating brief</p>
-          <h3>Sol is now a live money workspace inside the platform.</h3>
+          <h3>Sol now syncs its live money workspace to your account.</h3>
           <p className="muted">
             Adjust spending, log income, mark bills paid, and push progress into your goals without
             leaving the route. Ember still uses the energy profile, and Surge still feeds career
             decision pressure back into the financial picture.
           </p>
+          {syncError ? <p className="muted">{syncError}</p> : null}
         </div>
         <div className="context-row">
           <span className="status-pill">Expenses {currency(monthlyExpenses)}</span>
           <span className="status-pill">Unpaid bills {unpaidBills.length}</span>
-          <span className="status-pill">Saved in browser</span>
+          <span className="status-pill">{syncStatusLabel(syncStatus)}</span>
         </div>
       </section>
 
@@ -417,7 +381,9 @@ export function SolWorkspace() {
                       {bill.paid ? "paid" : "open"}
                     </span>
                   </div>
-                  <p className="muted">{currency(bill.amount)} due {bill.dueDate}</p>
+                  <p className="muted">
+                    {currency(bill.amount)} due {bill.dueDate}
+                  </p>
                   <button
                     className="ghost-button live-inline-button"
                     onClick={() => toggleBill(bill.id)}
