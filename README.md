@@ -32,4 +32,3 @@ Set the Vercel project root directory to:
 
 - This repo is the source of truth that GitHub and Vercel should follow.
 - Older local copies under `D:\Odirico\apps\...` should not be treated as canonical deploy targets.
-
