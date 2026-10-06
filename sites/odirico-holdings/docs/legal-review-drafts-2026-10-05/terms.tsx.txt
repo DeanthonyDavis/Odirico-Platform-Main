@@ -1,0 +1,71 @@
+import Link from "next/link";
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Terms of use — review draft",
+  description: "Draft website terms for review before publication.",
+  robots: { index: false, follow: false },
+};
+export default function Terms() {
+  return (
+    <article className="wrap legal">
+      <p className="eyebrow">Website information</p>
+      <h1>TERMS OF USE.</h1>
+      <div className="form-notice">
+        <strong>Draft for legal review before publication.</strong> Confirm the
+        responsible legal entity, jurisdiction, enforceability,
+        intellectual-property rights, and appropriate terms before using this
+        document publicly.
+      </div>
+      <h2>About this website</h2>
+      <p>
+        This website introduces Odirico Holdings, its approach to business
+        development, and potential acquisition and partnership interests.
+        Statements about future structure and portfolio development describe
+        aspirations and may change.
+      </p>
+      <h2>Business discussions</h2>
+      <p>
+        Website content is for general information. It is not an investment
+        solicitation, professional advice, an offer to acquire a business, or a
+        promise of funding. Discussions and submissions do not guarantee an
+        offer, partnership, financing, or a transaction.
+      </p>
+      <h2>Inquiry submissions</h2>
+      <p>
+        Provide accurate information that you have authority to share. Do not
+        upload or send sensitive financial records, personal identification
+        records, third-party confidential information, or unlawful content
+        through the public forms. Submitting an inquiry does not establish a
+        confidential relationship. Any confidentiality or transaction
+        obligations should be addressed in separate appropriate agreements.
+      </p>
+      <h2>Acceptable use</h2>
+      <p>
+        Do not interfere with the website, attempt unauthorized access, submit
+        automated spam, impersonate another person, or use the site to harm
+        others. Technical safeguards may restrict abusive requests.
+      </p>
+      <h2>Website content</h2>
+      <p>
+        Branding and other content are presented for the purposes of this
+        website. Permission and ownership details for all content should be
+        confirmed before publication.
+      </p>
+      <h2>Availability and external links</h2>
+      <p>
+        Website content and availability may change. Future company entries may
+        link to independently operated websites with their own policies. Any
+        warranties, limitations of liability, governing-law provisions, or other
+        jurisdiction-specific provisions require legal review and are not
+        finalized in this draft.
+      </p>
+      <h2>Contact</h2>
+      <p>
+        Use the <Link href="/contact">contact page</Link> for website inquiries
+        once delivery is configured. Review the{" "}
+        <Link href="/privacy">privacy notice</Link> for the intended handling of
+        inquiry information.
+      </p>
+    </article>
+  );
+}

@@ -1,0 +1,138 @@
+.form-notice {
+  border-left: 2px solid var(--black);
+  padding: 12px 16px;
+  background: #e8e8e5;
+  font-size: 13px;
+  line-height: 1.65;
+  margin-bottom: 32px;
+}
+.inquiry-form fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 36px;
+  min-width: 0;
+}
+.inquiry-form legend {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 0 18px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 25px;
+  font-weight: 500;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px 22px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+}
+.field--full {
+  grid-column: 1/-1;
+}
+.field label {
+  font-size: 14px;
+  line-height: 1.45;
+}
+.required {
+  color: var(--muted);
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid #bcbcb9;
+  border-radius: 0;
+  background: transparent;
+  color: var(--black);
+  padding: 14px;
+  min-height: 51px;
+  line-height: 1.4;
+  font-size: 16px;
+}
+.field select {
+  padding-right: 30px;
+}
+.field textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 2px solid var(--black);
+  outline-offset: 2px;
+  border-color: var(--black);
+}
+.field [aria-invalid="true"] {
+  border-color: #111;
+  border-width: 2px;
+}
+.field-error {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.field-help {
+  color: var(--muted);
+  font-size: 12px;
+}
+.form-consent {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.form-consent input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--black);
+}
+.form-consent a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.form-submit {
+  margin-top: 27px;
+  width: 100%;
+}
+.form-small {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 16px;
+}
+.form-message {
+  padding: 16px;
+  border: 1px solid var(--black);
+  margin-top: 24px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.form-success h3 {
+  font-size: 34px;
+  margin-bottom: 15px;
+}
+.form-success .button {
+  margin-top: 25px;
+}
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}

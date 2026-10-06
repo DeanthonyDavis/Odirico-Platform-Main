@@ -1,0 +1,35 @@
+{
+  "sourcePixels": [
+    1280,
+    853
+  ],
+  "status": "Provisional reconstruction from flat raster reference; original vector review required",
+  "assets": {
+    "odirico": {
+      "crop": [
+        78,
+        78,
+        731,
+        246
+      ],
+      "artworkPixels": [
+        635.0981182795698,
+        153.95995550611792
+      ],
+      "contours": 19
+    },
+    "symbol": {
+      "crop": [
+        388,
+        388,
+        489,
+        490
+      ],
+      "artworkPixels": [
+        89.73103130755064,
+        89.2547685834502
+      ],
+      "contours": 2
+    }
+  }
+}

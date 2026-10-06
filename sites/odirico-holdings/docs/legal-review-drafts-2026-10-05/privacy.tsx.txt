@@ -1,0 +1,79 @@
+import Link from "next/link";
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Privacy policy — review draft",
+  description: "Draft website privacy notice for review before publication.",
+  robots: { index: false, follow: false },
+};
+export default function Privacy() {
+  return (
+    <article className="wrap legal">
+      <p className="eyebrow">Website information</p>
+      <h1>PRIVACY POLICY.</h1>
+      <div className="form-notice">
+        <strong>Draft for review before publication.</strong> This notice must
+        be confirmed against Odirico’s actual legal entity, service providers,
+        privacy contact, retention practices, and applicable requirements. It is
+        not a representation of legal compliance.
+      </div>
+      <h2>Information you provide</h2>
+      <p>
+        The inquiry forms request contact details and information about your
+        inquiry. Acquisition inquiries may also include basic business details
+        and an approximate revenue range. Do not submit identity documents, bank
+        details, detailed financial records, trade secrets, or other sensitive
+        information.
+      </p>
+      <h2>How inquiry information is used</h2>
+      <p>
+        When delivery is enabled, information submitted through the forms is
+        used to assess and respond to your inquiry and to consider an
+        appropriate business conversation. A submission does not establish a
+        confidential relationship or require either party to proceed.
+      </p>
+      <h2>Delivery and service providers</h2>
+      <p>
+        The implementation is prepared to use Resend for email delivery, Upstash
+        for rate limiting, and Vercel for hosting. These providers must be
+        confirmed before launch. Live inquiries are delivered to a designated
+        company mailbox. The website does not create a public submission record
+        or maintain an application database of inquiries.
+      </p>
+      <p>
+        In disabled mode no email is sent. Preview mode validates the form
+        without sending or saving its contents. Rate-limit counters may still be
+        processed to prevent abuse.
+      </p>
+      <h2>Technical information and cookies</h2>
+      <p>
+        The application does not install advertising, behavioral analytics, or
+        non-essential tracking cookies. Hosting and security providers may
+        process technical request data. In live delivery mode, the rate limiter
+        uses a keyed hash of the request’s IP address and short-lived request
+        counts; it does not store the raw IP address in the rate-limit keys.
+      </p>
+      <h2>Access and retention</h2>
+      <p>
+        Access to inquiry emails should be restricted to people who need them to
+        evaluate and respond. An appropriate retention and deletion schedule for
+        company mailboxes, provider records, and backups must be established
+        before launch. No specific retention period is represented by this
+        draft.
+      </p>
+      <h2>Privacy requests</h2>
+      <p>
+        A verified privacy contact and the process for handling applicable
+        access, correction, and deletion requests must be added before
+        publication. The <Link href="/contact">contact page</Link> is the
+        intended inquiry route once delivery is configured.
+      </p>
+      <h2>Security and updates</h2>
+      <p>
+        Input validation, restricted email configuration, rate limiting, and
+        security headers are part of the website’s technical safeguards. They do
+        not guarantee complete security. This notice should be updated when
+        actual practices or applicable requirements change.
+      </p>
+    </article>
+  );
+}

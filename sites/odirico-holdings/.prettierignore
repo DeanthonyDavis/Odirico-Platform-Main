@@ -1,0 +1,9 @@
+package-lock.json
+scripts/extract-branding.py
+.next
+node_modules
+docs/screenshots
+docs/sources
+public
+playwright-report
+test-results
