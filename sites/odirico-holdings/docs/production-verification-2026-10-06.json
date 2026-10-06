@@ -1,0 +1,97 @@
+{
+  "checkedAt": "2026-10-06T15:39:16.669Z",
+  "origin": "https://odirico.com",
+  "preview": false,
+  "results": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/company",
+      "status": 200
+    },
+    {
+      "path": "/approach",
+      "status": 200
+    },
+    {
+      "path": "/portfolio",
+      "status": 200
+    },
+    {
+      "path": "/acquisitions",
+      "status": 200
+    },
+    {
+      "path": "/contact",
+      "status": 200
+    },
+    {
+      "path": "/privacy",
+      "status": 200
+    },
+    {
+      "path": "/terms",
+      "status": 200
+    },
+    {
+      "path": "/admin",
+      "status": 404
+    },
+    {
+      "path": "/login",
+      "status": 404
+    },
+    {
+      "path": "/forge",
+      "status": 404
+    },
+    {
+      "path": "/calendar",
+      "status": 404
+    },
+    {
+      "path": "/api/tickets",
+      "status": 404
+    },
+    {
+      "path": "/ember",
+      "status": 404
+    },
+    {
+      "path": "/sol",
+      "status": 404
+    },
+    {
+      "path": "/surge",
+      "status": 404
+    },
+    {
+      "path": "/not-a-real-page",
+      "status": 404
+    },
+    {
+      "path": "/portfolio/odirico-solutions",
+      "status": 404
+    },
+    {
+      "path": "/about",
+      "status": 308,
+      "destination": "/company"
+    },
+    {
+      "path": "/companies",
+      "status": 308,
+      "destination": "/portfolio"
+    },
+    {
+      "path": "/partnerships",
+      "status": 308,
+      "destination": "/contact"
+    }
+  ],
+  "assetsChecked": 15,
+  "inquiryStatus": 503,
+  "passed": true
+}

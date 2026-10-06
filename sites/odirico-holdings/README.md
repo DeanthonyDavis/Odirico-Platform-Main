@@ -36,7 +36,7 @@ Required names only: `INQUIRY_DELIVERY`, `NEXT_PUBLIC_SITE_URL`, `RESEND_API_KEY
 
 ## Domain and legacy transition
 
-Before this replacement, Vercel served www and redirected apex to www (307). The launch intends to serve apex and redirect www to apex. Cloudflare DNS records require no change. Product URLs are deliberately retired; they should return 404, not misleading redirects to corporate pages. Corporate redirects remain `/about` to `/company`, `/companies` to `/portfolio`, `/partnerships` to `/contact`.
+Production was verified October 6, 2026: HTTPS apex serves the corporate site and www redirects to apex (308), preserving paths and queries. Before this replacement, Vercel served www and redirected apex to www (307). Cloudflare DNS records were unchanged. Product URLs are deliberately retired; they return 404, not misleading redirects to corporate pages. Corporate redirects remain `/about` to `/company`, `/companies` to `/portfolio`, `/partnerships` to `/contact`.
 
 `public/sw.js` retires the previous platform service worker and removes only its known shell cache. Other cookies and browser storage are not erased. New corporate pages do not register a service worker or access the former login session.
 
@@ -56,4 +56,4 @@ A Git revert alone is insufficient to recreate the CLI build. Do not delete data
 
 The current privacy/terms pages are limited factual website notices for a release that does not accept inquiries. Earlier legal review drafts are preserved in `docs/legal-review-drafts-2026-10-05`. Entity-specific legal review, a verified privacy contact and inquiry retention rules remain follow-up work; no jurisdiction or guaranteed compliance is invented.
 
-See the repository deployment report for final commit, checks, production URL and verification results.
+See [the production report](docs/PRODUCTION-RELEASE-2026-10-06.md) for the application release commit, checks, domain verification, remaining work and evidence. Documentation-only follow-up commits deploy through the same main-branch workflow.
